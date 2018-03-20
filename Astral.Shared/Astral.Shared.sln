@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2026
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Astral.Shared", "Astral.Shared\Astral.Shared.csproj", "{38A57509-90CD-449B-A1CF-0645E89561F8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{38A57509-90CD-449B-A1CF-0645E89561F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38A57509-90CD-449B-A1CF-0645E89561F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38A57509-90CD-449B-A1CF-0645E89561F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38A57509-90CD-449B-A1CF-0645E89561F8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7CCB0FE1-6B0D-43A5-82CC-02D5FDAECE3A}
+	EndGlobalSection
+EndGlobal
