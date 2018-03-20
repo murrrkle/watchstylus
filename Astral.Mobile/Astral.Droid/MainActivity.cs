@@ -80,8 +80,8 @@ namespace Astral.Droid
             screenshotView.Screen = m_device[ModuleType.Display] as Display;
 
             // TODO: THIS IS HARDCODED
-            string ipAddress = "10.101.34.110";
-            // string ipAddress = "192.168.0.10";
+            //string ipAddress = "10.101.34.110";
+            string ipAddress = "192.168.0.10";
             //string ipAddress = "192.168.0.23";
             // iLab one
             //string ipAddress = "192.168.1.100";
