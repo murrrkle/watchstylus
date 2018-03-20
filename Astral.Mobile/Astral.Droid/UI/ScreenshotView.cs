@@ -29,7 +29,7 @@ namespace Astral.Droid.UI
         private Device.Display m_display;
         #endregion
 
-        private BackgroundWorker m_renderBitmap;
+        //private BackgroundWorker m_renderBitmap;
 
         #region Imaging Class Members
         private Android.Graphics.Bitmap m_currImg;
