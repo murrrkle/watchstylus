@@ -81,7 +81,11 @@ namespace Astral.Droid
 
             // TODO: THIS IS HARDCODED
             //string ipAddress = "10.101.34.110";
-            string ipAddress = "192.168.0.10";
+            //string ipAddress = "192.168.0.10";
+
+            // David's IP
+            string ipAddress = "192.168.0.15";
+
             //string ipAddress = "192.168.0.23";
             // iLab one
             //string ipAddress = "192.168.1.100";
