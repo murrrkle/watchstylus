@@ -24,9 +24,4 @@
   <ItemGroup>
     <PackageReference Include="lz4net" Version="1.0.15.93" />
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="LZ4">
-      <HintPath>..\..\..\Playground\Streaming\Shared\Astral\Astral.Common\bin\Debug\netstandard2.0\LZ4.dll</HintPath>
-    </Reference>
-  </ItemGroup>
 </Project>
