@@ -37,28 +37,28 @@ namespace Astral.Droid.Sensors
             m_sensors = new Dictionary<SensorType, IAndroidSensorBase>();
 
             AndroidAccelerometer accelerometer = new AndroidAccelerometer();
-            AddHandlers(accelerometer);
-            m_sensors.Add(accelerometer.SensorType, accelerometer);
+            //AddHandlers(accelerometer);
+            //m_sensors.Add(accelerometer.SensorType, accelerometer);
 
-            AndroidGyroscope gyroscope = new AndroidGyroscope();
-            AddHandlers(gyroscope);
-            m_sensors.Add(gyroscope.SensorType, gyroscope);
+            //AndroidGyroscope gyroscope = new AndroidGyroscope();
+            //AddHandlers(gyroscope);
+            //m_sensors.Add(gyroscope.SensorType, gyroscope);
 
-            AndroidCompass compass = new AndroidCompass();
-            AddHandlers(compass);
-            m_sensors.Add(compass.SensorType, compass);
+            //AndroidCompass compass = new AndroidCompass();
+            //AddHandlers(compass);
+            //m_sensors.Add(compass.SensorType, compass);
 
-            AndroidOrientation orientation = new AndroidOrientation();
-            AddHandlers(orientation);
-            m_sensors.Add(orientation.SensorType, orientation);
+            //AndroidOrientation orientation = new AndroidOrientation();
+            //AddHandlers(orientation);
+            //m_sensors.Add(orientation.SensorType, orientation);
 
-            AndroidLightSensor light = new AndroidLightSensor();
-            AddHandlers(light);
-            m_sensors.Add(light.SensorType, light);
+            //AndroidLightSensor light = new AndroidLightSensor();
+            //AddHandlers(light);
+            //m_sensors.Add(light.SensorType, light);
 
-            AndroidMagnetometer magnetometer = new AndroidMagnetometer();
-            AddHandlers(magnetometer);
-            m_sensors.Add(magnetometer.SensorType, magnetometer);
+            //AndroidMagnetometer magnetometer = new AndroidMagnetometer();
+            //AddHandlers(magnetometer);
+            //m_sensors.Add(magnetometer.SensorType, magnetometer);
 
             // Keep screen on all the time
             Window.AddFlags(WindowManagerFlags.KeepScreenOn);
