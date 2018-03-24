@@ -6,7 +6,6 @@
 *.cache
 .vs/
 Build/
-Build/
 packages/
 
 # Compiled files
