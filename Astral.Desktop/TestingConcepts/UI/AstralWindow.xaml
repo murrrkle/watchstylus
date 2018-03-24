@@ -1,0 +1,71 @@
+﻿<Window x:Class="TestingConcepts.AstralWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TestingConcepts"
+        mc:Ignorable="d"
+        Title="AstralWindow" Height="820" Width="405">
+    <Window.Resources>
+        <Storyboard x:Key="AddRuleSetCanvasAppear">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="AddRuleSetCanvas">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <QuarticEase EasingMode="EaseInOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="AddRuleSetCanvasDisappear">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="AddRuleSetCanvas">
+                <SplineDoubleKeyFrame KeyTime="0" Value="1"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <QuinticEase EasingMode="EaseInOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </Window.Resources>
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+            <BeginStoryboard Storyboard="{StaticResource AddRuleSetCanvasAppear}"/>
+        </EventTrigger>
+    </Window.Triggers>
+    <Canvas x:Name="Container">
+        <Canvas x:Name="Logo" Height="72.032" Canvas.Left="13.347" Canvas.Top="11.269" Width="277.477">
+            <Path Width="33.614" Height="40.179" Canvas.Left="91.658" Canvas.Top="31.13" Stretch="Fill" Fill="#FFE64D3C" Data="F1 M 680.338,1108.83L 740.298,1108.83L 710.319,994.825M 750.951,1155.38L 669.684,1155.38L 657.458,1201.93L 600.253,1201.93L 678.364,938.809L 741.879,938.809L 820.382,1201.93L 763.178,1201.93L 750.951,1155.38 Z "/>
+            <Path Width="27.288" Height="41.505" Canvas.Left="125.933" Canvas.Top="30.527" Stretch="Fill" Fill="#FFE64D3C" Data="F1 M 850.353,1132.11C 864.946,1148.28 887.826,1160.12 913.865,1160.12C 937.137,1160.12 949.761,1147.1 949.761,1130.92C 949.761,1111.2 930.04,1102.92 906.762,1093.05C 873.626,1079.64 832.205,1064.25 832.205,1011.39C 832.205,969.971 864.946,934.861 918.992,934.861C 950.945,934.861 978.56,945.121 998.68,963.66L 973.825,1003.51C 958.048,988.121 937.534,981.412 917.018,981.412C 898.084,981.412 886.25,992.065 886.25,1007.84C 886.25,1025.2 905.578,1033.49 928.458,1042.95C 961.992,1056.76 1003.41,1073.72 1003.41,1126.58C 1003.41,1172.35 971.854,1206.67 914.258,1206.67C 874.416,1206.67 845.225,1193.65 824.709,1172.74L 850.353,1132.11 Z "/>
+            <Path Width="25.902" Height="40.179" Canvas.Left="155.63" Canvas.Top="31.13" Stretch="Fill" Fill="#FFE64D3C" Data="F1 M 1077.57,985.357L 1019.19,985.357L 1019.19,938.81L 1188.82,938.81L 1188.82,985.357L 1130.43,985.357L 1130.43,1201.93L 1077.57,1201.93L 1077.57,985.357 Z "/>
+            <Path Width="27.529" Height="40.179" Canvas.Left="186.35" Canvas.Top="31.13" Stretch="Fill" Fill="#FFE64D3C" Data="F1 M 1310.71,985.357L 1273.23,985.357L 1273.23,1060.31L 1310.71,1060.31C 1331.22,1060.31 1344.63,1045.71 1344.63,1022.83C 1344.63,999.954 1331.22,985.357 1310.71,985.357 Z M 1301.64,1106.86L 1273.23,1106.86L 1273.23,1201.93L 1220.37,1201.93L 1220.37,938.81L 1318.6,938.81C 1366.73,938.81 1398.68,973.523 1398.68,1022.05C 1398.68,1067.81 1374.62,1090.29 1352.92,1097.39L 1400.65,1201.93L 1341.87,1201.93L 1301.64,1106.86 Z "/>
+            <Path Width="33.613" Height="40.179" Canvas.Left="215.865" Canvas.Top="31.13" Stretch="Fill" Fill="#FFE64D3C" Data="F1 M 1493.75,1108.83L 1553.71,1108.83L 1523.73,994.825M 1564.36,1155.38L 1483.1,1155.38L 1470.87,1201.93L 1413.66,1201.93L 1491.78,938.809L 1555.29,938.809L 1633.79,1201.93L 1576.59,1201.93L 1564.36,1155.38 Z "/>
+            <Path Width="21.566" Height="40.179" Canvas.Left="252.911" Canvas.Top="31.13" Stretch="Fill" Fill="#FFE64D3C" Data="F1 M 1656.27,938.81L 1709.13,938.81L 1709.13,1155.38L 1797.49,1155.38L 1797.49,1201.93L 1656.27,1201.93L 1656.27,938.81 Z "/>
+            <Path Width="42.174" Height="71.987" Stretch="Fill" Fill="#FF1C5379" Data="F1 M 276.191,734.944L 0.000467936,734.944L 0.000467936,1206.37L 276.191,734.944 Z "/>
+            <Rectangle Width="42.174" Height="42.174" Canvas.Top="29.813" Stretch="Fill" Fill="#FF6FB6B9"/>
+            <Path Width="71.987" Height="71.987" Stretch="Fill" Fill="#FFFFFFFF" Data="F1 M 459.429,1194.37L 288.191,1194.37L 288.191,1023.63L 33.5827,1172.79L 283.068,746.944L 459.429,746.944M 471.429,734.944L 262.284,734.944L 6.10352e-005,1182.63L 6.10352e-005,1206.37L 23.7387,1206.37L 264.191,1065.5L 264.191,1206.37L 471.429,1206.37L 471.429,734.944 Z "/>
+            <Path Width="71.987" Height="71.987" Stretch="Fill" Fill="#FFF19C34" Data="F1 M 276.191,734.944L 0.000467936,1206.37L 471.428,930.182L 276.191,734.944 Z "/>
+            <Rectangle Width="29.813" Height="29.813" Canvas.Left="42.174" Stretch="Fill" Fill="#FFF1C02B"/>
+            <Path Width="29.813" Height="42.174" Canvas.Left="42.174" Canvas.Top="29.813" Stretch="Fill" Fill="#FFE64D3C" Data="F1 M 276.191,1206.37L 471.428,1206.37L 471.428,930.182L 276.191,1044.56L 276.191,1206.37 Z "/>
+        </Canvas>
+        <Canvas x:Name="MainButtonsPanel" Height="38" Canvas.Left="13.347" Canvas.Top="95.667" Width="376.653"/>
+        <TextBlock Height="44.331" Canvas.Left="54.991" TextWrapping="Wrap" Canvas.Top="141.328" Width="235.833" FontFamily="{DynamicResource RobotoBold}" FontSize="36">
+            <TextBlock.Foreground>
+                <SolidColorBrush Color="{DynamicResource AstralBlack}"/>
+            </TextBlock.Foreground><Run Text="RULES"/></TextBlock>
+        <Button x:Name="AddRuleButton" Content="Button" Height="18" Width="15.82" Style="{DynamicResource PlusButton}" Canvas.Top="158" Canvas.Left="164"/>
+        <local:RuleSetTabs x:Name="RuleSetsTab" Height="622.833" Canvas.Left="13.347" Canvas.Top="145.667" Width="26.903"/>
+        <Canvas x:Name="AddRuleSetCanvas" Height="792.5" Width="400" Background="#5F000000" d:IsHidden="True">
+            <Rectangle Fill="#FFD9D9D9" Height="132" Canvas.Left="37" RadiusY="5" RadiusX="6" Canvas.Top="366" Width="329"/>
+            <TextBlock Height="42" Canvas.Left="49" TextWrapping="Wrap" Text="Add new Rule Set" Canvas.Top="382" Width="302" FontFamily="{DynamicResource RobotoBold}" FontSize="25">
+                <TextBlock.Foreground>
+                    <SolidColorBrush Color="{DynamicResource AstralBlack}"/>
+                </TextBlock.Foreground>
+            </TextBlock>
+            <TextBox x:Name="NewRuleSetNameTextBox" Height="28.5" Canvas.Left="49" TextWrapping="Wrap" Text="New Rule Name" Canvas.Top="418" Width="302" Style="{DynamicResource AstralTextBox}" TextBlock.FontFamily="{DynamicResource RobotoCondensed}" TextBlock.Foreground="{DynamicResource AstralBlackBrush}" FontSize="18"/>
+            <Button x:Name="NewRuleSetOkay" Content="Button" Height="25.25" Canvas.Left="327" Style="{DynamicResource OkayButtonStyle}" Canvas.Top="451.5" Width="24"/>
+            <Button x:Name="NewRuleSetCancel" Content="Button" Height="25.25" Canvas.Left="298" Style="{DynamicResource CancelButtonStyle}" Canvas.Top="451.5" Width="24"/>
+        </Canvas>
+        <local:RadialPlotter Height="174.118" Canvas.Left="88.676" Canvas.Top="190.659" Width="174.118"/>
+    </Canvas>
+</Window>

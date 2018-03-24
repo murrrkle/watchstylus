@@ -1,0 +1,47 @@
+﻿<UserControl x:Class="TestingConcepts.MouseOrKeyboardControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TestingConcepts"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300" Width="380" Height="50">
+    <Canvas>
+        <Rectangle Height="50.43" Canvas.Left="-0.215" Canvas.Top="-0.43" Width="380.215" RadiusX="7" RadiusY="7">
+            <Rectangle.Fill>
+                <SolidColorBrush Color="{DynamicResource AstralBlue}"/>
+            </Rectangle.Fill>
+        </Rectangle>
+        <Rectangle Height="42.5" Canvas.Left="200.285" RadiusY="7" RadiusX="7" Canvas.Top="3.167" Width="170" Fill="#FF12344C" d:IsHidden="True"/>
+        <Rectangle Height="42.5" Canvas.Left="10" RadiusY="7" RadiusX="7" Canvas.Top="3.167" Width="170" Fill="#FF12344C"/>
+        <Path Stretch="Fill" Data="F1 M 1106.71,780.26L 1106.71,778.551L 1179.79,778.551L 1179.79,780.259M 1143.25,724.861C 1144.84,724.861 1146.34,725.481 1147.47,726.608C 1148.59,727.735 1149.21,729.232 1149.21,730.827L 1149.21,749.765C 1149.21,753.053 1146.54,755.729 1143.25,755.729C 1141.65,755.729 1140.16,755.109 1139.03,753.981C 1137.9,752.855 1137.28,751.357 1137.28,749.764L 1137.28,730.827C 1137.29,727.537 1139.96,724.861 1143.25,724.861 Z M 1142.39,721.54L 1142.39,706.317L 1144.1,706.317L 1144.1,721.54C 1143.82,721.509 1143.54,721.493 1143.25,721.493C 1142.96,721.493 1142.68,721.509 1142.39,721.54 Z M 1143.25,759.097C 1143.54,759.097 1143.82,759.08 1144.1,759.052L 1144.1,774.275L 1142.39,774.275L 1142.39,759.051C 1142.68,759.08 1142.96,759.097 1143.25,759.097 Z M 1190.53,822.743L 1190.53,747.036C 1190.53,722.779 1170.87,703.113 1146.61,703.113L 1139.89,703.113C 1115.63,703.113 1095.97,722.779 1095.97,747.036L 1095.97,822.743C 1095.97,847.003 1115.63,866.667 1139.89,866.667L 1146.61,866.667C 1170.87,866.667 1190.53,847.003 1190.53,822.743 Z " Height="32.208" Canvas.Left="27.353" Width="18.621" Canvas.Top="7.481" RenderTransformOrigin="0.5,0.5">
+            <Path.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="-45"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Path.RenderTransform>
+            <Path.Fill>
+                <SolidColorBrush Color="{DynamicResource AstralWhite}"/>
+            </Path.Fill>
+        </Path>
+        <Path Stretch="Fill" Data="F1 M 919.761,640.373L 878.953,640.373L 878.953,624.289L 903.583,624.289L 903.583,599.673L 919.667,599.673L 919.667,621.623L 919.761,624.289M 919.761,665.681L 878.953,665.681L 878.953,649.597L 919.761,649.597M 919.761,690.321L 903.677,690.321L 903.677,674.237L 919.761,674.237M 895.036,690.321L 878.952,690.321L 878.952,674.237L 895.036,674.237M 870.397,616.137L 854.313,616.137L 854.313,600.053L 870.397,600.053M 870.397,640.373L 854.313,640.373L 854.313,624.289L 870.397,624.289M 870.397,665.681L 854.313,665.681L 854.313,649.597L 870.397,649.597M 870.397,690.321L 755.325,690.321L 755.325,674.237L 870.397,674.237M 747.344,690.321L 731.26,690.321L 731.26,674.237L 747.344,674.237M 731.644,649.599L 771.643,649.599L 771.643,665.683L 731.644,665.683M 731.644,624.289L 747.728,624.289L 747.728,640.373L 731.644,640.373M 731.644,600.055L 747.728,600.055L 747.728,616.139L 731.644,616.139M 756.177,624.289L 772.261,624.289L 772.261,640.373L 756.177,640.373M 756.177,600.055L 772.261,600.055L 772.261,616.139L 756.177,616.139M 780.712,649.599L 796.796,649.599L 796.796,665.683L 780.712,665.683M 780.712,624.289L 796.796,624.289L 796.796,640.373L 780.712,640.373M 780.712,600.055L 796.796,600.055L 796.796,616.139L 780.712,616.139M 804.885,649.599L 821.24,649.599L 821.24,665.683L 804.885,665.683M 805.245,624.289L 821.329,624.289L 821.329,640.373L 805.245,640.373M 805.245,600.055L 821.329,600.055L 821.329,616.139L 805.245,616.139M 829.78,649.599L 845.864,649.599L 845.864,665.683L 829.78,665.683M 829.78,624.289L 845.864,624.289L 845.864,640.373L 829.78,640.373M 829.78,600.055L 845.864,600.055L 845.864,616.139L 829.78,616.139M 879.049,600.055L 895.133,600.055L 895.133,616.139L 879.049,616.139M 930.911,579.372L 724.809,579.372C 717,579.372 710.668,585.703 710.668,593.512L 710.668,696.26C 710.668,704.069 717,710.401 724.809,710.401L 930.911,710.401C 938.721,710.401 945.053,704.069 945.053,696.26L 945.053,593.512C 945.053,585.703 938.721,579.372 930.911,579.372 Z " Height="25.544" Canvas.Left="209.46" Canvas.Top="10.813" Width="45.694">
+            <Path.Fill>
+                <SolidColorBrush Color="{DynamicResource AstralWhite}"/>
+            </Path.Fill>
+        </Path>
+        <TextBlock Height="30.688" Canvas.Left="61.3" TextWrapping="Wrap" Text="MOUSE" Canvas.Top="8.241" Width="75.872" FontSize="22" FontFamily="{DynamicResource RobotoBold}" >
+            <TextBlock.Foreground>
+                <SolidColorBrush Color="{DynamicResource AstralWhite}"/>
+            </TextBlock.Foreground>
+        </TextBlock>
+        <TextBlock Height="30.688" Canvas.Left="262.87" TextWrapping="Wrap" Text="KEYBOARD" Canvas.Top="8.241" Width="103.63" FontSize="22" FontFamily="{DynamicResource RobotoBold}" >
+            <TextBlock.Foreground>
+                <SolidColorBrush Color="{DynamicResource AstralWhite}"/>
+            </TextBlock.Foreground>
+        </TextBlock>
+        <Canvas Height="56.93" Canvas.Left="-0.215" Canvas.Top="-0.43" Width="190"/>
+    </Canvas>
+</UserControl>

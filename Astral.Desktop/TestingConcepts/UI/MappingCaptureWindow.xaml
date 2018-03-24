@@ -1,0 +1,22 @@
+﻿<Window x:Class="TestingConcepts.MappingCaptureWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TestingConcepts"
+        mc:Ignorable="d"
+        Title="MappingCaptureWindow" Height="300" Width="300">
+    <Canvas>
+        <Button x:Name="OkButton" Content="Button" Height="25" Canvas.Left="250.015" Canvas.Top="10" Width="25" Style="{DynamicResource OkayButtonStyle}"/>
+        <Button x:Name="CancelButton" Content="Button" Height="25" Canvas.Left="220.015" Canvas.Top="10" Width="25" Style="{DynamicResource CancelButtonStyle}"/>
+        <Rectangle Height="121.921" Canvas.Left="10" Canvas.Top="40" Width="266.182" StrokeThickness="2" StrokeDashArray="2 2">
+            <Rectangle.Fill>
+                <SolidColorBrush Color="#7FF1F2F2"/>
+            </Rectangle.Fill>
+            <Rectangle.Stroke>
+                <SolidColorBrush Color="{DynamicResource AstralBlack}"/>
+            </Rectangle.Stroke>
+        </Rectangle>
+
+    </Canvas>
+</Window>

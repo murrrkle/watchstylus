@@ -1,0 +1,385 @@
+﻿<Application x:Class="TestingConcepts.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:TestingConcepts"
+             StartupUri="UI/AstralWindow.xaml">
+    <Application.Resources>
+
+        <ResourceDictionary>
+
+            <FontFamily x:Key="RobotoCondensed">/TestingConcepts;component/Resources/Fonts/#Roboto Condensed</FontFamily>
+            <FontFamily x:Key="RobotoBold">Roboto Condensed Bold</FontFamily>
+
+            <Color x:Key="AstralRed">#FFE64D3C</Color>
+            <Color x:Key="AstralTeal">#FF6FB6B9</Color>
+            <Color x:Key="AstralBlue">#1C5379</Color>
+            <Color x:Key="AstralYellow">#F1C02B</Color>
+            <Color x:Key="AstralOrange">#F19C34</Color>
+            <Color x:Key="AstralWhite">#FFFFFF</Color>
+            <Color x:Key="AstralLightGray">#f1f2f2</Color>
+            <Color x:Key="AstralGreen">#aacd45</Color>
+            <Color x:Key="AstralGrey">#FFD9D9D9</Color>
+            <Color x:Key="AstralBlack">#333333</Color>
+
+            <SolidColorBrush x:Key="AstralRedBrush" Color="#FFE64D3C" />
+            <SolidColorBrush x:Key="AstralTealBrush" Color="#FF6FB6B9" />
+            <SolidColorBrush x:Key="AstralYellowBrush" Color="#F1C02B" />
+            <SolidColorBrush x:Key="AstralOrangeBrush" Color="#F19C34" />
+            <SolidColorBrush x:Key="AstralWhiteBrush" Color="#FFFFFF" />
+            <SolidColorBrush x:Key="AstralLightGrayBrush" Color="#f1f2f2" />
+            <SolidColorBrush x:Key="AstralGrayBrush" Color="#FFD9D9D9" />
+            <SolidColorBrush x:Key="AstralGreenBrush" Color="#aacd45"/>
+            <SolidColorBrush x:Key="AstralBlackBrush" Color="#333333" />
+
+            <SolidColorBrush x:Key="TextBox.Static.Border" Color="#FFABAdB3"/>
+            <SolidColorBrush x:Key="TextBox.MouseOver.Border" Color="#FF7EB4EA"/>
+            <SolidColorBrush x:Key="TextBox.Focus.Border" Color="#FF569DE5"/>
+
+            <Style x:Key="AstralTextBox" TargetType="{x:Type TextBox}">
+                <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource TextBox.Static.Border}"/>
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
+                <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                <Setter Property="AllowDrop" Value="true"/>
+                <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst"/>
+                <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type TextBox}">
+                            <Border x:Name="border" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True" BorderBrush="#FFABADB3">
+                                <ScrollViewer  x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" TextBlock.FontFamily="{DynamicResource RobotoBold}" TextBlock.Foreground="{DynamicResource AstralBlackBrush}"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsEnabled" Value="false">
+                                    <Setter Property="Opacity" TargetName="border" Value="0.56"/>
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="true">
+                                    <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource TextBox.MouseOver.Border}"/>
+                                </Trigger>
+                                <Trigger Property="IsKeyboardFocused" Value="true">
+                                    <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource TextBox.Focus.Border}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <MultiTrigger>
+                        <MultiTrigger.Conditions>
+                            <Condition Property="IsInactiveSelectionHighlightEnabled" Value="true"/>
+                            <Condition Property="IsSelectionActive" Value="false"/>
+                        </MultiTrigger.Conditions>
+                        <Setter Property="SelectionBrush" Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightBrushKey}}"/>
+                    </MultiTrigger>
+                </Style.Triggers>
+            </Style>
+            <Style x:Key="OkayButtonStyle" TargetType="{x:Type Button}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid>
+                                <Rectangle RadiusY="5" RadiusX="6">
+                                    <Rectangle.Fill>
+                                        <SolidColorBrush Color="{DynamicResource AstralGreen}"/>
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                                <Path Data="M2.5,15 L10,21.200001 23.125,2.2" Margin="2.5,3,2,4.25" Stretch="Fill" StrokeThickness="3">
+                                    <Path.Stroke>
+                                        <SolidColorBrush Color="{DynamicResource AstralWhite}"/>
+                                    </Path.Stroke>
+                                    <Path.Fill>
+                                        <SolidColorBrush Color="{DynamicResource AstralGreen}"/>
+                                    </Path.Fill>
+                                </Path>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsFocused" Value="True"/>
+                                <Trigger Property="IsDefaulted" Value="True"/>
+                                <Trigger Property="IsMouseOver" Value="True"/>
+                                <Trigger Property="IsPressed" Value="True"/>
+                                <Trigger Property="IsEnabled" Value="False"/>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style x:Key="CancelButtonStyle" TargetType="{x:Type Button}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid>
+                                <Rectangle RadiusY="5" RadiusX="6">
+                                    <Rectangle.Fill>
+                                        <SolidColorBrush Color="{DynamicResource AstralRed}"/>
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                                <Path Data="M4.75,5.25 L16.25,16.75" Margin="5,5.125,4.5,5.625" Stretch="Fill" StrokeThickness="3">
+                                    <Path.Fill>
+                                        <SolidColorBrush Color="{DynamicResource AstralGreen}"/>
+                                    </Path.Fill>
+                                    <Path.Stroke>
+                                        <SolidColorBrush Color="{DynamicResource AstralWhite}"/>
+                                    </Path.Stroke>
+                                </Path>
+                                <Path Data="M4.75,5.25 L16.25,16.75" Margin="5,5.125,4.5,5.625" Stretch="Fill" StrokeThickness="3" RenderTransformOrigin="0.5,0.5">
+                                    <Path.RenderTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform/>
+                                            <SkewTransform/>
+                                            <RotateTransform Angle="90"/>
+                                            <TranslateTransform/>
+                                        </TransformGroup>
+                                    </Path.RenderTransform>
+                                    <Path.Fill>
+                                        <SolidColorBrush Color="{DynamicResource AstralGreen}"/>
+                                    </Path.Fill>
+                                    <Path.Stroke>
+                                        <SolidColorBrush Color="{DynamicResource AstralWhite}"/>
+                                    </Path.Stroke>
+                                </Path>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsFocused" Value="True"/>
+                                <Trigger Property="IsDefaulted" Value="True"/>
+                                <Trigger Property="IsMouseOver" Value="True"/>
+                                <Trigger Property="IsPressed" Value="True"/>
+                                <Trigger Property="IsEnabled" Value="False"/>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style x:Key="PlusButton" TargetType="{x:Type Button}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Canvas Height="16.499" Width="16.312">
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualStateGroup.Transitions>
+                                            <VisualTransition From="MouseOver" GeneratedDuration="0:0:0.3" To="Normal">
+                                                <VisualTransition.GeneratedEasingFunction>
+                                                    <QuarticEase EasingMode="EaseInOut"/>
+                                                </VisualTransition.GeneratedEasingFunction>
+                                            </VisualTransition>
+                                            <VisualTransition From="Normal" GeneratedDuration="0:0:0.3" To="MouseOver">
+                                                <VisualTransition.GeneratedEasingFunction>
+                                                    <QuinticEase EasingMode="EaseInOut"/>
+                                                </VisualTransition.GeneratedEasingFunction>
+                                            </VisualTransition>
+                                        </VisualStateGroup.Transitions>
+                                        <VisualState x:Name="Normal"/>
+                                        <VisualState x:Name="MouseOver">
+                                            <Storyboard>
+                                                <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="rectangle">
+                                                    <EasingColorKeyFrame KeyTime="0" Value="{StaticResource AstralOrange}"/>
+                                                </ColorAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed"/>
+                                        <VisualState x:Name="Disabled"/>
+                                    </VisualStateGroup>
+                                    <VisualStateGroup x:Name="FocusStates">
+                                        <VisualStateGroup.Transitions>
+                                            <VisualTransition GeneratedDuration="0">
+                                                <VisualTransition.GeneratedEasingFunction>
+                                                    <QuinticEase EasingMode="EaseInOut"/>
+                                                </VisualTransition.GeneratedEasingFunction>
+                                            </VisualTransition>
+                                        </VisualStateGroup.Transitions>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                                <Rectangle x:Name="rectangle" RadiusY="2" RadiusX="2" Height="16.499" Width="16.312">
+                                    <Rectangle.Fill>
+                                        <SolidColorBrush Color="{DynamicResource AstralBlue}"/>
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                                <Path Data="M7.943,0.41651232 L7.943,10.5498" Height="13.134" Canvas.Left="6.609" Stretch="Fill" Stroke="White" StrokeThickness="3" Canvas.Top="1.587" Width="3"/>
+                                <Path Data="M7.943,0.41651232 L7.943,10.5498" Height="13.134" Canvas.Left="6.609" Stretch="Fill" Stroke="White" StrokeThickness="3" Canvas.Top="1.587" Width="3" RenderTransformOrigin="0.5,0.5">
+                                    <Path.RenderTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform/>
+                                            <SkewTransform/>
+                                            <RotateTransform Angle="90"/>
+                                            <TranslateTransform/>
+                                        </TransformGroup>
+                                    </Path.RenderTransform>
+                                </Path>
+                            </Canvas>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsFocused" Value="True"/>
+                                <Trigger Property="IsDefaulted" Value="True"/>
+                                <Trigger Property="IsMouseOver" Value="True"/>
+                                <Trigger Property="IsPressed" Value="True"/>
+                                <Trigger Property="IsEnabled" Value="False"/>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style x:Key="AstralButtonStyle" TargetType="{x:Type Button}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid>
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualStateGroup.Transitions>
+                                            <VisualTransition From="MouseOver" GeneratedDuration="0:0:0.1" To="Pressed">
+                                                <VisualTransition.GeneratedEasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </VisualTransition.GeneratedEasingFunction>
+                                            </VisualTransition>
+                                            <VisualTransition From="Normal" GeneratedDuration="0:0:0.3" To="MouseOver">
+                                                <VisualTransition.GeneratedEasingFunction>
+                                                    <CircleEase EasingMode="EaseInOut"/>
+                                                </VisualTransition.GeneratedEasingFunction>
+                                            </VisualTransition>
+                                        </VisualStateGroup.Transitions>
+                                        <VisualState x:Name="Normal"/>
+                                        <VisualState x:Name="MouseOver">
+                                            <Storyboard>
+                                                <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="rectangle">
+                                                    <EasingColorKeyFrame KeyTime="0" Value="{StaticResource AstralYellow}"/>
+                                                </ColorAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed">
+                                            <Storyboard>
+                                                <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="rectangle">
+                                                    <EasingColorKeyFrame KeyTime="0" Value="#FF498183"/>
+                                                </ColorAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="Disabled"/>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                                <Rectangle x:Name="rectangle" Cursor="Hand" RadiusX="6" RadiusY="5">
+                                    <Rectangle.Fill>
+                                        <SolidColorBrush Color="{DynamicResource AstralTeal}"/>
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                                <ContentPresenter TextBlock.FontFamily="{DynamicResource ResourceKey=RobotoBold}" TextBlock.FontSize="20" TextBlock.Foreground="{DynamicResource ResourceKey=AstralWhiteBrush}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsFocused" Value="True"/>
+                                <Trigger Property="IsDefaulted" Value="True"/>
+                                <Trigger Property="IsMouseOver" Value="True"/>
+                                <Trigger Property="IsPressed" Value="True"/>
+                                <Trigger Property="IsEnabled" Value="False"/>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style x:Key="AstralButtonGreen" TargetType="{x:Type Button}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid>
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualStateGroup.Transitions>
+                                            <VisualTransition From="MouseOver" GeneratedDuration="0:0:0.1" To="Pressed">
+                                                <VisualTransition.GeneratedEasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </VisualTransition.GeneratedEasingFunction>
+                                            </VisualTransition>
+                                            <VisualTransition From="Normal" GeneratedDuration="0:0:0.3" To="MouseOver">
+                                                <VisualTransition.GeneratedEasingFunction>
+                                                    <CircleEase EasingMode="EaseInOut"/>
+                                                </VisualTransition.GeneratedEasingFunction>
+                                            </VisualTransition>
+                                        </VisualStateGroup.Transitions>
+                                        <VisualState x:Name="Normal"/>
+                                        <VisualState x:Name="MouseOver">
+                                            <Storyboard>
+                                                <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="rectangle">
+                                                    <EasingColorKeyFrame KeyTime="0" Value="{StaticResource AstralYellow}"/>
+                                                </ColorAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed">
+                                            <Storyboard>
+                                                <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="rectangle">
+                                                    <EasingColorKeyFrame KeyTime="0" Value="#FF498183"/>
+                                                </ColorAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="Disabled"/>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                                <Rectangle x:Name="rectangle" Cursor="Hand" RadiusX="6" RadiusY="5">
+                                    <Rectangle.Fill>
+                                        <SolidColorBrush Color="{DynamicResource AstralGreen}"/>
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                                <ContentPresenter TextBlock.FontFamily="{DynamicResource ResourceKey=RobotoBold}" TextBlock.FontSize="20" TextBlock.Foreground="{DynamicResource ResourceKey=AstralWhiteBrush}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsFocused" Value="True"/>
+                                <Trigger Property="IsDefaulted" Value="True"/>
+                                <Trigger Property="IsMouseOver" Value="True"/>
+                                <Trigger Property="IsPressed" Value="True"/>
+                                <Trigger Property="IsEnabled" Value="False"/>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style x:Key="ExitButtonStyle" TargetType="{x:Type Button}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Canvas Height="37.872" Width="39.833">
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal"/>
+                                        <VisualState x:Name="MouseOver">
+                                            <Storyboard>
+                                                <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="rectangle">
+                                                    <EasingColorKeyFrame KeyTime="0" Value="{StaticResource AstralOrange}"/>
+                                                </ColorAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed"/>
+                                        <VisualState x:Name="Disabled"/>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                                <Rectangle x:Name="rectangle" RadiusY="5" RadiusX="6" Height="37.872" Width="39.833" Canvas.Left="0.198" Canvas.Top="0.25" Cursor="Hand">
+                                    <Rectangle.Fill>
+                                        <SolidColorBrush Color="{DynamicResource AstralRed}"/>
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                                <Path Data="M8.208,10.042 L28.7705,30.6045" Height="20.562" Canvas.Left="9.833" Stretch="Fill" Canvas.Top="8.905" Width="20.562" Stroke="White" StrokeThickness="4" Cursor="Hand"/>
+                                <Path Data="M8.208,10.042 L28.7705,30.6045" Height="20.562" Canvas.Left="9.833" Stretch="Fill" Canvas.Top="8.905" Width="20.562" Stroke="White" StrokeThickness="4" RenderTransformOrigin="0.5,0.5" Cursor="Hand">
+                                    <Path.RenderTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform/>
+                                            <SkewTransform/>
+                                            <RotateTransform Angle="90"/>
+                                            <TranslateTransform/>
+                                        </TransformGroup>
+                                    </Path.RenderTransform>
+                                </Path>
+                            </Canvas>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsFocused" Value="True"/>
+                                <Trigger Property="IsDefaulted" Value="True"/>
+                                <Trigger Property="IsMouseOver" Value="True"/>
+                                <Trigger Property="IsPressed" Value="True"/>
+                                <Trigger Property="IsEnabled" Value="False"/>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+
+        </ResourceDictionary>
+
+    </Application.Resources>
+</Application>

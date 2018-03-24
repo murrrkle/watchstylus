@@ -1,0 +1,27 @@
+﻿<UserControl x:Class="TestingConcepts.RangeSlider"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TestingConcepts"
+             mc:Ignorable="d" d:DesignWidth="380" Height="42.417">
+    <Canvas x:Name="Container">
+        <Rectangle x:Name="BackgroungRect" Height="10" Canvas.Top="8.415" Width="380">
+            <Rectangle.Fill>
+                <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveBorderColorKey}}"/>
+            </Rectangle.Fill>
+        </Rectangle>
+        <Rectangle x:Name="RangeRect" Fill="#FF819D30" Height="10" Canvas.Left="115.75" Canvas.Top="8.415" Width="96" Cursor="Hand"/>
+        <Rectangle x:Name="LowerBoundRect" Width="13.75" Height="26.417" Canvas.Left="114.25" Canvas.Top="0.207" Cursor="Hand" Fill="#FFAACD45"/>
+        <Rectangle x:Name="UpperBoundRect" Width="13.75" Height="26.417" Canvas.Left="200.75" Canvas.Top="0.207" Cursor="Hand">
+            <Rectangle.Fill>
+                <SolidColorBrush Color="{DynamicResource AstralGreen}"/>
+            </Rectangle.Fill>
+        </Rectangle>
+        <TextBlock x:Name="LowerBoundText" Height="15.793" TextWrapping="Wrap" Text="TextBlock" Canvas.Top="26.624" Width="53" FontFamily="/TestingConcepts;component/Resources/Fonts/#Roboto Condensed" Cursor="Hand"/>
+        <TextBlock x:Name="UpperBoundText" Height="15.793" TextWrapping="Wrap" Text="TextBlock" Canvas.Top="26.624" Width="53" Canvas.Left="327" TextAlignment="Right" FontFamily="/TestingConcepts;component/Resources/Fonts/#Roboto Condensed" Cursor="Hand"/>
+        <TextBox x:Name="LowerBoundTextBox" Height="15.793" Style="{DynamicResource AstralTextBox}" TextWrapping="Wrap" Text="TextBox" FontFamily="{DynamicResource RobotoCondensed}" Canvas.Top="26.624" Width="60.158" TextAlignment="Center" d:IsHidden="True"/>
+        <TextBox x:Name="UpperBoundTextBox" Height="15.793" Style="{DynamicResource AstralTextBox}" TextWrapping="Wrap" Text="TextBox" FontFamily="{DynamicResource ResourceKey=RobotoCondensed}" Canvas.Top="26.624" Width="60.158" TextAlignment="Center" Canvas.Left="319.842" d:IsHidden="True"/>
+
+    </Canvas>
+</UserControl>

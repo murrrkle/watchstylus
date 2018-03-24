@@ -1,0 +1,16 @@
+﻿<Window x:Class="TestingConcepts.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TestingConcepts"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="600" Width="1304">
+    <Canvas Name="Container">
+        <local:Linear3DSensorVisualizationSet x:Name="AccelerometerDataView" Canvas.Left="30.5" Canvas.Top="20" SensorName="Accelerometer" />
+        <local:Linear3DSensorVisualizationSet x:Name="GyroscopeDataView" Canvas.Left="408" Canvas.Top="20" Width="348" SensorName="Gyroscope" />
+        <local:Linear3DSensorVisualizationSet x:Name="OrientationDataView" Canvas.Left="799.5" Canvas.Top="20" Width="348" SensorName="Orientation" />
+
+
+    </Canvas>
+</Window>

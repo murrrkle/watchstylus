@@ -1,0 +1,200 @@
+﻿<Window x:Class="TestingConcepts.RuleEditingWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TestingConcepts"
+        xmlns:device="clr-namespace:Astral.Device"
+        mc:Ignorable="d"
+        Title="RuleEditingWindow" Height="725.25" Width="933.087" ResizeMode="NoResize" WindowStyle="None">
+    <Window.Resources>
+        <Style x:Key="AstralCheckBoxStyle" TargetType="{x:Type CheckBox}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type CheckBox}">
+                        <Grid Margin="0,0,-0.667,0">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal">
+                                        <Storyboard>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)" Storyboard.TargetName="contentPresenter">
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="-0.501"/>
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="MouseOver"/>
+                                    <VisualState x:Name="Pressed"/>
+                                    <VisualState x:Name="Disabled"/>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="CheckStates">
+                                    <VisualStateGroup.Transitions>
+                                        <VisualTransition From="Unchecked" GeneratedDuration="0:0:0.2" To="Checked">
+                                            <VisualTransition.GeneratedEasingFunction>
+                                                <CircleEase EasingMode="EaseOut"/>
+                                            </VisualTransition.GeneratedEasingFunction>
+                                        </VisualTransition>
+                                        <VisualTransition From="Checked" GeneratedDuration="0:0:0.2" To="Unchecked">
+                                            <VisualTransition.GeneratedEasingFunction>
+                                                <CircleEase EasingMode="EaseOut"/>
+                                            </VisualTransition.GeneratedEasingFunction>
+                                        </VisualTransition>
+                                    </VisualStateGroup.Transitions>
+                                    <VisualState x:Name="Checked">
+                                        <Storyboard>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="path">
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="rectangle">
+                                                <EasingColorKeyFrame KeyTime="0" Value="{StaticResource AstralGreen}"/>
+                                            </ColorAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Unchecked"/>
+                                    <VisualState x:Name="Indeterminate"/>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Rectangle x:Name="rectangle" RadiusY="3" RadiusX="3" HorizontalAlignment="Left" Width="21.5" Cursor="Hand">
+                                <Rectangle.Fill>
+                                    <SolidColorBrush Color="{DynamicResource AstralGrey}"/>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <ContentPresenter x:Name="contentPresenter" TextBlock.FontFamily="{DynamicResource ResourceKey=RobotoCondensed}" TextBlock.Foreground="{DynamicResource ResourceKey=AstralBlackBrush}" TextBlock.FontSize="15"  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" RenderTransformOrigin="1.738,0.376" Margin="30.165,2.998,0,0" Width="142.307" d:LayoutOverrides="LeftMargin, RightMargin">
+                                <ContentPresenter.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform/>
+                                        <SkewTransform/>
+                                        <RotateTransform/>
+                                        <TranslateTransform/>
+                                    </TransformGroup>
+                                </ContentPresenter.RenderTransform>
+                            </ContentPresenter>
+                            <Path x:Name="path" Data="M1.9223333,13.75 L7.3393334,19.25 17.339334,3.8333333" HorizontalAlignment="Left" Margin="2.924,3.666,0,4.417" Stretch="Fill" Width="15.417" Fill="{x:Null}" StrokeThickness="3" Opacity="0" Cursor="Hand">
+                                <Path.Stroke>
+                                    <SolidColorBrush Color="{DynamicResource AstralWhite}"/>
+                                </Path.Stroke>
+                            </Path>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Canvas x:Name="Container">
+        <TextBlock Height="44.331" Canvas.Left="29.491" TextWrapping="Wrap" Canvas.Top="7.328" Width="235.833" FontFamily="{DynamicResource RobotoBold}" FontSize="36" Text="RULE EDITOR">
+            <TextBlock.Foreground>
+                <SolidColorBrush Color="{DynamicResource AstralBlack}"/>
+            </TextBlock.Foreground></TextBlock>
+
+        <Canvas x:Name="TouchCanvas" Height="498.5" Canvas.Left="104.22" Canvas.Top="95.5" Width="243" d:IsHidden="True">
+            <Rectangle Fill="#FFF4F4F5" Height="414.5" Width="243"/>
+            <local:MultiTouchPlotter x:Name="TouchPlotter" Height="414.5" Width="243" d:LayoutOverrides="HorizontalAlignment"/>
+            <TextBlock Height="18.5" TextWrapping="Wrap" Text="Selection Top" Canvas.Top="419.5" Width="101" FontSize="16" FontFamily="{DynamicResource RobotoBold}" >
+                <TextBlock.Foreground>
+                    <SolidColorBrush Color="{DynamicResource AstralBlack}"/>
+                </TextBlock.Foreground>
+            </TextBlock>
+            <TextBlock x:Name="SelectionTopLabel" Height="18.5" TextWrapping="Wrap" Text="Selection Top" Canvas.Top="440.5" Width="101"  FontFamily="{DynamicResource RobotoCondensed}" >
+                <TextBlock.Foreground>
+                    <SolidColorBrush Color="{DynamicResource AstralBlack}"/>
+                </TextBlock.Foreground>
+            </TextBlock>
+            <TextBlock Height="18.5" TextWrapping="Wrap" Text="Selection Size" Canvas.Top="460" Width="101"  FontFamily="{DynamicResource RobotoBold}" FontSize="16" >
+                <TextBlock.Foreground>
+                    <SolidColorBrush Color="{DynamicResource AstralBlack}"/>
+                </TextBlock.Foreground>
+            </TextBlock>
+            <TextBlock x:Name="SelectionSizeLabel" Height="18.5" TextWrapping="Wrap" Text="Selection Size" Canvas.Top="480" Width="101"  FontFamily="{DynamicResource RobotoCondensed}" >
+                <TextBlock.Foreground>
+                    <SolidColorBrush Color="{DynamicResource AstralBlack}"/>
+                </TextBlock.Foreground>
+            </TextBlock>
+        </Canvas>
+
+        <Canvas Name="CompassCanvas" Height="579.5" Width="282.78" Canvas.Left="104.22" Canvas.Top="95.5">
+            <Rectangle Fill="#FFF4F4F5" Height="222" Canvas.Left="33.28" Canvas.Top="26.5" Width="222"/>
+            <local:RadialPlotter x:Name="Plotter" Width="222" Height="222" Canvas.Left="33.28" Canvas.Top="26.5" d:LayoutOverrides="Width, Height"/>
+            <Ellipse Fill="White" StrokeThickness="4" Height="57" Canvas.Left="115.78" Canvas.Top="109" Width="57">
+                <Ellipse.Stroke>
+                    <SolidColorBrush Color="{DynamicResource AstralRed}"/>
+                </Ellipse.Stroke>
+            </Ellipse>
+            <TextBlock x:Name="CompassTextBlock" FontFamily="{DynamicResource RobotoBold}" TextWrapping="Wrap" Text="360" TextAlignment="Center" FontSize="18" Height="25.5" Canvas.Left="125.78" Canvas.Top="125.833" Width="38"/>
+
+        </Canvas>
+
+        <local:MouseOrKeyboardControl Canvas.Left="440.5" Canvas.Top="54.205" d:LayoutOverrides="Width"/>
+        <Canvas x:Name="OrientationCanvas" Height="579.5" Width="282.78" Canvas.Left="104.22" Canvas.Top="95.5" d:IsHidden="True">
+            <Rectangle Fill="#FFF4F4F5" Height="222" Canvas.Left="33.28" Canvas.Top="26.5" Width="222"/>
+            <local:OrientationVisualizer x:Name="OrientationVisualizer" Height="222" Canvas.Left="33.28" Canvas.Top="26" Width="222"/>
+
+        </Canvas>
+        <Button x:Name="EasingButton" Content="EASING FUNCTIONS" Height="48.25" Canvas.Left="487.161" Canvas.Top="393" Width="285.339" Style="{DynamicResource AstralButtonStyle}"/>
+        <StackPanel x:Name="SensorButtonPanel" Height="435.01" Canvas.Top="123.12" Width="30" Canvas.Left="30" Margin="0" RenderTransformOrigin="0.5,0.5">
+            <StackPanel.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="1.25" ScaleY="1.25"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </StackPanel.RenderTransform>
+
+        </StackPanel>
+        <TextBlock Height="33" Canvas.Left="440.5" TextWrapping="Wrap" Text="Mouse Event" FontFamily="{DynamicResource RobotoBold}" Canvas.Top="112.5" Width="204.5" OpacityMask="Black" FontSize="18">
+            <TextBlock.Foreground>
+                <SolidColorBrush Color="{DynamicResource AstralBlack}"/>
+            </TextBlock.Foreground>
+        </TextBlock>
+        <local:MouseButtonBar x:Name="RuleMouseButtonBar" Height="45.333" Canvas.Left="440.5" Canvas.Top="145.5" Width="380"/>
+        <Button x:Name="TestButton" Content="TEST" Height="48.25" Canvas.Left="487.161" Canvas.Top="456" Width="285.339" Style="{DynamicResource AstralButtonStyle}"/>
+        <Grid x:Name="ScrollCanvas" Canvas.Left="439.161" Canvas.Top="218.833" Height="139.417" Width="381.339" d:IsHidden="True">
+            <TextBlock Height="33" TextWrapping="Wrap" Text="Scrolling Range" FontFamily="{DynamicResource RobotoBold}" OpacityMask="Black" FontSize="18" Margin="0,18,176.839,0" VerticalAlignment="Top">
+                <TextBlock.Foreground>
+                    <SolidColorBrush Color="{DynamicResource AstralBlack}"/>
+                </TextBlock.Foreground>
+            </TextBlock>
+            <local:RangeSlider x:Name="ScrollRangeSlider" Margin="0.339,58,1,30.167"/>
+        </Grid>
+        <Grid x:Name="DragGrid" Height="50.205" Canvas.Left="-1.5" Canvas.Top="-1" Width="934.587" Background="#00000000"/>
+        <Button x:Name="ExitButton" Content="X" Height="42.205" Canvas.Left="877.75" Canvas.Top="7" Width="47.337" Style="{DynamicResource ExitButtonStyle}"/>
+        <Grid x:Name="MouseMoveCanvas" Canvas.Left="487.161" Canvas.Top="206.155" Height="100.539" Width="285.339">
+            <Button x:Name="DoButton" Content="Map Mouse to Screen Selection" Style="{DynamicResource AstralButtonGreen}" Margin="0,0,0,43.289"/>
+            <CheckBox x:Name="ClickInRangeCheckBox" Content="Click When in Range" Height="20.555" Style="{DynamicResource AstralCheckBoxStyle}" RenderTransformOrigin="0.5,0.5" Margin="48.528,0,49.451,0" VerticalAlignment="Bottom">
+                <CheckBox.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </CheckBox.RenderTransform>
+            </CheckBox>
+
+        </Grid>
+        <Grid x:Name="MouseUpCanvas" Height="98.643" Canvas.Left="487.161" Canvas.Top="211.857" Width="285.339" d:IsHidden="True">
+            <Button x:Name="MoveMouseButton" Content="MOVE MOUSE TO ( X, Y )" Style="{DynamicResource AstralButtonGreen}" Margin="0,0,0,41.393"/>
+            <CheckBox x:Name="MouseClickCheckBox" Content="Perform Mouse Click" Height="23.5" Style="{DynamicResource AstralCheckBoxStyle}" RenderTransformOrigin="0.5,0.5" Margin="47.084,0,48.584,0" VerticalAlignment="Bottom">
+                <CheckBox.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </CheckBox.RenderTransform>
+            </CheckBox>
+
+        </Grid>
+        <local:EasingSelector x:Name="EasingSelector" Canvas.Left="-325.281" Canvas.Top="-212.5" d:LayoutOverrides="Height" RenderTransformOrigin="0.5,0.5" Visibility="Hidden">
+            <local:EasingSelector.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="0.5" ScaleY="0.5"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </local:EasingSelector.RenderTransform>
+        </local:EasingSelector>
+
+    </Canvas>
+</Window>
