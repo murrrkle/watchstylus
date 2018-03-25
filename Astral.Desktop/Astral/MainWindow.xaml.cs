@@ -79,6 +79,7 @@ namespace Astral
                         {
                             TouchPanel.IsEnabled = true;
                             CaptureButton.IsEnabled = true;
+                            InputButton.IsEnabled = true;
                         }
 
                         // accelerometer enabled?
@@ -115,6 +116,7 @@ namespace Astral
 
                         // disable all
                         CaptureButton.IsEnabled = false;
+                        InputButton.IsEnabled = false;
 
                         TouchPanel.IsEnabled = false;
 
@@ -168,7 +170,15 @@ namespace Astral
         {
             if (m_session != null)
             {
-                m_session.SelectRegion();
+                m_session.ShowCaptureSelectionWindow();
+            }
+        }
+
+        private void OnInputButtonClicked(object sender, RoutedEventArgs e)
+        {
+            if (m_session != null)
+            {
+                m_session.ShowInputSelectionWindow();
             }
         }
 
@@ -320,7 +330,7 @@ namespace Astral
             Canvas.SetLeft(ellipse, rawTouchPoint.X * xFactor - TouchEllipseSize / 2.0);
             Canvas.SetTop(ellipse, rawTouchPoint.Y * yFactor - TouchEllipseSize / 2.0);
         }
-        
+
         private void OnDisplayTouchDown(object sender, AstralTouchEventArgs e)
         {
             lock (this)
@@ -331,12 +341,14 @@ namespace Astral
                         new Action(
                             delegate ()
                             {
-                                Ellipse touchEllipse = new Ellipse();
-                                touchEllipse.Width = TouchEllipseSize;
-                                touchEllipse.Height = TouchEllipseSize;
-                                touchEllipse.Fill = new SolidColorBrush(Color.FromArgb(64, 255, 0, 0));
-                                touchEllipse.Stroke = Brushes.Red;
-                                touchEllipse.StrokeThickness = 1.0;
+                                Ellipse touchEllipse = new Ellipse
+                                {
+                                    Width = TouchEllipseSize,
+                                    Height = TouchEllipseSize,
+                                    Fill = new SolidColorBrush(Color.FromArgb(64, 255, 0, 0)),
+                                    Stroke = Brushes.Red,
+                                    StrokeThickness = 1.0
+                                };
 
                                 m_touchPts.Add(e.TouchPoint.Id, touchEllipse);
 

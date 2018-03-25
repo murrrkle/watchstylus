@@ -58,6 +58,9 @@
     <Compile Include="Session\Enumerations.cs" />
     <Compile Include="Session\Tasks\ScreenCaptureTask.cs" />
     <Compile Include="UI\Enumerations.cs" />
+    <Compile Include="UI\Windows\InputSelectionWindow.xaml.cs">
+      <DependentUpon>InputSelectionWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Windows\CaptureSelectionWindow.xaml.cs">
       <DependentUpon>CaptureSelectionWindow.xaml</DependentUpon>
     </Compile>
@@ -72,6 +75,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="UI\Windows\InputSelectionWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\Windows\CaptureSelectionWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

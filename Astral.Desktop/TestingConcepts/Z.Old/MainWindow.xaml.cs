@@ -112,7 +112,7 @@ namespace TestingConcepts
                         }));
 
 
-                m_session.SelectRegion();
+                m_session.ShowCaptureSelectionWindow();
 
                 Display display = m_session.Device[ModuleType.Display] as Display;
                 display.TouchDown += OnTouchDown; 

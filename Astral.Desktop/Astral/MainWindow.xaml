@@ -23,7 +23,7 @@
         <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="200" />
             </Grid.ColumnDefinitions>
             
             <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" Margin="0,0,0,0" Grid.Row="0" Grid.Column="0">
@@ -31,7 +31,10 @@
                 <Label x:Name="DeviceInfoLabel" Content="Not connected" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" />
             </StackPanel>
 
-            <Button x:Name="CaptureButton" Content="Select Region" Width="96" Height="24" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,4,1" Grid.Row="0" Grid.Column="1" Click="OnCaptureButtonClicked" IsEnabled="False" />
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" Margin="0,0,0,0" Grid.Row="0" Grid.Column="1">
+                <Button x:Name="CaptureButton" Content="Capture Region" Width="96" Height="24" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,4,1" Click="OnCaptureButtonClicked" IsEnabled="False" />
+                <Button x:Name="InputButton" Content="Input Region" Width="96" Height="24" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,1" Click="OnInputButtonClicked" IsEnabled="False" />
+            </StackPanel>
         </Grid>
 
         <!-- Horizontal Separator -->

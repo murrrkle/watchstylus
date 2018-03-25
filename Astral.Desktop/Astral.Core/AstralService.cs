@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 
 using Astral.Device;
 using Astral.Net;
@@ -17,6 +18,8 @@ namespace Astral
         internal static volatile AstralService Instance;
 
         private static object SyncObj = new object();
+
+        internal static readonly DpiScale DisplayScale;
         #endregion
 
         #region Class Members
@@ -34,6 +37,11 @@ namespace Astral
         #endregion
 
         #region Constructors
+        static AstralService()
+        {
+            DisplayScale = VisualTreeHelper.GetDpi(Application.Current.MainWindow);
+        }
+
         private AstralService()
         {
             m_running = false;

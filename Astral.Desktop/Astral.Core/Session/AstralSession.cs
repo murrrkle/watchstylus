@@ -13,14 +13,11 @@ using Astral.Session;
 using Astral.Session.Tasks;
 using Astral.UI;
 
-
-
 using Astral.Device;
-
 
 namespace Astral
 {
-    #region Class 'AstralSession'
+    #region Sealed Class 'AstralSession'
     public sealed class AstralSession
     {
         #region Class Members
@@ -32,6 +29,8 @@ namespace Astral
 
         #region Task Class Members
         private ScreenCaptureTask m_captureTask;
+
+        private InputSelectionWindow m_inputSelectionWindow;
         #endregion
         #endregion
 
@@ -55,6 +54,14 @@ namespace Astral
         {
             m_captureTask = new ScreenCaptureTask(this);
             m_captureTask.ProcessedScreenshotCaptured += ProcessedScreenshotCaptured;
+
+            Application.Current.Dispatcher.Invoke(
+                new Action(
+                    delegate ()
+                    {
+                        m_inputSelectionWindow = new InputSelectionWindow(
+                            m_captureTask.CaptureRegion, m_device[ModuleType.Display] as Display);
+                    }));
         }
         #endregion
 
@@ -69,18 +76,160 @@ namespace Astral
             get { return m_active; }
             private set { m_active = value; }
         }
+
+        public Rect CaptureRegion
+        {
+            get
+            {
+                Rect captureRegion = Rect.Empty;
+                if (m_captureTask != null)
+                {
+                    Application.Current.Dispatcher.Invoke(
+                       new Action(
+                           delegate ()
+                           {
+                               captureRegion = m_captureTask.CaptureRegion;
+                           }));
+                }
+
+                return captureRegion;
+            }
+        }
+
+        public Rect InputRegion
+        {
+            get
+            {
+                Rect inputRegion = Rect.Empty;
+                if (m_inputSelectionWindow != null)
+                {
+                    Application.Current.Dispatcher.Invoke(
+                       new Action(
+                           delegate ()
+                           {
+                               inputRegion = m_inputSelectionWindow.InputRegion;
+                           }));
+                }
+
+                return inputRegion;
+            }
+        }
         #endregion
 
         #region Region Handling
-        public void SelectRegion()
+        #region Capture Region Handling
+        public void ShowCaptureSelectionWindow()
         {
             m_captureTask.ShowSelectionWindow();
         }
 
-        public void SetRegion(Rect newRegion)
+        public void SetCaptureRegionWidth(int newWidth)
         {
-
+            m_captureTask.SetCaptureWidth(newWidth);
         }
+
+        public void SetCaptureRegionHeight(int newHeight)
+        {
+            m_captureTask.SetCaptureHeight(newHeight);
+        }
+
+        public void SetCaptureRegionLocation(Point newLocation)
+        {
+            m_captureTask.SetCaptureLocation(newLocation);
+        }
+
+        public void SetCaptureRegionX(int newX)
+        {
+            m_captureTask.SetCaptureX(newX);
+        }
+
+        public void SetCaptureRegionY(int newY)
+        {
+            m_captureTask.SetCaptureY(newY);
+        }
+        #endregion
+
+        #region Input Region Handling
+        public void ShowInputSelectionWindow()
+        {
+            Application.Current.Dispatcher.Invoke(
+                new Action(
+                    delegate ()
+                    {
+                        m_inputSelectionWindow.Show();
+                    }));
+        }
+
+        public void SetInputRegion(Rect newInputRegion)
+        {
+            Application.Current.Dispatcher.Invoke(
+                new Action(
+                    delegate ()
+                    {
+                        m_inputSelectionWindow.SetInputRegion(newInputRegion);
+                    }));
+        }
+
+        public void SetInputRegionLocation(Size newSize)
+        {
+            Application.Current.Dispatcher.Invoke(
+                new Action(
+                    delegate ()
+                    {
+                        m_inputSelectionWindow.SetInputRegionSize(newSize);
+                    }));
+        }
+
+        public void SetInputRegionWidth(int newWidth)
+        {
+            Application.Current.Dispatcher.Invoke(
+                new Action(
+                    delegate ()
+                    {
+                        m_inputSelectionWindow.SetInputRegionWidth(newWidth);
+                    }));
+        }
+
+        public void SetInputRegionheight(int newHeight)
+        {
+            Application.Current.Dispatcher.Invoke(
+                new Action(
+                    delegate ()
+                    {
+                        m_inputSelectionWindow.SetInputRegionheight(newHeight);
+                    }));
+        }
+
+        public void SetInputRegionLocation(Point newLocation)
+        {
+            Application.Current.Dispatcher.Invoke(
+                new Action(
+                    delegate ()
+                    {
+                        m_inputSelectionWindow.SetInputRegionLocation(newLocation);
+                    }));
+        }
+
+        public void SetInputRegionX(int newX)
+        {
+            Application.Current.Dispatcher.Invoke(
+                new Action(
+                    delegate ()
+                    {
+                        m_inputSelectionWindow.SetInputRegionX(newX);
+                    }));
+        }
+
+        public void SetInputRegionY(int newY)
+        {
+            Application.Current.Dispatcher.Invoke(
+                new Action(
+                    delegate ()
+                    {
+                        m_inputSelectionWindow.SetInputRegionY(newY);
+                    }));
+        }
+        #endregion
         #endregion
 
         #region Shutdown

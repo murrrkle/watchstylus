@@ -20,25 +20,23 @@ using Astral.Device;
 
 namespace Astral.UI
 {
-    #region Partial Class 'CaptureSelectionWindow'
-    internal partial class CaptureSelectionWindow : Window
+    #region Partial Class 'InputSelectionWindow'
+    internal partial class InputSelectionWindow : Window
     {
         #region Static Class Members
         private static readonly double HotCornerSize = 20.0;
 
-        private static readonly double MinimumSize = 100.0;
+        private static readonly double MinimumSize = 40.0;
         #endregion
 
         #region Class Members
         private Rect m_screenBounds;
 
-        private Rect m_captureRegion;
+        private Rect m_inputRegion;
 
         private Rect m_backgroundUpdatedRect;
 
         private Rect[] m_hotCorners;
-
-        private double m_aspectRatio; // width / height
 
         private Display m_display;
 
@@ -56,10 +54,10 @@ namespace Astral.UI
         #endregion
 
         #region Constructors
-        internal CaptureSelectionWindow(Rect captureRegion, Display display)
+        internal InputSelectionWindow(Rect captureRegion, Display display)
         {
             m_backgroundUpdatedRect = captureRegion;
-            m_captureRegion = captureRegion;
+            m_inputRegion = captureRegion;
             m_display = display;
 
             m_buttonPressed = false;
@@ -67,8 +65,6 @@ namespace Astral.UI
             InitializeComponent();
 
             ResolutionLabel.Content = m_display.Width + " x " + m_display.Height;
-
-            m_aspectRatio = captureRegion.Width / captureRegion.Height;
             m_hotCorners = new Rect[4];
         }
         #endregion
@@ -92,17 +88,17 @@ namespace Astral.UI
         #endregion
 
         #region Properties
-        internal Rect CaptureRegion
+        internal Rect InputRegion
         {
             get
             {
                 lock (m_syncObj)
                 {
                     Rect correctRegion = new Rect(
-                        m_captureRegion.X * AstralService.DisplayScale.DpiScaleX,
-                        m_captureRegion.Y * AstralService.DisplayScale.DpiScaleY,
-                        m_captureRegion.Width * AstralService.DisplayScale.DpiScaleX,
-                        m_captureRegion.Height * AstralService.DisplayScale.DpiScaleY);
+                        m_inputRegion.X * AstralService.DisplayScale.DpiScaleX,
+                        m_inputRegion.Y * AstralService.DisplayScale.DpiScaleY,
+                        m_inputRegion.Width * AstralService.DisplayScale.DpiScaleX,
+                        m_inputRegion.Height * AstralService.DisplayScale.DpiScaleY);
 
                     return correctRegion;
                 }
@@ -111,15 +107,13 @@ namespace Astral.UI
         #endregion
 
         #region Manual Adjustments
-        internal void SetCaptureWidth(int width)
+        internal void SetInputRegion(Rect inputRegion)
         {
-            double minWidth = (m_aspectRatio < 1.0 ? MinimumSize : m_aspectRatio * MinimumSize);
-            double newWidth = width;
+            double newWidth = Math.Max(inputRegion.Width, MinimumSize);
+            double newHeight = Math.Max(inputRegion.Height, MinimumSize);
 
-            newWidth = Math.Max(minWidth, newWidth);
-            double newHeight = newWidth / m_aspectRatio;
-
-            // adjust the width
+            m_backgroundUpdatedRect.X = inputRegion.X;
+            m_backgroundUpdatedRect.Y = inputRegion.Y;
             m_backgroundUpdatedRect.Width = newWidth;
             m_backgroundUpdatedRect.Height = newHeight;
 
@@ -128,24 +122,34 @@ namespace Astral.UI
             Update();
         }
 
-        internal void SetCaptureHeight(int height)
+        public void SetInputRegionSize(Size size)
         {
-            double minHeight = (m_aspectRatio > 1.0 ? MinimumSize : m_aspectRatio * MinimumSize);
-            double newHeight = height;
+            double newWidth = Math.Max(size.Width, MinimumSize);
+            double newHeight = Math.Max(size.Height, MinimumSize);
 
-            newHeight = Math.Max(minHeight, newHeight);
-            double newWidth = newHeight * m_aspectRatio;
-
-            // adjust the width
-            m_backgroundUpdatedRect.Width = newWidth;
-            m_backgroundUpdatedRect.Height = newHeight;
-
+            m_backgroundUpdatedRect.Size = size;
             m_initialized = true;
 
             Update();
         }
 
-        internal void SetCaptureLocation(Point location)
+        public void SetInputRegionWidth(int width)
+        {
+            m_backgroundUpdatedRect.Width = Math.Max(width, MinimumSize);
+            m_initialized = true;
+
+            Update();
+        }
+
+        public void SetInputRegionheight(int height)
+        {
+            m_backgroundUpdatedRect.Height = Math.Max(height, MinimumSize);
+            m_initialized = true;
+
+            Update();
+        }
+
+        public void SetInputRegionLocation(Point location)
         {
             m_backgroundUpdatedRect.Location = location;
             m_initialized = true;
@@ -153,7 +157,7 @@ namespace Astral.UI
             Update();
         }
 
-        internal void SetCaptureX(int x)
+        public void SetInputRegionX(int x)
         {
             m_backgroundUpdatedRect.X = x;
             m_initialized = true;
@@ -161,7 +165,7 @@ namespace Astral.UI
             Update();
         }
 
-        internal void SetCaptureY(int y)
+        public void SetInputRegionY(int y)
         {
             m_backgroundUpdatedRect.Y = y;
             m_initialized = true;
@@ -216,35 +220,9 @@ namespace Astral.UI
 
         private void UpdateButtons()
         {
-            if (m_display != null)
-            {
-                switch (m_display.Orientation)
-                {
-                    default:
-                    case DeviceOrientation.Unknown:
-                        break;
-                    case DeviceOrientation.Portrait:
-                        ControlPanel.RenderTransform = new RotateTransform(0.0);
-                        Canvas.SetLeft(ControlPanel, m_backgroundUpdatedRect.Left - 1.5);
-                        Canvas.SetTop(ControlPanel, m_backgroundUpdatedRect.Top - (ControlPanel.ActualHeight + 5.5));
-                        break;
-                    case DeviceOrientation.PortraitUpsideDown:
-                        ControlPanel.RenderTransform = new RotateTransform(0.0);
-                        Canvas.SetLeft(ControlPanel, m_backgroundUpdatedRect.Right - (ControlPanel.ActualWidth - 1.5));
-                        Canvas.SetTop(ControlPanel, m_backgroundUpdatedRect.Bottom + 5.5);
-                        break;
-                    case DeviceOrientation.LandscapeLeft:
-                        ControlPanel.RenderTransform = new RotateTransform(90.0);
-                        Canvas.SetLeft(ControlPanel, m_backgroundUpdatedRect.Right + (ControlPanel.ActualHeight + 5.5));
-                        Canvas.SetTop(ControlPanel, m_backgroundUpdatedRect.Top - 1.5);
-                        break;
-                    case DeviceOrientation.LandscapeRight:
-                        ControlPanel.RenderTransform = new RotateTransform(-90.0);
-                        Canvas.SetLeft(ControlPanel, m_backgroundUpdatedRect.Left - (ControlPanel.ActualHeight + 5.5));
-                        Canvas.SetTop(ControlPanel, m_backgroundUpdatedRect.Bottom + 1.5);
-                        break;
-                }
-            }
+            ControlPanel.RenderTransform = new RotateTransform(0.0);
+            Canvas.SetLeft(ControlPanel, m_backgroundUpdatedRect.Left - 1.5);
+            Canvas.SetTop(ControlPanel, m_backgroundUpdatedRect.Top - (ControlPanel.ActualHeight + 5.5));
         }
         #endregion
         
@@ -256,9 +234,9 @@ namespace Astral.UI
 
         internal void Scale(Vector offset, ScaleDirection direction)
         {
-            double minWidth = (m_aspectRatio < 1.0 ? MinimumSize : m_aspectRatio * MinimumSize);
-
             double newWidth = m_backgroundUpdatedRect.Width;
+            double newHeight = m_backgroundUpdatedRect.Height;
+
             switch (direction)
             {
                 default:
@@ -266,17 +244,25 @@ namespace Astral.UI
                     // don't do anything
                     break;
                 case ScaleDirection.SW:
+                    newWidth -= offset.X;
+                    newHeight += offset.Y;
+                    break;
                 case ScaleDirection.NW:
                     newWidth -= offset.X;
+                    newHeight -= offset.Y;
                     break;
                 case ScaleDirection.NE:
+                    newWidth += offset.X;
+                    newHeight -= offset.Y;
+                    break;
                 case ScaleDirection.SE:
                     newWidth += offset.X;
+                    newHeight += offset.Y;
                     break;
             }
 
-            newWidth = Math.Max(minWidth, newWidth);
-            double newHeight = newWidth / m_aspectRatio;
+            newWidth = Math.Max(MinimumSize, newWidth);
+            newHeight = Math.Max(MinimumSize, newHeight);
 
             // adjust the width
             double widthChange = newWidth - m_backgroundUpdatedRect.Width;
@@ -361,56 +347,17 @@ namespace Astral.UI
             {
                 double increase = 1.5;
 
-                m_captureRegion.Width = MouseOverlay.RenderSize.Width - 2.0 * increase;
-                m_captureRegion.Height = MouseOverlay.RenderSize.Height - 2.0 * increase;
-                m_captureRegion.X = Canvas.GetLeft(MouseOverlay) + increase;
-                m_captureRegion.Y = Canvas.GetTop(MouseOverlay) + increase;
+                m_inputRegion.Width = MouseOverlay.RenderSize.Width - 2.0 * increase;
+                m_inputRegion.Height = MouseOverlay.RenderSize.Height - 2.0 * increase;
+                m_inputRegion.X = Canvas.GetLeft(MouseOverlay) + increase;
+                m_inputRegion.Y = Canvas.GetTop(MouseOverlay) + increase;
+
+                // let's update the text
+                ResolutionLabel.Content = Math.Round(m_inputRegion.Width) 
+                    + " x " + Math.Round(m_inputRegion.Height);
             }
         }
-
-        private void OrientationButtonClicked(object sender, RoutedEventArgs e)
-        {
-            int buttonPressed = Convert.ToInt32(((Button)sender).Tag);
-            bool shouldUpdate = false;
-
-            if (buttonPressed == 0)
-            {
-                // rotate left
-                if (m_display != null)
-                {
-                    m_display.RotateLeft();
-                    shouldUpdate = true;
-                }
-            }
-            else if (buttonPressed == 1)
-            {
-                // rotate right
-                if (m_display != null)
-                {
-                    m_display.RotateRight();
-                    shouldUpdate = true;
-                }
-            }
-
-            if (shouldUpdate)
-            {
-                // now, flip the width and height and update the top-left corner
-                double newWidth = m_backgroundUpdatedRect.Height;
-                double newHeight = m_backgroundUpdatedRect.Width;
-                double newX = m_backgroundUpdatedRect.X
-                    - (newWidth - m_backgroundUpdatedRect.Width) / 2.0;
-                double newY = m_backgroundUpdatedRect.Y
-                    - (newHeight - m_backgroundUpdatedRect.Height) / 2.0;
-
-                m_backgroundUpdatedRect.X = newX;
-                m_backgroundUpdatedRect.Y = newY;
-                m_backgroundUpdatedRect.Width = newWidth;
-                m_backgroundUpdatedRect.Height = newHeight;
-
-                Update();
-            }
-        }
-
+        
         private void DoneButtonClicked(object sender, RoutedEventArgs e)
         {
             Hide();

@@ -100,6 +100,11 @@ namespace Astral.Session.Tasks
                 }
             }
         }
+
+        internal Rect CaptureRegion
+        {
+            get { return m_selectionWindow.CaptureRegion; }
+        }
         #endregion
 
         #region Initialization
@@ -144,7 +149,7 @@ namespace Astral.Session.Tasks
         }
         #endregion
 
-        #region Show/Hide
+        #region Show / Hide
         internal void ShowSelectionWindow()
         {
             Application.Current.Dispatcher.Invoke(
@@ -211,7 +216,59 @@ namespace Astral.Session.Tasks
         }
         #endregion
 
-        #region Update/Reset
+        #region Manual Adjustments
+        internal void SetCaptureWidth(int newWidth)
+        {
+            Application.Current.Dispatcher.Invoke(
+                new Action(
+                    delegate ()
+                    {
+                        m_selectionWindow.SetCaptureWidth(newWidth);
+                    }));
+        }
+
+        internal void SetCaptureHeight(int newHeight)
+        {
+            Application.Current.Dispatcher.Invoke(
+                new Action(
+                    delegate ()
+                    {
+                        m_selectionWindow.SetCaptureHeight(newHeight);
+                    }));
+        }
+
+        internal void SetCaptureLocation(System.Windows.Point newLocation)
+        {
+            Application.Current.Dispatcher.Invoke(
+                new Action(
+                    delegate ()
+                    {
+                        m_selectionWindow.SetCaptureLocation(newLocation);
+                    }));
+        }
+
+        internal void SetCaptureX(int newX)
+        {
+            Application.Current.Dispatcher.Invoke(
+                new Action(
+                    delegate ()
+                    {
+                        m_selectionWindow.SetCaptureX(newX);
+                    }));
+        }
+
+        internal void SetCaptureY(int newY)
+        {
+            Application.Current.Dispatcher.Invoke(
+                new Action(
+                    delegate ()
+                    {
+                        m_selectionWindow.SetCaptureY(newY);
+                    }));
+        }
+        #endregion
+
+        #region Update / Reset
         private void Reset(Rect captureRegion)
         {
             int width = (int)captureRegion.Width;
