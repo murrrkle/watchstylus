@@ -390,8 +390,8 @@ namespace Astral.Net.Serialization
         /// <param name="type">The <see cref="System.Type"/> of the object to be reconstructed.</param>
         internal static object FromBytes(byte[] bytes, Type type)
         {
-            TransferType transferType = GetTransferType(type);
             object value = null;
+            TransferType transferType = GetTransferType(type);
 
             switch (transferType)
             {

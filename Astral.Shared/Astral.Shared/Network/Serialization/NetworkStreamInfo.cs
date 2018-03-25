@@ -294,7 +294,7 @@ namespace Astral.Net.Serialization
             Descriptor descriptor = GetDescriptor(name, internalType);
             if (descriptor == null)
             {
-                throw new DecodingException("The given name '" + name + "' with the type '" 
+                throw new DecodingException("The given name '" + name + "' with the type '"
                     + internalType + "' does not exist in this context.");
             }
 

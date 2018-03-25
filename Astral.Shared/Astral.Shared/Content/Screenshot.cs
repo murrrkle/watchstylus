@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Diagnostics;
+using System.Drawing;
 
 using Astral.Net.Serialization;
 

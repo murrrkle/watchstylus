@@ -47,6 +47,7 @@
     <CodesignKey>iPhone Developer: Sebastian Boring (EFN6KHG89K)</CodesignKey>
     <MtouchDebug>true</MtouchDebug>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <MtouchLink>SdkOnly</MtouchLink>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
