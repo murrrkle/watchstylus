@@ -450,8 +450,9 @@ namespace TestingConcepts
         private void OnDoClick(object sender, RoutedEventArgs e)
         {
             // show mouse capture window
-          //  this.source = this.TouchPlotter.SelectionInDeviceCoords;
-            this.destination = this.mouseCapture.Selection;
+            //  this.source = this.TouchPlotter.SelectionInDeviceCoords;
+            this.deviceModel.ShowInputWindow();
+         //   this.destination = this.mouseCapture.Selection;
 
             UpdateRule();
         }
