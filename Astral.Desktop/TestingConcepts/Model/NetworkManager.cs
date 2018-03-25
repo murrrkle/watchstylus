@@ -11,10 +11,12 @@ namespace TestingConcepts
     public class DeviceConnectedEventArgs : EventArgs
     {
         public AstralDevice Device { get; set; }
+        public AstralSession Session { get; set; }
 
-        public DeviceConnectedEventArgs(AstralDevice device)
+        public DeviceConnectedEventArgs(AstralDevice device, AstralSession session)
         {
             this.Device = device;
+            this.Session = session;
         }
     }
 
@@ -85,7 +87,7 @@ namespace TestingConcepts
                 m_session = session;
 
                 // this.m_device = m_session.Device;
-                RaiseDeviceAdded(new DeviceConnectedEventArgs(session.Device));
+                RaiseDeviceAdded(new DeviceConnectedEventArgs(session.Device, session));
             }
         }
     }

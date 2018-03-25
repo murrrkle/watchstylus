@@ -81,6 +81,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DeviceModel.cs" />
     <Compile Include="Model\ContinuousRule.cs" />
     <Compile Include="Model\DiscreteRule.cs" />
     <Compile Include="Model\PCInputAction.cs" />

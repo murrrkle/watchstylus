@@ -58,8 +58,9 @@ namespace TestingConcepts
 
         private void OnDeviceConnected(object sender, DeviceConnectedEventArgs e)
         {
-            this.ruleManager.Device = e.Device;
-            this.ruleEditingWindow.Device = this.ruleManager.Device;
+            DeviceModel deviceModel = new DeviceModel(e.Device, e.Session);
+            this.ruleManager.DeviceModel = deviceModel;
+            this.ruleEditingWindow.DeviceModel = deviceModel;       
 
         }
 

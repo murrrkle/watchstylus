@@ -24,7 +24,6 @@ namespace TestingConcepts
     /// </summary>
     public partial class RuleEditingWindow : Window
     {
-        private AstralDevice device;
         private DeviceModel deviceModel = null;
 
         private ModuleType currentModule = ModuleType.Display;
@@ -45,16 +44,15 @@ namespace TestingConcepts
         private bool invert = false;
         private EasingType easing = EasingType.Linear;
 
-        public AstralDevice Device
+        public DeviceModel DeviceModel
         {
             get
             {
-                return this.device;
+                return this.deviceModel;
             }
             set
             {
-                this.device = value;
-                this.deviceModel = new DeviceModel(this.device);
+                this.deviceModel = value;
 
                 // remove later
                 //this.manager.AddRule(this.rule);
@@ -441,9 +439,9 @@ namespace TestingConcepts
                 this.SelectionSizeLabel.Text = size;
             }
 
-            //if(this.eventType == MobileEventType.TouchMove)
-            // this.source = this.TouchPlotter.SelectionInDeviceCoords;
-            //else
+            if (this.eventType == MobileEventType.TouchMove)
+                this.source = this.TouchPlotter.SelectionInDeviceCoords;
+            else
                 this.source = this.Plotter.Selection;
             UpdateRule();
         }
