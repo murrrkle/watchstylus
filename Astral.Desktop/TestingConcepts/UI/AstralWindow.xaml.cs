@@ -63,8 +63,11 @@ namespace TestingConcepts
             this.ActiveRuleContainer.Children.Clear();
             foreach(Rule r in this.ruleManager.ActiveRules)
             {
-                RuleDisplayControl ruleDisplay = new RuleDisplayControl(r);
-                this.ActiveRuleContainer.Children.Add(ruleDisplay);
+                if(r.Name != null || r.Name != "")
+                {
+                    RuleDisplayControl ruleDisplay = new RuleDisplayControl(r);
+                    this.ActiveRuleContainer.Children.Add(ruleDisplay);
+                }
             }
             this.ruleEditingWindow.Close();
         }

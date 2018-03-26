@@ -114,6 +114,8 @@ namespace TestingConcepts
 
             this.DoButton.Click += OnDoClick;
 
+            this.deviceModel.Session.InputSelectionWindowClosed += OnInputSelectionWindowClosed;
+
             this.EasingButton.Click += OnEasingButtonClicked;
             this.EasingSelector.PropertyChanged += OnEasingPropertyChanged;
             this.EasingSelector.InvertCheckBox.Click += OnInvertCheck;
@@ -471,6 +473,14 @@ namespace TestingConcepts
             UpdateRule();
         }
 
+        private void OnInputSelectionWindowClosed(object sender, Astral.UI.SelectionWindowEventArgs e)
+        {
+            if(e.Reason == Astral.UI.ClosingReason.OK)
+            {
+                Console.WriteLine(this.deviceModel.InputRegion);
+                this.destination = this.deviceModel.InputRegion;
+            }
+        }
 
         private void OnDoClick(object sender, RoutedEventArgs e)
         {
