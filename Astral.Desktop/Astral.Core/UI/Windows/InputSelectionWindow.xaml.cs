@@ -21,12 +21,12 @@ using Astral.Device;
 namespace Astral.UI
 {
     #region Partial Class 'InputSelectionWindow'
-    internal partial class InputSelectionWindow : Window
+    internal partial class InputSelectionWindow : Window, ISelectionWindow
     {
         #region Static Class Members
-        private static readonly double HotCornerSize = 20.0;
+        protected static readonly double HotCornerSize = 20.0;
 
-        private static readonly double MinimumSize = 40.0;
+        protected static readonly double MinimumSize = 40.0;
         #endregion
 
         #region Class Members
@@ -34,7 +34,7 @@ namespace Astral.UI
 
         private Rect m_inputRegion;
 
-        private Rect m_backgroundUpdatedRect;
+        private Rect m_lastInputRegion;
 
         private Rect[] m_hotCorners;
 
@@ -53,11 +53,16 @@ namespace Astral.UI
         private object m_syncObj = new object();
         #endregion
 
+        #region Events
+        public event SelectionWindowEventHandler SelectionWindowClosed;
+        #endregion
+
         #region Constructors
         internal InputSelectionWindow(Rect captureRegion, Display display)
         {
-            m_backgroundUpdatedRect = captureRegion;
             m_inputRegion = captureRegion;
+            m_lastInputRegion = m_inputRegion;
+
             m_display = display;
 
             m_buttonPressed = false;
@@ -78,9 +83,10 @@ namespace Astral.UI
             m_screenBounds = new Rect(0.0, 0.0, ActualWidth, ActualHeight);
             if (!(m_initialized))
             {
-                m_backgroundUpdatedRect.Location = new Point(
-                    (m_screenBounds.Width - m_backgroundUpdatedRect.Width) / 2.0,
-                    (m_screenBounds.Height - m_backgroundUpdatedRect.Height) / 2.0);
+                m_inputRegion.Location = new Point(
+                    (m_screenBounds.Width - m_inputRegion.Width) / 2.0,
+                    (m_screenBounds.Height - m_inputRegion.Height) / 2.0);
+                m_lastInputRegion = m_inputRegion;
             }
 
             Update();
@@ -112,10 +118,13 @@ namespace Astral.UI
             double newWidth = Math.Max(inputRegion.Width, MinimumSize);
             double newHeight = Math.Max(inputRegion.Height, MinimumSize);
 
-            m_backgroundUpdatedRect.X = inputRegion.X;
-            m_backgroundUpdatedRect.Y = inputRegion.Y;
-            m_backgroundUpdatedRect.Width = newWidth;
-            m_backgroundUpdatedRect.Height = newHeight;
+            m_inputRegion.X = inputRegion.X;
+            m_inputRegion.Y = inputRegion.Y;
+            m_inputRegion.Width = newWidth;
+            m_inputRegion.Height = newHeight;
+
+            // update it here right away, because it cannot be cancelled
+            m_lastInputRegion = m_inputRegion;
 
             m_initialized = true;
 
@@ -127,7 +136,10 @@ namespace Astral.UI
             double newWidth = Math.Max(size.Width, MinimumSize);
             double newHeight = Math.Max(size.Height, MinimumSize);
 
-            m_backgroundUpdatedRect.Size = size;
+            m_inputRegion.Size = size;
+
+            // update it here right away, because it cannot be cancelled
+            m_lastInputRegion = m_inputRegion;
             m_initialized = true;
 
             Update();
@@ -135,7 +147,10 @@ namespace Astral.UI
 
         public void SetInputRegionWidth(int width)
         {
-            m_backgroundUpdatedRect.Width = Math.Max(width, MinimumSize);
+            m_inputRegion.Width = Math.Max(width, MinimumSize);
+
+            // update it here right away, because it cannot be cancelled
+            m_lastInputRegion = m_inputRegion;
             m_initialized = true;
 
             Update();
@@ -143,7 +158,10 @@ namespace Astral.UI
 
         public void SetInputRegionheight(int height)
         {
-            m_backgroundUpdatedRect.Height = Math.Max(height, MinimumSize);
+            m_inputRegion.Height = Math.Max(height, MinimumSize);
+
+            // update it here right away, because it cannot be cancelled
+            m_lastInputRegion = m_inputRegion;
             m_initialized = true;
 
             Update();
@@ -151,7 +169,10 @@ namespace Astral.UI
 
         public void SetInputRegionLocation(Point location)
         {
-            m_backgroundUpdatedRect.Location = location;
+            m_inputRegion.Location = location;
+
+            // update it here right away, because it cannot be cancelled
+            m_lastInputRegion = m_inputRegion;
             m_initialized = true;
 
             Update();
@@ -159,7 +180,10 @@ namespace Astral.UI
 
         public void SetInputRegionX(int x)
         {
-            m_backgroundUpdatedRect.X = x;
+            m_inputRegion.X = x;
+
+            // update it here right away, because it cannot be cancelled
+            m_lastInputRegion = m_inputRegion;
             m_initialized = true;
 
             Update();
@@ -167,7 +191,10 @@ namespace Astral.UI
 
         public void SetInputRegionY(int y)
         {
-            m_backgroundUpdatedRect.Y = y;
+            m_inputRegion.Y = y;
+
+            // update it here right away, because it cannot be cancelled
+            m_lastInputRegion = m_inputRegion;
             m_initialized = true;
 
             Update();
@@ -179,20 +206,28 @@ namespace Astral.UI
         {
             UpdateHotCorners();
             UpdateOverlay();
+
+            Dispatcher.Invoke(
+                new Action(
+                    delegate ()
+                    {
+                        ResolutionLabel.Content = ((int)Math.Round(m_inputRegion.Width))
+                            + " x " + ((int)Math.Round(m_inputRegion.Height));
+                    }));
         }
 
         private void UpdateHotCorners()
         {
-            m_hotCorners[0] = new Rect(m_backgroundUpdatedRect.TopLeft.X - HotCornerSize / 2.0,
-                m_backgroundUpdatedRect.TopLeft.Y - HotCornerSize / 2.0, HotCornerSize, HotCornerSize);
-            m_hotCorners[1] = new Rect(m_backgroundUpdatedRect.TopRight.X - HotCornerSize / 2.0,
-                m_backgroundUpdatedRect.TopRight.Y - HotCornerSize / 2.0, HotCornerSize, HotCornerSize);
-            m_hotCorners[2] = new Rect(m_backgroundUpdatedRect.BottomRight.X - HotCornerSize / 2.0,
-                m_backgroundUpdatedRect.BottomRight.Y - HotCornerSize / 2.0, HotCornerSize, HotCornerSize);
-            m_hotCorners[3] = new Rect(m_backgroundUpdatedRect.BottomLeft.X - HotCornerSize / 2.0,
-                m_backgroundUpdatedRect.BottomLeft.Y - HotCornerSize / 2.0, HotCornerSize, HotCornerSize);
+            m_hotCorners[0] = new Rect(m_inputRegion.TopLeft.X - HotCornerSize / 2.0,
+                m_inputRegion.TopLeft.Y - HotCornerSize / 2.0, HotCornerSize, HotCornerSize);
+            m_hotCorners[1] = new Rect(m_inputRegion.TopRight.X - HotCornerSize / 2.0,
+                m_inputRegion.TopRight.Y - HotCornerSize / 2.0, HotCornerSize, HotCornerSize);
+            m_hotCorners[2] = new Rect(m_inputRegion.BottomRight.X - HotCornerSize / 2.0,
+                m_inputRegion.BottomRight.Y - HotCornerSize / 2.0, HotCornerSize, HotCornerSize);
+            m_hotCorners[3] = new Rect(m_inputRegion.BottomLeft.X - HotCornerSize / 2.0,
+                m_inputRegion.BottomLeft.Y - HotCornerSize / 2.0, HotCornerSize, HotCornerSize);
         }
-        
+
         private void UpdateOverlay()
         {
             UpdateRegions();
@@ -201,19 +236,18 @@ namespace Astral.UI
 
         private void UpdateRegions()
         {
-            Geometry region = new RectangleGeometry(m_backgroundUpdatedRect);
+            Geometry region = new RectangleGeometry(m_inputRegion);
             Geometry invert = new CombinedGeometry(GeometryCombineMode.Exclude,
                 new RectangleGeometry(m_screenBounds), region);
 
             InvertedOverlay.Clip = invert;
 
-            // TODO: fix the offset in m_cropRegion!
             double increase = 1.5;
 
-            Canvas.SetLeft(MouseOverlay, m_backgroundUpdatedRect.Left - increase);
-            Canvas.SetTop(MouseOverlay, m_backgroundUpdatedRect.Top - increase);
-            MouseOverlay.Width = m_backgroundUpdatedRect.Width + 2.0 * increase;
-            MouseOverlay.Height = m_backgroundUpdatedRect.Height + 2.0 * increase;
+            Canvas.SetLeft(MouseOverlay, m_inputRegion.Left - increase);
+            Canvas.SetTop(MouseOverlay, m_inputRegion.Top - increase);
+            MouseOverlay.Width = m_inputRegion.Width + 2.0 * increase;
+            MouseOverlay.Height = m_inputRegion.Height + 2.0 * increase;
 
             GC.Collect();
         }
@@ -221,21 +255,21 @@ namespace Astral.UI
         private void UpdateButtons()
         {
             ControlPanel.RenderTransform = new RotateTransform(0.0);
-            Canvas.SetLeft(ControlPanel, m_backgroundUpdatedRect.Left - 1.5);
-            Canvas.SetTop(ControlPanel, m_backgroundUpdatedRect.Top - (ControlPanel.ActualHeight + 5.5));
+            Canvas.SetLeft(ControlPanel, m_inputRegion.Left - 1.5);
+            Canvas.SetTop(ControlPanel, m_inputRegion.Top - (ControlPanel.ActualHeight + 5.5));
         }
         #endregion
-        
+
         #region Manipulation
         internal void Move(Vector offset)
         {
-            m_backgroundUpdatedRect.Location += offset;
+            m_inputRegion.Location += offset;
         }
 
         internal void Scale(Vector offset, ScaleDirection direction)
         {
-            double newWidth = m_backgroundUpdatedRect.Width;
-            double newHeight = m_backgroundUpdatedRect.Height;
+            double newWidth = m_inputRegion.Width;
+            double newHeight = m_inputRegion.Height;
 
             switch (direction)
             {
@@ -265,11 +299,11 @@ namespace Astral.UI
             newHeight = Math.Max(MinimumSize, newHeight);
 
             // adjust the width
-            double widthChange = newWidth - m_backgroundUpdatedRect.Width;
-            double heightChange = newHeight - m_backgroundUpdatedRect.Height;
+            double widthChange = newWidth - m_inputRegion.Width;
+            double heightChange = newHeight - m_inputRegion.Height;
 
-            m_backgroundUpdatedRect.Width = newWidth;
-            m_backgroundUpdatedRect.Height = newHeight;
+            m_inputRegion.Width = newWidth;
+            m_inputRegion.Height = newHeight;
 
             // do we need to adjust the location as well?
             switch (direction)
@@ -279,17 +313,17 @@ namespace Astral.UI
                     // don't do anything
                     break;
                 case ScaleDirection.NW:
-                    m_backgroundUpdatedRect.Location -= (new Vector(widthChange, heightChange));
+                    m_inputRegion.Location -= (new Vector(widthChange, heightChange));
                     break;
                 case ScaleDirection.NE:
-                    m_backgroundUpdatedRect.Location -= (new Vector(0.0, heightChange));
+                    m_inputRegion.Location -= (new Vector(0.0, heightChange));
                     break;
                 case ScaleDirection.SE:
                     // this will not do anything
-                    m_backgroundUpdatedRect.Location -= (new Vector(0.0, 0.0));
+                    m_inputRegion.Location -= (new Vector(0.0, 0.0));
                     break;
                 case ScaleDirection.SW:
-                    m_backgroundUpdatedRect.Location -= (new Vector(widthChange, 0.0));
+                    m_inputRegion.Location -= (new Vector(widthChange, 0.0));
                     break;
             }
         }
@@ -319,7 +353,7 @@ namespace Astral.UI
             }
             else
             {
-                operation = m_backgroundUpdatedRect.Contains(position)
+                operation = m_inputRegion.Contains(position)
                     ? MouseOperation.Move : MouseOperation.None;
                 direction = ScaleDirection.None;
             }
@@ -329,38 +363,60 @@ namespace Astral.UI
         }
         #endregion
 
+        #region Closing
+        private void AcceptSelection()
+        {
+            // update the last region here, because the user accepted it
+            m_lastInputRegion = m_inputRegion;
+
+            Hide();
+
+            // fire the event
+            SelectionWindowClosed?.Invoke(this, new SelectionWindowEventArgs(ClosingReason.OK));
+        }
+
+        private void CancelSelection()
+        {
+            // revert back to the previous region, as the user has cancelled it
+            m_inputRegion = m_lastInputRegion;
+            Update();
+
+            // enforce update
+            DispatcherFrame frame = new DispatcherFrame();
+            Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Render, 
+                new DispatcherOperationCallback(
+                    delegate (object parameter)
+                    {
+                        frame.Continue = false;
+                        return null;
+            }), null);
+            Dispatcher.PushFrame(frame);
+
+            Hide();
+
+            // fire the event
+            SelectionWindowClosed?.Invoke(this, new SelectionWindowEventArgs(ClosingReason.Cancel));
+        }
+        #endregion
+
         #region Event Handler
         #region Window Event Handler
         private void CaptureSelectionWindowLoaded(object sender, RoutedEventArgs e)
         {
             ControlPanel.Visibility = Visibility.Visible;
-
-            MouseOverlay.LayoutUpdated += OnMouseOverlayLayoutUpdated;
             InitializeOverlay();
         }
         #endregion
 
         #region UI Event Handler
-        private void OnMouseOverlayLayoutUpdated(object sender, EventArgs e)
-        {
-            lock (m_syncObj)
-            {
-                double increase = 1.5;
-
-                m_inputRegion.Width = MouseOverlay.RenderSize.Width - 2.0 * increase;
-                m_inputRegion.Height = MouseOverlay.RenderSize.Height - 2.0 * increase;
-                m_inputRegion.X = Canvas.GetLeft(MouseOverlay) + increase;
-                m_inputRegion.Y = Canvas.GetTop(MouseOverlay) + increase;
-
-                // let's update the text
-                ResolutionLabel.Content = Math.Round(m_inputRegion.Width) 
-                    + " x " + Math.Round(m_inputRegion.Height);
-            }
-        }
-        
         private void DoneButtonClicked(object sender, RoutedEventArgs e)
         {
-            Hide();
+            AcceptSelection();
+        }
+
+        private void CancelButtonClicked(object sender, RoutedEventArgs e)
+        {
+            CancelSelection();
         }
         #endregion
 
@@ -369,7 +425,7 @@ namespace Astral.UI
         {
             if (e.Key == Key.Escape)
             {
-                Hide();
+                CancelSelection();
             }
         }
         #endregion
@@ -392,8 +448,6 @@ namespace Astral.UI
 
             if (!(m_buttonPressed))
             {
-                // this should only occur when we're not dragging
-
                 // first, get the new operation
                 Tuple<MouseOperation, ScaleDirection> mouseOperation = GetMouseOperation(position);
                 m_currMouseOperation = mouseOperation.Item1;

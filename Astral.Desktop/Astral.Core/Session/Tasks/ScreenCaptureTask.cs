@@ -57,6 +57,34 @@ namespace Astral.Session.Tasks
         internal event CaptureEventHandler ScreenshotCaptured;
 
         internal event ProcessedCaptureEventHandler ProcessedScreenshotCaptured;
+
+        internal event SelectionWindowEventHandler SelectionWindowClosed
+        {
+            add
+            {
+                Application.Current.Dispatcher.Invoke(
+                    new Action(
+                        delegate ()
+                        {
+                            if (m_selectionWindow != null)
+                            {
+                                m_selectionWindow.SelectionWindowClosed += value;
+                            }
+                        }));
+            }
+            remove
+            {
+                Application.Current.Dispatcher.Invoke(
+                    new Action(
+                        delegate ()
+                        {
+                            if (m_selectionWindow != null)
+                            {
+                                m_selectionWindow.SelectionWindowClosed += value;
+                            }
+                        }));
+            }
+        }
         #endregion
 
         #region Constructors

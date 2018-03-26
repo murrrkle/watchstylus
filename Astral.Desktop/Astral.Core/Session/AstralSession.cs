@@ -36,6 +36,10 @@ namespace Astral
 
         #region Events
         internal event AstralSessionEventHandler SessionInitialized;
+
+        public event SelectionWindowEventHandler CaptureSelectionWindowClosed;
+
+        public event SelectionWindowEventHandler InputSelectionWindowClosed;
         #endregion
 
         #region Constructors
@@ -54,6 +58,7 @@ namespace Astral
         {
             m_captureTask = new ScreenCaptureTask(this);
             m_captureTask.ProcessedScreenshotCaptured += ProcessedScreenshotCaptured;
+            m_captureTask.SelectionWindowClosed += OnCaptureSelectionWindowClosed;
 
             Application.Current.Dispatcher.Invoke(
                 new Action(
@@ -61,6 +66,7 @@ namespace Astral
                     {
                         m_inputSelectionWindow = new InputSelectionWindow(
                             m_captureTask.CaptureRegion, m_device[ModuleType.Display] as Display);
+                        m_inputSelectionWindow.SelectionWindowClosed += OnInputSelectionWindowClosed;
                     }));
         }
         #endregion
@@ -246,6 +252,18 @@ namespace Astral
         #endregion
 
         #region Event Handler
+        #region ISelectionWindow Event Handler
+        private void OnCaptureSelectionWindowClosed(object sender, SelectionWindowEventArgs e)
+        {
+            CaptureSelectionWindowClosed?.Invoke(this, e);
+        }
+
+        private void OnInputSelectionWindowClosed(object sender, SelectionWindowEventArgs e)
+        {
+            InputSelectionWindowClosed?.Invoke(this, e);
+        }
+        #endregion
+
         #region AstralDevice Event Handler
         private void AstralDeviceInitialized(object sender, AstralDevice device)
         {

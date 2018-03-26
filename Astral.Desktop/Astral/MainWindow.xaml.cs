@@ -16,6 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using Astral.Device;
+using Astral.UI;
 
 namespace Astral
 {
@@ -300,6 +301,10 @@ namespace Astral
             {
                 m_session = session;
                 EnableUI();
+
+                // add selection window event handlers (for demonstration)
+                m_session.CaptureSelectionWindowClosed += SessionCaptureSelectionWindowClosed;
+                m_session.InputSelectionWindowClosed += SessionInputSelectionWindowClosed;
             }
         }
 
@@ -309,6 +314,10 @@ namespace Astral
                 && session.Equals(m_session))
             {
                 // remove handlers
+                // remove selection window event handlers (for demonstration)
+                m_session.CaptureSelectionWindowClosed -= SessionCaptureSelectionWindowClosed;
+                m_session.InputSelectionWindowClosed -= SessionInputSelectionWindowClosed;
+
                 m_session = null;
 
                 DisableUI();
@@ -428,6 +437,18 @@ namespace Astral
                     {
                         CompassHeadingLabel.Content = e.CompassData.Heading.ToString("F4");
                     }));
+        }
+        #endregion
+
+        #region ISelectionWindow Event Handler
+        private void SessionInputSelectionWindowClosed(object sender, SelectionWindowEventArgs e)
+        {
+            Debug.WriteLine("Input Window closed: REASON = " + e.Reason);
+        }
+
+        private void SessionCaptureSelectionWindowClosed(object sender, SelectionWindowEventArgs e)
+        {
+            Debug.WriteLine("Capture Window closed: REASON = " + e.Reason);
         }
         #endregion
         #endregion

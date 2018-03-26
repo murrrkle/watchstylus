@@ -36,4 +36,13 @@ namespace Astral.UI
         Portrait = 1
     }
     #endregion
+
+    #region Enumeration 'ClosingReason'
+    [Flags]
+    public enum ClosingReason
+    {
+        OK = 1,
+        Cancel = 2
+    }
+    #endregion
 }

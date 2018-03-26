@@ -21,7 +21,7 @@ using Astral.Device;
 namespace Astral.UI
 {
     #region Partial Class 'CaptureSelectionWindow'
-    internal partial class CaptureSelectionWindow : Window
+    internal partial class CaptureSelectionWindow : Window, ISelectionWindow
     {
         #region Static Class Members
         private static readonly double HotCornerSize = 20.0;
@@ -53,6 +53,10 @@ namespace Astral.UI
         private bool m_initialized = false;
 
         private object m_syncObj = new object();
+        #endregion
+
+        #region Event Handler
+        public event SelectionWindowEventHandler SelectionWindowClosed;
         #endregion
 
         #region Constructors
@@ -343,6 +347,16 @@ namespace Astral.UI
         }
         #endregion
 
+        #region Closing
+        private void AcceptSelection()
+        {
+            Hide();
+
+            // fire the event
+            SelectionWindowClosed?.Invoke(this, new SelectionWindowEventArgs(ClosingReason.OK));
+        }
+        #endregion
+
         #region Event Handler
         #region Window Event Handler
         private void CaptureSelectionWindowLoaded(object sender, RoutedEventArgs e)
@@ -413,7 +427,7 @@ namespace Astral.UI
 
         private void DoneButtonClicked(object sender, RoutedEventArgs e)
         {
-            Hide();
+            AcceptSelection();
         }
         #endregion
 

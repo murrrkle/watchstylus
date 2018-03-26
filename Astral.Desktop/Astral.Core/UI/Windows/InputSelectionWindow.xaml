@@ -19,6 +19,7 @@
                 <StackPanel Orientation="Horizontal" Margin="4">
                     <Label x:Name="ResolutionLabel" Width="80" Content="750 x 1334" Foreground="White" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                     <Button x:Name="DoneButton" Content="Done" Width="50" Height="24" Margin="4,0,0,0" Click="DoneButtonClicked" />
+                    <Button x:Name="CancelButton" Content="Cancel" Width="50" Height="24" Margin="4,0,0,0" Click="CancelButtonClicked" />
                 </StackPanel>
             </Border>
         </Canvas>
