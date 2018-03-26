@@ -53,19 +53,58 @@ namespace TestingConcepts
             this.ruleManager.SetActiveRuleSet("Default");
 
             this.AddRuleButton.Click += OnAddNewRule;
+            this.Closed += OnClosed;
 
+            this.ruleEditingWindow.RuleAdded += OnRuleAdded;
+        }
+
+        private void OnRuleAdded(object sender, EventArgs e)
+        {
+            this.ActiveRuleContainer.Children.Clear();
+            foreach(Rule r in this.ruleManager.ActiveRules)
+            {
+                RuleDisplayControl ruleDisplay = new RuleDisplayControl(r);
+                this.ActiveRuleContainer.Children.Add(ruleDisplay);
+            }
+            this.ruleEditingWindow.Close();
+        }
+
+        private void OnClosed(object sender, EventArgs e)
+        {
+            Application.Current.Shutdown();
         }
 
         private void OnDeviceConnected(object sender, DeviceConnectedEventArgs e)
         {
             DeviceModel deviceModel = new DeviceModel(e.Device, e.Session);
             this.ruleManager.DeviceModel = deviceModel;
-            this.ruleEditingWindow.DeviceModel = deviceModel;       
+            this.ruleEditingWindow.DeviceModel = deviceModel;
+            Dispatcher.Invoke(new Action(delegate
+            {
+                this.DeviceInfoText.Text = e.Device.Class + " Connected";
+                if(e.Device.Class.ToLower().Contains("nexus"))
+                {
+                    this.AndroidLogoIcon.Visibility = Visibility.Visible;
+                    this.PhoneIcon.Visibility = Visibility.Visible;
+                }
+                else if(e.Device.Class.ToLower().Contains("iphone"))
+                {
+                    this.PhoneIcon.Visibility = Visibility.Visible;
+                    this.AppleLogoIcon.Visibility = Visibility.Visible;
+                }
+                else if(e.Device.Class.ToLower().Contains("watch"))
+                {
+                    this.WatchIcon.Visibility = Visibility.Visible;
+                }
+            }));
 
         }
 
         private void OnAddNewRule(object sender, RoutedEventArgs e)
         {
+            this.ruleEditingWindow = new RuleEditingWindow(this.ruleManager);
+            this.ruleEditingWindow.RuleAdded += OnRuleAdded;
+            this.ruleEditingWindow.DeviceModel = ruleManager.DeviceModel;
             this.ruleEditingWindow.Show();
         }
 

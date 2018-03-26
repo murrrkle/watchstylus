@@ -96,6 +96,9 @@
     <Compile Include="OrientationVisualizer.xaml.cs">
       <DependentUpon>OrientationVisualizer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="RuleDisplayControl.xaml.cs">
+      <DependentUpon>RuleDisplayControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\UI Elements\RangeSlider.xaml.cs">
       <DependentUpon>RangeSlider.xaml</DependentUpon>
     </Compile>
@@ -140,6 +143,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="OrientationVisualizer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="RuleDisplayControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

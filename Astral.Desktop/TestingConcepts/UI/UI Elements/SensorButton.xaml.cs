@@ -37,17 +37,27 @@ namespace TestingConcepts
     {
         //private ModuleType sensorType = ModuleType.Display;
 
+        private Path activePath = null;
+
         public ModuleType SensorType
         {
             get
             {
-               // return this.sensorType;
+                // return this.sensorType;
                 return (ModuleType)this.GetValue(SensorProperty);
             }
             set
             {
-               // this.sensorType = value;
+                // this.sensorType = value;
                 this.SetValue(SensorProperty, value);
+            }
+        }
+        
+        internal Path ActivePath
+        {
+            get
+            {
+                return this.activePath;
             }
         }
 
@@ -75,6 +85,24 @@ namespace TestingConcepts
                 if(canvas != this.BackgroundBox)
                 {
                     canvas.Visibility = Visibility.Hidden;
+                }
+            }
+        }
+
+        internal void ApplyDarkTheme()
+        {
+            foreach (UIElement canvas in this.Container.Children)
+            {
+                if (canvas is Canvas)
+                {
+                    foreach(UIElement element in (canvas as Canvas).Children)
+                    {
+                        if(element is Path)
+                        {
+                            (element as Path).Fill = AstralColors.Black;
+                            (element).Opacity = 0.8;
+                        }
+                    }
                 }
             }
         }
@@ -111,7 +139,11 @@ namespace TestingConcepts
                     break;
                     // need microphone
             }
-            canvasForSensor.Visibility = Visibility.Visible;
+            if (canvasForSensor != null)
+            {
+                canvasForSensor.Visibility = Visibility.Visible;
+                this.activePath = canvasForSensor.Children[0] as Path;
+            }
         }
 
         public SensorButton()

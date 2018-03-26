@@ -82,6 +82,62 @@ namespace TestingConcepts
 
         }
 
+        public static ModuleType EventToModule(MobileEventType type)
+        {
+            ModuleType? moduleType = null;
+
+            switch (type)
+            {
+                case MobileEventType.None:
+                    break;
+                case MobileEventType.TouchDown:
+                    moduleType = ModuleType.Display;
+                    break;
+                case MobileEventType.TouchUp:
+                    moduleType = ModuleType.Display;
+                    break;
+                case MobileEventType.TouchMove:
+                    moduleType = ModuleType.Display;
+                    break;
+                case MobileEventType.AccelerationChanged:
+                    moduleType = ModuleType.Accelerometer;
+                    break;
+                case MobileEventType.AccelerationMagnitudeChanged:
+                    moduleType = ModuleType.Accelerometer;
+                    break;
+                case MobileEventType.AmbientLightChanged:
+                    moduleType = ModuleType.AmbientLight;
+                    break;
+                case MobileEventType.CompassChanged:
+                    moduleType = ModuleType.Compass;
+                    break;
+                case MobileEventType.MagnetometerChanged:
+                    moduleType = ModuleType.Magnetometer;
+                    break;
+                case MobileEventType.MagnetometerMagnitudeChanged:
+                    moduleType = ModuleType.Magnetometer;
+                    break;
+                case MobileEventType.MagnetometerAngleChanged:
+                    moduleType = ModuleType.Magnetometer;
+                    break;
+                case MobileEventType.GyroscopeChanged:
+                    moduleType = ModuleType.Gyroscope;
+                    break;
+                case MobileEventType.OrientationChanged:
+                    moduleType = ModuleType.Orientation;
+                    break;
+                case MobileEventType.AmplitudeChanged:
+                    moduleType = ModuleType.Microphone;
+                    break;
+                case MobileEventType.FrequencyChanged:
+                    moduleType = ModuleType.Microphone;
+                    break;
+                default:
+                    break;
+            }
+            return moduleType.GetValueOrDefault();
+        }
+
         private static byte Lerp(byte a, byte b, double step)
         {
             return (byte)(a + (b - a) * step);

@@ -32,6 +32,7 @@ namespace TestingConcepts
 
     public abstract class Rule
     {
+        protected string name;
         protected MappingDimension dimension;
         protected MobileEventType eventType;
         protected bool checksBounds = false;
@@ -54,6 +55,18 @@ namespace TestingConcepts
         protected void RaiseSelectionExited(SelectionCrossedEventArgs e)
         {
             SelectionExited?.Invoke(this, e);
+        }
+
+        public string Name
+        {
+            get
+            {
+                return this.name;
+            }
+            set
+            {
+                this.name = value;
+            }
         }
 
         public bool ChecksBounds

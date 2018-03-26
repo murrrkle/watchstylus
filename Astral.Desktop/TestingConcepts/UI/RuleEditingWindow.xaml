@@ -4,81 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TestingConcepts"
-        xmlns:device="clr-namespace:Astral.Device"
+        
         mc:Ignorable="d"
-        Title="RuleEditingWindow" Height="725.25" Width="933.087" ResizeMode="NoResize" WindowStyle="None">
-    <Window.Resources>
-        <Style x:Key="AstralCheckBoxStyle" TargetType="{x:Type CheckBox}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type CheckBox}">
-                        <Grid Margin="0,0,-0.667,0">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal">
-                                        <Storyboard>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)" Storyboard.TargetName="contentPresenter">
-                                                <EasingDoubleKeyFrame KeyTime="0" Value="-0.501"/>
-                                            </DoubleAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="MouseOver"/>
-                                    <VisualState x:Name="Pressed"/>
-                                    <VisualState x:Name="Disabled"/>
-                                </VisualStateGroup>
-                                <VisualStateGroup x:Name="CheckStates">
-                                    <VisualStateGroup.Transitions>
-                                        <VisualTransition From="Unchecked" GeneratedDuration="0:0:0.2" To="Checked">
-                                            <VisualTransition.GeneratedEasingFunction>
-                                                <CircleEase EasingMode="EaseOut"/>
-                                            </VisualTransition.GeneratedEasingFunction>
-                                        </VisualTransition>
-                                        <VisualTransition From="Checked" GeneratedDuration="0:0:0.2" To="Unchecked">
-                                            <VisualTransition.GeneratedEasingFunction>
-                                                <CircleEase EasingMode="EaseOut"/>
-                                            </VisualTransition.GeneratedEasingFunction>
-                                        </VisualTransition>
-                                    </VisualStateGroup.Transitions>
-                                    <VisualState x:Name="Checked">
-                                        <Storyboard>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="path">
-                                                <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
-                                            </DoubleAnimationUsingKeyFrames>
-                                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="rectangle">
-                                                <EasingColorKeyFrame KeyTime="0" Value="{StaticResource AstralGreen}"/>
-                                            </ColorAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Unchecked"/>
-                                    <VisualState x:Name="Indeterminate"/>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <Rectangle x:Name="rectangle" RadiusY="3" RadiusX="3" HorizontalAlignment="Left" Width="21.5" Cursor="Hand">
-                                <Rectangle.Fill>
-                                    <SolidColorBrush Color="{DynamicResource AstralGrey}"/>
-                                </Rectangle.Fill>
-                            </Rectangle>
-                            <ContentPresenter x:Name="contentPresenter" TextBlock.FontFamily="{DynamicResource ResourceKey=RobotoCondensed}" TextBlock.Foreground="{DynamicResource ResourceKey=AstralBlackBrush}" TextBlock.FontSize="15"  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" RenderTransformOrigin="1.738,0.376" Margin="30.165,2.998,0,0" Width="142.307" d:LayoutOverrides="LeftMargin, RightMargin">
-                                <ContentPresenter.RenderTransform>
-                                    <TransformGroup>
-                                        <ScaleTransform/>
-                                        <SkewTransform/>
-                                        <RotateTransform/>
-                                        <TranslateTransform/>
-                                    </TransformGroup>
-                                </ContentPresenter.RenderTransform>
-                            </ContentPresenter>
-                            <Path x:Name="path" Data="M1.9223333,13.75 L7.3393334,19.25 17.339334,3.8333333" HorizontalAlignment="Left" Margin="2.924,3.666,0,4.417" Stretch="Fill" Width="15.417" Fill="{x:Null}" StrokeThickness="3" Opacity="0" Cursor="Hand">
-                                <Path.Stroke>
-                                    <SolidColorBrush Color="{DynamicResource AstralWhite}"/>
-                                </Path.Stroke>
-                            </Path>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </Window.Resources>
+        Title="RuleEditingWindow" Height="725.25" Width="933.087" ResizeMode="NoResize" WindowStyle="None" BorderBrush="#FFE7E7E7">
+
     <Canvas x:Name="Container">
         <TextBlock Height="44.331" Canvas.Left="29.491" TextWrapping="Wrap" Canvas.Top="7.328" Width="235.833" FontFamily="{DynamicResource RobotoBold}" FontSize="36" Text="RULE EDITOR">
             <TextBlock.Foreground>
@@ -112,7 +41,7 @@
 
         <Canvas Name="CompassCanvas" Height="579.5" Width="282.78" Canvas.Left="104.22" Canvas.Top="95.5">
             <Rectangle Fill="#FFF4F4F5" Height="222" Canvas.Left="33.28" Canvas.Top="26.5" Width="222"/>
-            <local:RadialPlotter x:Name="Plotter" Width="222" Height="222" Canvas.Left="33.28" Canvas.Top="26.5" d:LayoutOverrides="Width, Height"/>
+            <local:RadialPlotter x:Name="Plotter" Width="222" Height="222" Canvas.Left="33.28" Canvas.Top="26.5" />
             <Ellipse Fill="White" StrokeThickness="4" Height="57" Canvas.Left="115.78" Canvas.Top="109" Width="57">
                 <Ellipse.Stroke>
                     <SolidColorBrush Color="{DynamicResource AstralRed}"/>
@@ -195,6 +124,26 @@
                 </TransformGroup>
             </local:EasingSelector.RenderTransform>
         </local:EasingSelector>
+        <Rectangle Height="85.5" Canvas.Left="439.161" RadiusY="5" RadiusX="6" Canvas.Top="554.25" Width="381.339">
+            <Rectangle.Fill>
+                <SolidColorBrush Color="{DynamicResource AstralLightGray}"/>
+            </Rectangle.Fill>
+        </Rectangle>
+        <Button x:Name="AddButton" Content="ADD" Height="25" Canvas.Left="765.237" Canvas.Top="586.5" Width="25" Style="{DynamicResource OkayButtonStyle}" RenderTransformOrigin="0.5,0.5">
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="2" ScaleY="2"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Button.RenderTransform>
+        </Button>
+        <TextBox x:Name="RuleNameTextBox" Height="55.75" Canvas.Left="462.75" TextWrapping="Wrap" Text="Rule Name Here" Canvas.Top="571.417" Width="283.5" TextBlock.FontFamily="{DynamicResource RobotoBold}" Style="{DynamicResource AstralTextBox}" FontSize="28">
+            <TextBox.Foreground>
+                <SolidColorBrush Color="{DynamicResource AstralBlack}"/>
+            </TextBox.Foreground>
+        </TextBox>
 
     </Canvas>
 </Window>

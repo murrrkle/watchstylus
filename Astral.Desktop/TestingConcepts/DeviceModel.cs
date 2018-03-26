@@ -67,6 +67,9 @@ namespace TestingConcepts
         public Gyroscope Gyroscope { get => gyroscope; set => gyroscope = value; }
         public Microphone Microphone { get => microphone; set => microphone = value; }
 
+        public string Name { get => this.device.Name; }
+        public string Class { get => this.device.Class; }
+
         public AstralSession Session { get => session; }
 
         public Rect InputRegion
@@ -111,6 +114,8 @@ namespace TestingConcepts
             if (device.HasGyroscope) this.gyroscope = device[ModuleType.Gyroscope] as Gyroscope;
             if (device.HasOrientation) this.orientation = device[ModuleType.Orientation] as Orientation;
             if (device.HasMicrophone) this.microphone = device[ModuleType.Microphone] as Microphone;
+
+            
         }
 
         #endregion

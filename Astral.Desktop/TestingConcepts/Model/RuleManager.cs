@@ -32,7 +32,6 @@ namespace TestingConcepts
 
         private List<Rule> activeRules = new List<Rule>();
 
-
         private Dictionary<string, List<Rule>> allRuleSets = new Dictionary<string, List<Rule>>();
 
         public PCInputHandler inputHandler = new PCInputHandler();
@@ -90,6 +89,19 @@ namespace TestingConcepts
          //   this.worker.DoWork += OnWorkerDoWork;
         }
 
+        public string GetKey(List<Rule> rules)
+        {
+            string ruleSetName = "";
+            foreach(string key in this.allRuleSets.Keys)
+            {
+                if(this.allRuleSets[key] == rules)
+                {
+                    ruleSetName = key;
+                }
+            }
+            return ruleSetName;
+        }
+
         private void OnWorkerDoWork(object sender, DoWorkEventArgs e)
         {
             // LAND OF ALL ERRORS
@@ -133,9 +145,16 @@ namespace TestingConcepts
 
         public void AddRuleSet(string name)
         {
-            this.allRuleSets.Add(name, new List<Rule>());
+            if (!this.allRuleSets.ContainsKey(name))
+            {
+                this.allRuleSets.Add(name, new List<Rule>());
+            }
         }
 
+        public void RemoveRuleSet(string name)
+        {
+            this.allRuleSets.Remove(name);
+        }
 
         public bool ContainsRuleSet(string name)
         {
@@ -160,7 +179,7 @@ namespace TestingConcepts
             // check if DestinationMapping is MoveAndMouseDown, create event for selection entered
             // do the same for thresholds?
         }
-
+        
         internal void UpdateTempRule(Rule sameRule)
         {
             this.activeRules[0] = sameRule;
@@ -302,8 +321,11 @@ namespace TestingConcepts
         {
             foreach (Rule rule in this.activeRules.Where(r => r.EventType == MobileEventType.TouchMove))
             {
-                rule.ExecuteRule(new Point(e.TouchPoint.X, e.TouchPoint.Y));
-                this.inputHandler.ExecuteInputAction(rule.InputAction);
+                bool inRange = rule.ExecuteRule(new Point(e.TouchPoint.X, e.TouchPoint.Y));
+                if(inRange)
+                {
+                    this.inputHandler.ExecuteInputAction(rule.InputAction);
+                }
             }
         }
 

@@ -44,6 +44,15 @@ namespace TestingConcepts
         private bool invert = false;
         private EasingType easing = EasingType.Linear;
 
+        public event EventHandler<EventArgs> RuleAdded;
+
+        string activeRuleSetName = "";
+
+        private void RaiseRuleAdded(EventArgs e)
+        {
+            RuleAdded?.Invoke(this, e);
+        }
+
         public DeviceModel DeviceModel
         {
             get
@@ -71,7 +80,6 @@ namespace TestingConcepts
             {
                 this.rule = value;
                 UpdateRule();
-                this.manager.SetActiveRuleSet("temp");
             }
         }
 
@@ -91,6 +99,7 @@ namespace TestingConcepts
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            this.activeRuleSetName = this.manager.GetKey(this.manager.ActiveRules);
             this.manager.AddRuleSet("temp");
             this.manager.SetActiveRuleSet("temp");
             this.manager.AddRule(this.rule);
@@ -129,6 +138,22 @@ namespace TestingConcepts
 
             this.MoveMouseButton.Click += OnMoveMouseButtonClick;
             this.MouseClickCheckBox.Click += OnMouseClickCheckBox;
+
+            this.AddButton.Click += OnAddRuleButtonClicked;
+        }
+
+        private void OnAddRuleButtonClicked(object sender, RoutedEventArgs e)
+        {
+            this.rule.Name = this.RuleNameTextBox.Text;
+            UpdateRule();
+
+            this.manager.SetActiveRuleSet(this.activeRuleSetName);
+            this.manager.AddRule(this.rule);
+
+            this.manager.RemoveRuleSet("temp");
+            Console.WriteLine("RAISE");
+            RaiseRuleAdded(new EventArgs());
+            
         }
 
         private void OnMouseClickCheckBox(object sender, RoutedEventArgs e)

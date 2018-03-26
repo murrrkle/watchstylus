@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TestingConcepts"
         mc:Ignorable="d"
-        Title="AstralWindow" Height="820" Width="405">
+        Title="AstralWindow" Height="863.158" Width="405">
     <Window.Resources>
         <Storyboard x:Key="AddRuleSetCanvasAppear">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="AddRuleSetCanvas">
@@ -48,13 +48,46 @@
             <Rectangle Width="29.813" Height="29.813" Canvas.Left="42.174" Stretch="Fill" Fill="#FFF1C02B"/>
             <Path Width="29.813" Height="42.174" Canvas.Left="42.174" Canvas.Top="29.813" Stretch="Fill" Fill="#FFE64D3C" Data="F1 M 276.191,1206.37L 471.428,1206.37L 471.428,930.182L 276.191,1044.56L 276.191,1206.37 Z "/>
         </Canvas>
+        <Canvas x:Name="ConnectionDetailsCanvas" Height="50.699" Canvas.Left="18.683" Canvas.Top="138.825" Width="361.653">
+            <Rectangle Fill="#FFF1F2F2" Height="50.699" Width="360.653" RadiusX="5" RadiusY="5"/>
+            <Canvas x:Name="DeviceIcons" Height="93.434" Canvas.Top="-20.767" Width="66.585" RenderTransformOrigin="0.5,0.5" Canvas.Left="-12.001">
+                <Canvas.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleX="0.4" ScaleY="0.4"/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Canvas.RenderTransform>
+                <Canvas x:Name="PhoneIcon" Height="93.434" Width="66.585" Visibility="Hidden">
+                    <Path Stretch="Fill" Fill="#FF6D6E71" Data="F1 M 58.8067,93.3333L 7.77734,93.3333C 3.48132,93.3333 0,89.8507 0,85.5546L 0,7.67599C 0,3.38135 3.48132,-0.101318 7.77734,-0.101318L 58.8067,-0.101318C 63.1027,-0.101318 66.5853,3.38135 66.5853,7.67599L 66.5853,85.5546C 66.5853,89.8507 63.1027,93.3333 58.8067,93.3333 Z " Height="93.434" Width="66.585"/>
+                    <Rectangle Stretch="Fill" Fill="#FF403F41" Height="72.821" Canvas.Left="6.309" Canvas.Top="8.457" Width="53.966"/>
+                </Canvas>
+                <Canvas x:Name="AppleLogoIcon" Height="41.205" Canvas.Left="17.759" Canvas.Top="18.632" Width="31.065" Visibility="Hidden">
+                    <Path Stretch="Fill" Fill="#FFFFFFFF" Data="F1 M 45.1985,18.5332C 35.7932,18.3479 33.9545,28.9879 33.9545,28.9879C 47.4146,23.5705 45.1985,18.5332 45.1985,18.5332 Z " Height="10.457" Canvas.Left="16.195" Width="11.381"/>
+                    <Path Stretch="Fill" Fill="#FFFFFFFF" Data="F1 M 41.0736,43.097C 41.0736,38.3784 44.3936,34.4397 48.8243,33.4784C 47.431,30.9277 44.4789,29.3157 39.0456,29.3157C 37.1083,29.3157 35.3323,29.6757 33.7149,30.3024C 32.2176,29.6757 30.5496,29.3157 28.6936,29.3157C 12.0923,29.3157 18.3403,44.3104 22.0883,55.4664C 24.3176,62.097 27.6083,59.2344 33.759,58.4224C 39.9083,59.2344 43.2016,62.097 45.4296,55.4664C 45.8123,54.3277 46.2216,53.1504 46.6336,51.9517C 43.3456,50.3571 41.0736,46.9971 41.0736,43.097 Z " Height="30.42" Canvas.Top="10.785" Width="31.065"/>
+                </Canvas>
+                <Canvas x:Name="AndroidLogoIcon" Height="34.957" Canvas.Left="18.769" Canvas.Top="26.673" Width="29.047" Visibility="Hidden">
+                    <Path Stretch="Fill" Fill="#FF8DC63F" Data="F1 M 37.4187,33.2709C 36.7933,33.2709 36.2867,32.7642 36.2867,32.1389C 36.2867,31.5149 36.7933,31.0083 37.4187,31.0083C 38.044,31.0083 38.5507,31.5149 38.5507,32.1389C 38.5507,32.7642 38.044,33.2709 37.4187,33.2709 Z M 29.1667,33.2709C 28.5413,33.2709 28.0333,32.7642 28.0333,32.1389C 28.0333,31.5149 28.5413,31.0083 29.1667,31.0083C 29.7907,31.0083 30.2973,31.5149 30.2973,32.1389C 30.2973,32.7642 29.7907,33.2709 29.1667,33.2709 Z M 37.8627,29.1309L 39.4867,26.8389C 39.52,26.7923 39.4707,26.7003 39.3787,26.6336C 39.284,26.5683 39.1814,26.5522 39.148,26.6003L 37.4747,28.9643C 36.3414,28.5203 34.9667,28.2443 33.292,28.2403C 31.608,28.2349 30.2267,28.5016 29.092,28.9376L 27.436,26.6003C 27.4013,26.5522 27.2987,26.5683 27.2067,26.6336C 27.1133,26.7003 27.064,26.7923 27.0987,26.8389L 28.7013,29.103C 24.028,31.1669 23.8907,36.2362 23.8907,36.2362L 42.6933,36.2362C 42.6933,36.2362 42.5027,31.2123 37.8627,29.1309 Z " Height="9.664" Canvas.Left="5.122" Width="18.802"/>
+                    <Path Stretch="Fill" Fill="#FF8DC63F" Data="F1 M 24.9629,37.3516L 23.8123,37.3516L 23.8123,45.1569L 23.8296,45.1569L 23.8296,53.3422C 23.8296,53.9676 24.3376,54.4756 24.9629,54.4756L 27.3843,54.4756L 27.3843,59.5129C 27.3843,60.6263 28.2869,61.5289 29.4003,61.5289C 30.5149,61.5289 31.4176,60.6263 31.4176,59.5129L 31.4176,54.4756L 35.167,54.4756L 35.167,59.5129C 35.167,60.6263 36.0696,61.5289 37.1829,61.5289C 38.2976,61.5289 39.2003,60.6263 39.2003,59.5129L 39.2003,54.4756L 41.6216,54.4756C 42.2469,54.4756 42.7549,53.9676 42.7549,53.3422L 42.7549,45.1569L 42.7723,45.1569L 42.7723,37.3516L 41.6216,37.3516L 24.9629,37.3516 Z " Height="24.177" Canvas.Left="5.043" Canvas.Top="10.78" Width="18.96"/>
+                    <Path Stretch="Fill" Fill="#FF8DC63F" Data="F1 M 45.7988,36.7071C 44.6855,36.7071 43.7828,37.6097 43.7828,38.7231L 43.7828,47.7844C 43.7828,48.8991 44.6855,49.8004 45.7988,49.8004C 46.9135,49.8004 47.8161,48.8991 47.8161,47.7844L 47.8161,38.7231C 47.8161,37.6097 46.9135,36.7071 45.7988,36.7071 Z " Height="13.093" Canvas.Left="25.014" Canvas.Top="10.135" Width="4.033"/>
+                    <Path Stretch="Fill" Fill="#FF8DC63F" Data="F1 M 20.7845,36.7071C 19.6712,36.7071 18.7686,37.6097 18.7686,38.7231L 18.7686,47.7844C 18.7686,48.8991 19.6712,49.8004 20.7845,49.8004C 21.8979,49.8004 22.8019,48.8991 22.8019,47.7844L 22.8019,38.7231C 22.8019,37.6097 21.8979,36.7071 20.7845,36.7071 Z " Height="13.093" Canvas.Top="10.135" Width="4.033"/>
+                </Canvas>
+                <Canvas x:Name="WatchIcon" Height="93.401" Canvas.Left="5.337" Canvas.Top="0.033" Width="55.91" Visibility="Hidden">
+                    <Rectangle Stretch="Fill" Fill="#FFE84C3C" Height="93.401" Canvas.Left="13.012" Width="29.888"/>
+                    <Path Stretch="Fill" Fill="#FFD1D3D4" Data="F1 M 56.3587,72.3333L 10.2253,72.3333C 7.52535,72.3333 5.33732,70.144 5.33732,67.444L 5.33732,25.82C 5.33732,23.12 7.52535,20.932 10.2253,20.932L 56.3587,20.932C 59.0573,20.932 61.2467,23.12 61.2467,25.82L 61.2467,67.444C 61.2467,70.144 59.0573,72.3333 56.3587,72.3333 Z " Height="51.401" Canvas.Top="21" Width="55.91"/>
+                    <Rectangle Stretch="Fill" Fill="#FF403F41" Height="36.737" Canvas.Left="9.586" Canvas.Top="28.332" Width="36.737"/>
+                </Canvas>
+            </Canvas>
+            <TextBlock x:Name="DeviceInfoText" Height="26.857" Canvas.Left="44.194" TextWrapping="Wrap" Text="No Device Connected" Canvas.Top="10.842" Width="267.291" FontFamily="{DynamicResource ResourceKey=RobotoBold}" FontSize="20" Foreground="{DynamicResource AstralBlackBrush}"/>
+        </Canvas>
         <Canvas x:Name="MainButtonsPanel" Height="38" Canvas.Left="13.347" Canvas.Top="95.667" Width="376.653"/>
-        <TextBlock Height="44.331" Canvas.Left="54.991" TextWrapping="Wrap" Canvas.Top="141.328" Width="235.833" FontFamily="{DynamicResource RobotoBold}" FontSize="36">
+        <TextBlock Height="44.331" Canvas.Left="60.876" TextWrapping="Wrap" Canvas.Top="197.524" Width="235.833" FontFamily="{DynamicResource RobotoBold}" FontSize="36">
             <TextBlock.Foreground>
                 <SolidColorBrush Color="{DynamicResource AstralBlack}"/>
             </TextBlock.Foreground><Run Text="RULES"/></TextBlock>
-        <Button x:Name="AddRuleButton" Content="Button" Height="18" Width="15.82" Style="{DynamicResource PlusButton}" Canvas.Top="158" Canvas.Left="164"/>
-        <local:RuleSetTabs x:Name="RuleSetsTab" Height="622.833" Canvas.Left="13.347" Canvas.Top="145.667" Width="26.903"/>
+        <Button x:Name="AddRuleButton" Content="Button" Height="18" Width="15.82" Style="{DynamicResource PlusButton}" Canvas.Top="214.196" Canvas.Left="169.885"/>
+        <local:RuleSetTabs x:Name="RuleSetsTab" Height="622.833" Canvas.Left="19.232" Canvas.Top="201.863" Width="26.903"/>
         <Canvas x:Name="AddRuleSetCanvas" Height="792.5" Width="400" Background="#5F000000" d:IsHidden="True">
             <Rectangle Fill="#FFD9D9D9" Height="132" Canvas.Left="37" RadiusY="5" RadiusX="6" Canvas.Top="366" Width="329"/>
             <TextBlock Height="42" Canvas.Left="49" TextWrapping="Wrap" Text="Add new Rule Set" Canvas.Top="382" Width="302" FontFamily="{DynamicResource RobotoBold}" FontSize="25">
@@ -66,6 +99,10 @@
             <Button x:Name="NewRuleSetOkay" Content="Button" Height="25.25" Canvas.Left="327" Style="{DynamicResource OkayButtonStyle}" Canvas.Top="451.5" Width="24"/>
             <Button x:Name="NewRuleSetCancel" Content="Button" Height="25.25" Canvas.Left="298" Style="{DynamicResource CancelButtonStyle}" Canvas.Top="451.5" Width="24"/>
         </Canvas>
-        <local:RadialPlotter Height="174.118" Canvas.Left="88.676" Canvas.Top="190.659" Width="174.118"/>
+        <StackPanel x:Name="ActiveRuleContainer" Height="569.196" Canvas.Left="57.876" Canvas.Top="255.5" Width="319.46">
+            <local:RuleDisplayControl />
+            <local:RuleDisplayControl />
+        </StackPanel>
+        <local:RadialPlotter Height="174.118" Canvas.Left="60.876" Canvas.Top="540.855" Width="174.118"/>
     </Canvas>
 </Window>

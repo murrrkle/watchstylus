@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -71,6 +72,12 @@ namespace TestingConcepts
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+
+            // prevent the Visual Studio designer from drawing null things
+            // stop rendering on the designer view
+            #if DEBUG
+            if (DesignerProperties.GetIsInDesignMode(new DependencyObject())) return;
+            #endif
 
             Window.GetWindow(this).MouseMove += OnWindowMouseMove;
             Window.GetWindow(this).MouseLeftButtonUp += OnBoundClickReleased;
