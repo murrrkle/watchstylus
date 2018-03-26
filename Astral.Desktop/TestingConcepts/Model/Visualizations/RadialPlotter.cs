@@ -13,24 +13,27 @@ namespace TestingConcepts
 {
     public class RadialPlotter : PlotterBase
     {
+        #region Class Members
         private Pen pen = new Pen(AstralColors.Black, 2);
+
         private Pen anglePen = new Pen(AstralColors.Red, 4);
 
         private Point center;
-        private double mouseAngle = 0;
-        private double lastAngle = 0;
+        
+        // sensor value
         private double sensorAngle = 0;
 
-        private double selectionStartAngle;
-        private double selectionEndAngle;
+        // interaction members
+        private Point currMousePosition;
 
-        private bool increasing = false;
-        private bool crossOver = false;
-        private bool selectionCrossed = false;
+        private Point prevMousePosition;
 
+        private double startAngle = 0.0;
+
+        private double endAngle = 0.0;
+        #endregion
 
         #region Properties
-
         public double Radius
         {
             get
@@ -46,21 +49,9 @@ namespace TestingConcepts
                 return this.center;
             }
         }
-
-
-        public bool SelectionCrosses
-        {
-            get
-            {
-                return this.selectionCrossed;
-            }
-        }
-
-
         #endregion
 
         #region Constructors
-
         public RadialPlotter()
         {
             this.MouseMove += OnMouseMove;
@@ -76,31 +67,34 @@ namespace TestingConcepts
             base.OnLoaded(this, e);
             this.center = new Point(this.Width / 2, this.Height / 2);
         }
-
         #endregion
 
         #region Mouse Events
-
         protected override void OnMouseLeftDown(object sender, MouseButtonEventArgs e)
         {
             this.isMouseDown = true;
+
+            // get the mouse position (shifted to center)
             this.mousePosition = e.GetPosition(this);
-            this.selectionStartAngle = MousePointToAngle(this.mousePosition);
+
+            this.currMousePosition = AdjustMousePosition(this.mousePosition);
+            this.prevMousePosition = this.currMousePosition;
+
+            // set the selected range (in degrees), both are the same
+            double angle = Utils.RadiansToDegrees(MousePointToAngle(this.mousePosition));
+            this.startAngle = angle;
+            this.endAngle = angle;
         }
 
         protected override void OnMouseLeftUp(object sender, MouseButtonEventArgs e)
         {
             this.isMouseDown = false;
             this.mousePosition = e.GetPosition(this);
-            this.crossOver = false;
-            this.selectionEndAngle = this.mouseAngle;
-            
-            double start = Utils.RadiansToDegrees(this.selectionStartAngle);
-            double end = Utils.RadiansToDegrees(this.selectionEndAngle);
-            this.selection = new Rect(new Point(start, start), new Point(end, end));
+
+            UpdateSelection();
 
             // this will only be here for now while we debug
-          //  DrawPoints();
+            //  DrawPoints();
 
             OnSelectionChanged(new SelectionEventArgs(this.selection));
         }
@@ -109,34 +103,73 @@ namespace TestingConcepts
         protected override void OnMouseMove(object sender, MouseEventArgs e)
         {
             this.mousePosition = e.GetPosition(this);
+            this.currMousePosition = AdjustMousePosition(this.mousePosition);
+
             if (this.isMouseDown)
             {
-                if (lastAngle > mouseAngle)
+                // get the delta angle (to previous position)
+                double deltaAngle = Vector.AngleBetween((Vector)this.currMousePosition, (Vector)this.prevMousePosition);
+
+                this.endAngle += deltaAngle;
+                this.prevMousePosition = this.currMousePosition;
+
+                // check the range (could technically also be done while drawing)
+                if (this.endAngle > this.startAngle)
                 {
-                    this.increasing = false;
+                    while (this.endAngle - this.startAngle >= 360.0)
+                    {
+                        this.endAngle -= 360.0;
+                    }
+
+                    // rounding errors
+                    if (this.endAngle < this.startAngle)
+                    {
+                        this.endAngle = this.startAngle;
+                    }
                 }
                 else
                 {
-                    this.increasing = true;
+                    while (this.startAngle - this.endAngle >= 360.0)
+                    {
+                        this.endAngle += 360.0;
+                    }
+
+                    // rounding errors
+                    if (this.endAngle > this.startAngle)
+                    {
+                        this.endAngle = this.startAngle;
+                    }
                 }
 
-                this.lastAngle = this.mouseAngle;
-                this.selectionEndAngle = this.mouseAngle;
-
-                double start = Utils.RadiansToDegrees(this.selectionStartAngle);
-                double end = Utils.RadiansToDegrees(this.selectionEndAngle);
-                this.selection = new Rect(new Point(start, start), new Point(end, end));
+                UpdateSelection();
             }
-            
+
             // this will only be here for now while we debug
-          //  DrawPoints();
+            //  DrawPoints();
         }
 
-        #region Arc Stuff
-
-        protected void GetMouseAngle()
+        #region Selection
+        private void UpdateSelection()
         {
-            this.mouseAngle = MousePointToAngle(this.mousePosition);
+            double start = Math.Min(this.startAngle, this.endAngle);
+            double end = Math.Max(this.startAngle, this.endAngle);
+
+            start %= 360.0;
+            end %= 360.0;
+
+            while (start > end)
+            {
+                start -= 360.0;
+            }
+
+            this.selection = new Rect(new Point(start, start), new Point(end, end));
+        }
+        #endregion
+
+        #region Arc Stuff
+        protected Point AdjustMousePosition(Point mousePosition)
+        {
+            return (mousePosition - ((Vector)this.center));
         }
 
         protected double MousePointToAngle(Point p)
@@ -160,7 +193,6 @@ namespace TestingConcepts
         private GeometryDrawing DrawArc(double startAngle, double endAngle)
         {
             StreamGeometry geometry = new StreamGeometry();
-            
             using (StreamGeometryContext context = geometry.Open())
             {
                 context.BeginFigure(Center, true, true);
@@ -197,6 +229,7 @@ namespace TestingConcepts
             GeometryDrawing drawing = new GeometryDrawing();
             drawing.Geometry = geometry;
             drawing.Brush = AstralColors.Yellow;
+
             return drawing;
         }
 
@@ -204,8 +237,10 @@ namespace TestingConcepts
 
         public override void DrawPoints()
         {
-            GetMouseAngle();
-            Point endPoint = PointFromAngle(this.mouseAngle);
+            // GetMouseAngle();
+
+            double mouseAngle = MousePointToAngle(this.mousePosition);
+            Point endPoint = PointFromAngle(mouseAngle);
 
             using (var context = this.visual.RenderOpen())
             {
@@ -215,32 +250,9 @@ namespace TestingConcepts
                 // draw the ellipse
                 context.DrawEllipse(AstralColors.LightGray, null, this.Center, Radius, Radius);
 
-                // questionably draw the selection
-                if (this.selection != null)
-                {
-                    // OMG HAXX !!11!1!
-                    if (increasing)
-                    {
-                        if (Math.Abs(lastAngle - mouseAngle) > 5)
-                        {
-                            crossOver = true;
-                        }
-
-                    }
-                    if (crossOver)
-                    {
-                        double lowAngle = Math.Min(this.selectionStartAngle, this.selectionEndAngle);
-                        double highAngle = Math.Max(this.selectionStartAngle, this.selectionEndAngle);
-                        context.DrawDrawing(DrawArc(0, lowAngle));
-                        context.DrawDrawing(DrawArc(highAngle, (Math.PI * 2) - 0.0000001));
-                    }
-                    else
-                    {
-                        context.DrawDrawing(DrawArc(this.selectionStartAngle, this.selectionEndAngle));
-                    }
-                }
-
-
+                // draw the selection
+                context.DrawDrawing(DrawArc(Utils.DegreesToRadians(this.startAngle), 
+                    Utils.DegreesToRadians(this.endAngle)));
 
                 // draw dotted line representing current mouse intersection
                 context.DrawLine(this.pen, center, endPoint);
