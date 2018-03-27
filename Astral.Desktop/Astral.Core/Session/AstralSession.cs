@@ -120,6 +120,18 @@ namespace Astral
                 return inputRegion;
             }
         }
+
+        public double FramesPerSecond
+        {
+            get
+            {
+                if (m_captureTask != null)
+                {
+                    return m_captureTask.FramesPerSecond;
+                }
+                return -1.0;
+            }
+        }
         #endregion
 
         #region Region Handling

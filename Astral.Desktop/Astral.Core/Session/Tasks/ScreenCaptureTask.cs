@@ -26,6 +26,8 @@ namespace Astral.Session.Tasks
         private AstralSession m_session;
 
         private CaptureTaskState m_state;
+
+        private double m_framesPerSecond = -1.0;
         #endregion
 
         #region Thread Class Members
@@ -133,6 +135,11 @@ namespace Astral.Session.Tasks
         {
             get { return m_selectionWindow.CaptureRegion; }
         }
+
+        internal double FramesPerSecond
+        {
+            get { return m_framesPerSecond; }
+        }
         #endregion
 
         #region Initialization
@@ -172,6 +179,10 @@ namespace Astral.Session.Tasks
                 width = 1334.0;
                 height = 750.0;
             }
+
+            // modify size
+            width *= Constants.InitialRegionSizeFactor;
+            height *= Constants.InitialRegionSizeFactor;
 
             return new Rect(0.0, 0.0, width, height);
         }
@@ -432,7 +443,6 @@ namespace Astral.Session.Tasks
                 Thread.Sleep(1);
                 
                 Rect captureRegion = m_selectionWindow.CaptureRegion;
-
                 bool shouldReset = ShouldResetBuffers(captureRegion);
 
                 if (shouldReset)
@@ -443,11 +453,7 @@ namespace Astral.Session.Tasks
                 CaptureAndSendScreenshot(captureRegion);
 
                 numFrames++;
-                if (numFrames % 10 == 0)
-                {
-                    double fps = numFrames / (s.ElapsedMilliseconds / 1000.0);
-                    Debug.WriteLine("FPS: " + fps.ToString("F4"));
-                }
+                m_framesPerSecond = numFrames / (s.ElapsedMilliseconds / 1000.0);
             }
         }
         #endregion

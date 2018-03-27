@@ -24,7 +24,13 @@ namespace Astral.UI
         NW = 1,
         NE = 2,
         SE = 3,
-        SW = 4
+        SW = 4,
+        
+        // this is needed for edges
+        N = 5,
+        E = 6,
+        S = 7,
+        W = 8
     }
     #endregion
 

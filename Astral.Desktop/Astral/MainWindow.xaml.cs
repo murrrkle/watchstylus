@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 using Astral.Device;
 using Astral.UI;
@@ -37,6 +38,10 @@ namespace Astral
         #region Touch Class Members
         private Dictionary<int, Ellipse> m_touchPts;
         #endregion
+
+        #region Timer Class Members
+        private DispatcherTimer m_fpsTimer;
+        #endregion
         #endregion
 
         #region Constructors
@@ -45,6 +50,10 @@ namespace Astral
             InitializeComponent();
 
             m_touchPts = new Dictionary<int, Ellipse>();
+
+            m_fpsTimer = new DispatcherTimer();
+            m_fpsTimer.Interval = TimeSpan.FromMilliseconds(50.0);
+            m_fpsTimer.Tick += FramesPerSecondTimerTick;
         }
         #endregion
 
@@ -305,6 +314,8 @@ namespace Astral
                 // add selection window event handlers (for demonstration)
                 m_session.CaptureSelectionWindowClosed += SessionCaptureSelectionWindowClosed;
                 m_session.InputSelectionWindowClosed += SessionInputSelectionWindowClosed;
+
+                m_fpsTimer.Start();
             }
         }
 
@@ -313,6 +324,8 @@ namespace Astral
             if (session != null
                 && session.Equals(m_session))
             {
+                m_fpsTimer.Stop();
+
                 // remove handlers
                 // remove selection window event handlers (for demonstration)
                 m_session.CaptureSelectionWindowClosed -= SessionCaptureSelectionWindowClosed;
@@ -449,6 +462,28 @@ namespace Astral
         private void SessionCaptureSelectionWindowClosed(object sender, SelectionWindowEventArgs e)
         {
             Debug.WriteLine("Capture Window closed: REASON = " + e.Reason);
+        }
+        #endregion
+
+        #region FPS Timer Event Handler
+        private void FramesPerSecondTimerTick(object sender, EventArgs e)
+        {
+            if (m_session != null)
+            {
+                try
+                {
+                    double fps = m_session.FramesPerSecond;
+                    if (fps >= 0.0)
+                    {
+                        FPSLabel.Content = fps.ToString("F2") + " fps";
+                    }
+                    else
+                    {
+                        FPSLabel.Content = "N/A";
+                    }
+                }
+                catch { }
+            }
         }
         #endregion
         #endregion

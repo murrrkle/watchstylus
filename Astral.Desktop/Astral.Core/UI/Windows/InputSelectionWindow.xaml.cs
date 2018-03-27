@@ -38,6 +38,8 @@ namespace Astral.UI
 
         private Rect[] m_hotCorners;
 
+        private Rect[] m_hotEdges;
+
         private Display m_display;
 
         private MouseOperation m_currMouseOperation;
@@ -70,7 +72,9 @@ namespace Astral.UI
             InitializeComponent();
 
             ResolutionLabel.Content = m_display.Width + " x " + m_display.Height;
+
             m_hotCorners = new Rect[4];
+            m_hotEdges = new Rect[4];
         }
         #endregion
 
@@ -204,7 +208,7 @@ namespace Astral.UI
         #region Updates
         private void Update()
         {
-            UpdateHotCorners();
+            UpdateHotCornersAndEdges();
             UpdateOverlay();
 
             Dispatcher.Invoke(
@@ -216,16 +220,37 @@ namespace Astral.UI
                     }));
         }
 
-        private void UpdateHotCorners()
+        private void UpdateHotCornersAndEdges()
         {
+            // top-left
             m_hotCorners[0] = new Rect(m_inputRegion.TopLeft.X - HotCornerSize / 2.0,
                 m_inputRegion.TopLeft.Y - HotCornerSize / 2.0, HotCornerSize, HotCornerSize);
+            // top-right
             m_hotCorners[1] = new Rect(m_inputRegion.TopRight.X - HotCornerSize / 2.0,
                 m_inputRegion.TopRight.Y - HotCornerSize / 2.0, HotCornerSize, HotCornerSize);
+            // bottom-right
             m_hotCorners[2] = new Rect(m_inputRegion.BottomRight.X - HotCornerSize / 2.0,
                 m_inputRegion.BottomRight.Y - HotCornerSize / 2.0, HotCornerSize, HotCornerSize);
+            // bottom-left
             m_hotCorners[3] = new Rect(m_inputRegion.BottomLeft.X - HotCornerSize / 2.0,
                 m_inputRegion.BottomLeft.Y - HotCornerSize / 2.0, HotCornerSize, HotCornerSize);
+
+            // top
+            m_hotEdges[0] = new Rect(m_inputRegion.TopLeft.X + HotCornerSize / 2.0,
+                m_inputRegion.TopLeft.Y - HotCornerSize / 2.0, 
+                m_inputRegion.Width - HotCornerSize, HotCornerSize);
+            // right
+            m_hotEdges[1] = new Rect(m_inputRegion.TopRight.X - HotCornerSize / 2.0,
+                m_inputRegion.TopRight.Y + HotCornerSize / 2.0,
+                HotCornerSize, m_inputRegion.Height - HotCornerSize);
+            // bottom
+            m_hotEdges[2] = new Rect(m_inputRegion.BottomLeft.X + HotCornerSize / 2.0,
+                m_inputRegion.BottomLeft.Y - HotCornerSize / 2.0,
+                m_inputRegion.Width - HotCornerSize, HotCornerSize);
+            // left
+            m_hotEdges[3] = new Rect(m_inputRegion.TopLeft.X - HotCornerSize / 2.0,
+                m_inputRegion.TopLeft.Y + HotCornerSize / 2.0,
+                HotCornerSize, m_inputRegion.Height - HotCornerSize);
         }
 
         private void UpdateOverlay()
@@ -293,6 +318,18 @@ namespace Astral.UI
                     newWidth += offset.X;
                     newHeight += offset.Y;
                     break;
+                case ScaleDirection.N:
+                    newHeight -= offset.Y;
+                    break;
+                case ScaleDirection.W:
+                    newWidth -= offset.X;
+                    break;
+                case ScaleDirection.S:
+                    newHeight += offset.Y;
+                    break;
+                case ScaleDirection.E:
+                    newWidth += offset.X;
+                    break;
             }
 
             newWidth = Math.Max(MinimumSize, newWidth);
@@ -325,6 +362,20 @@ namespace Astral.UI
                 case ScaleDirection.SW:
                     m_inputRegion.Location -= (new Vector(widthChange, 0.0));
                     break;
+                case ScaleDirection.N:
+                    m_inputRegion.Location -= (new Vector(0.0, heightChange));
+                    break;
+                case ScaleDirection.W:
+                    m_inputRegion.Location -= (new Vector(widthChange, 0.0));
+                    break;
+                case ScaleDirection.S:
+                    // this will not do anything
+                    m_inputRegion.Location -= (new Vector(0.0, 0.0));
+                    break;
+                case ScaleDirection.E:
+                    // this will not do anything
+                    m_inputRegion.Location -= (new Vector(0.0, 0.0));
+                    break;
             }
         }
         #endregion
@@ -353,9 +404,29 @@ namespace Astral.UI
             }
             else
             {
-                operation = m_inputRegion.Contains(position)
-                    ? MouseOperation.Move : MouseOperation.None;
-                direction = ScaleDirection.None;
+                // check whether we hit an edge
+                int hotEdgeIndex = -1;
+                for (int i = 0; i < m_hotEdges.Length; i++)
+                {
+                    if (m_hotEdges[i].Contains(position))
+                    {
+                        hotEdgeIndex = i;
+                        break;
+                    }
+                }
+
+                if (hotEdgeIndex != -1)
+                {
+                    operation = MouseOperation.Scale;
+                    direction = (ScaleDirection)Enum.ToObject(
+                        typeof(ScaleDirection), hotEdgeIndex + (4 + 1));
+                }
+                else
+                {
+                    operation = m_inputRegion.Contains(position)
+                        ? MouseOperation.Move : MouseOperation.None;
+                    direction = ScaleDirection.None;
+                }
             }
 
             return new Tuple<MouseOperation, ScaleDirection>(
@@ -476,6 +547,14 @@ namespace Astral.UI
                             case ScaleDirection.NE:
                             case ScaleDirection.SW:
                                 Cursor = Cursors.SizeNESW;
+                                break;
+                            case ScaleDirection.N:
+                            case ScaleDirection.S:
+                                Cursor = Cursors.SizeNS;
+                                break;
+                            case ScaleDirection.W:
+                            case ScaleDirection.E:
+                                Cursor = Cursors.SizeWE;
                                 break;
                         }
                         break;

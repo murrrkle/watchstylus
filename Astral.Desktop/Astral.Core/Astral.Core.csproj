@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AstralService.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="Events\CaptureEvents.cs" />
     <Compile Include="Events\SessionEvents.cs" />
     <Compile Include="Events\DeviceEvents.cs" />
@@ -59,9 +60,6 @@
     <Compile Include="Session\Tasks\ScreenCaptureTask.cs" />
     <Compile Include="UI\Enumerations.cs" />
     <Compile Include="UI\Windows\ISelectionWindow.cs" />
-    <Compile Include="UI\Windows\SelectionWindow.xaml.cs">
-      <DependentUpon>SelectionWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UI\Windows\InputSelectionWindow.xaml.cs">
       <DependentUpon>InputSelectionWindow.xaml</DependentUpon>
     </Compile>
@@ -69,9 +67,7 @@
       <DependentUpon>CaptureSelectionWindow.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Session\Data\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\..\Astral.Shared\Astral.Shared\Astral.Shared.csproj">
       <Project>{c06ea7d7-778b-4e8b-8139-d6cc2ff9ae6e}</Project>
@@ -79,10 +75,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="UI\Windows\SelectionWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="UI\Windows\InputSelectionWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
