@@ -61,9 +61,9 @@ namespace Astral.Droid
                 DeviceOrientation.Portrait, TouchCapabilities.Multi);
             m_device.AddModule(display);
 
-            // microhpone
-            //AndroidMicrophone microphone = new AndroidMicrophone();
-            //m_device.AddModule(microphone);
+            //microhpone
+            AndroidMicrophone2 microphone = new AndroidMicrophone2();
+            m_device.AddModule(microphone);
 
             // add sensors
             foreach (IDeviceModule module in SensorModules)
@@ -84,11 +84,11 @@ namespace Astral.Droid
             //string ipAddress = "192.168.0.10";
 
             // David's IP
-            string ipAddress = "192.168.0.15";
+          //  string ipAddress = "192.168.0.15";
 
             //string ipAddress = "192.168.0.23";
             // iLab one
-            //string ipAddress = "192.168.1.100";
+            string ipAddress = "192.168.1.102";
             //string ipAddress = "192.168.137.1";
             //string ipAddress = "10.11.106.246";
             // emulator link to host = 10.0.2.2; see <https://developer.android.com/studio/run/emulator-networking.html>
@@ -99,7 +99,7 @@ namespace Astral.Droid
             m_device.MessageReceived += AstralMessageReceived;
 
             // TEMP
-            //(m_device[ModuleType.Microphone] as AndroidMicrophone).Start();
+            (m_device[ModuleType.Microphone] as AndroidMicrophone2).Start();
         }
         #endregion
 
