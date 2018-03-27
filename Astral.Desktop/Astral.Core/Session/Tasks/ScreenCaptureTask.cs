@@ -136,6 +136,11 @@ namespace Astral.Session.Tasks
             get { return m_selectionWindow.CaptureRegion; }
         }
 
+        internal Rect InitialCaptureRegion
+        {
+            get { return m_selectionWindow.InitialCaptureRegion; }
+        }
+
         internal double FramesPerSecond
         {
             get { return m_framesPerSecond; }

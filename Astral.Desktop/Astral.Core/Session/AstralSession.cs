@@ -65,7 +65,7 @@ namespace Astral
                     delegate ()
                     {
                         m_inputSelectionWindow = new InputSelectionWindow(
-                            m_captureTask.CaptureRegion, m_device[ModuleType.Display] as Display);
+                            m_captureTask.InitialCaptureRegion, m_device[ModuleType.Display] as Display);
                         m_inputSelectionWindow.SelectionWindowClosed += OnInputSelectionWindowClosed;
                     }));
         }

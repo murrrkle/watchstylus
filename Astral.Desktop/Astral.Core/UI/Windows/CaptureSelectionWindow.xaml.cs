@@ -112,6 +112,21 @@ namespace Astral.UI
                 }
             }
         }
+
+        internal Rect InitialCaptureRegion
+        {
+            get
+            {
+                lock (m_syncObj)
+                {
+                    Rect correctRegion = new Rect(
+                        m_captureRegion.X, m_captureRegion.Y,
+                        m_captureRegion.Width, m_captureRegion.Height);
+
+                    return correctRegion;
+                }
+            }
+        }
         #endregion
 
         #region Manual Adjustments
