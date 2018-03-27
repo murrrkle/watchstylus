@@ -11,9 +11,7 @@ using Astral.Device;
 using Orientation = Astral.Device.Orientation;
 
 namespace TestingConcepts
-{
-
-    
+{    
     public class RuleManager
     {
         private static RuleManager instance = null;
@@ -59,15 +57,6 @@ namespace TestingConcepts
             {
                 return this.deviceModel.Device;
             }
-            //set
-            //{
-            //    if(this.deviceModel != null)
-            //    {
-            //        DisableHandlers(this.deviceModel);
-            //    }
-            //    this.deviceModel = new DeviceModel(value);
-            //    EnableHandlers(this.deviceModel);
-            //}
         }
 
         public DeviceModel DeviceModel
@@ -312,8 +301,11 @@ namespace TestingConcepts
         {
             foreach (Rule rule in this.activeRules.Where(r => r.EventType == MobileEventType.TouchUp))
             {
-                rule.ExecuteRule(new Point(e.TouchPoint.X, e.TouchPoint.Y));
-                this.inputHandler.ExecuteInputAction(rule.InputAction);
+                bool inRange = rule.ExecuteRule(new Point(e.TouchPoint.X, e.TouchPoint.Y));
+                if (inRange)
+                {
+                    this.inputHandler.ExecuteInputAction(rule.InputAction);
+                }
             }
         }
 
@@ -333,8 +325,11 @@ namespace TestingConcepts
         {
             foreach (Rule rule in this.activeRules.Where(r => r.EventType == MobileEventType.TouchDown))
             {
-                rule.ExecuteRule(new Point(e.TouchPoint.X, e.TouchPoint.Y));
-                this.inputHandler.ExecuteInputAction(rule.InputAction);
+                bool inRange = rule.ExecuteRule(new Point(e.TouchPoint.X, e.TouchPoint.Y));
+                if (inRange)
+                {
+                    this.inputHandler.ExecuteInputAction(rule.InputAction);
+                }
             }
         }
 

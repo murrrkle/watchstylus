@@ -82,6 +82,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DeviceModel.cs" />
+    <Compile Include="KeyboardButtonBar.xaml.cs">
+      <DependentUpon>KeyboardButtonBar.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Model\ContinuousRule.cs" />
     <Compile Include="Model\DiscreteRule.cs" />
     <Compile Include="Model\PCInputAction.cs" />
@@ -138,6 +141,10 @@
     <Compile Include="Model\Visualizations\LinearPlotter.cs" />
     <Compile Include="Model\Rule.cs" />
     <Compile Include="Utilities\Utils.cs" />
+    <Page Include="KeyboardButtonBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MouseButtonBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

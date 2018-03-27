@@ -142,6 +142,102 @@ namespace TestingConcepts
             this.MouseClickCheckBox.Click += OnMouseClickCheckBox;
 
             this.AddButton.Click += OnAddRuleButtonClicked;
+
+            this.MouseOrKeyboardControl.Clicked += OnMouseOrKeyboardSelected;
+
+            this.AllMouseCommands.Visibility = Visibility.Hidden;
+            this.AllKeyboardCanvas.Visibility = Visibility.Hidden;
+
+            this.KeyboardBar.Selection += OnKeyBoardBarSelection;
+
+            this.EnterKeyTextBox.MouseLeftButtonUp += OnEnterKeyTextBoxClicked;
+            this.EnterKeyTextBox.KeyUp += OnEnterKeyTextBoxKeyUp;
+
+            InitializeTouchCanvas();
+        }
+
+        private void InitializeTouchCanvas()
+        {
+            this.ToggleTouchDown.Click += (s, e) =>
+            {
+                this.ToggleTouchMove.IsChecked = false;
+                this.ToggleTouchUp.IsChecked = false;
+                this.eventType = MobileEventType.TouchDown;
+                UpdateRule();
+            };
+
+            this.ToggleTouchMove.Click += (s, e) =>
+            {
+                this.ToggleTouchDown.IsChecked = false;
+                this.ToggleTouchUp.IsChecked = false;
+                this.eventType = MobileEventType.TouchMove;
+                UpdateRule();
+            };
+
+            this.ToggleTouchUp.Click += (s, e) =>
+            {
+                this.ToggleTouchMove.IsChecked = false;
+                this.ToggleTouchDown.IsChecked = false;
+                this.eventType = MobileEventType.TouchUp;
+                UpdateRule();
+            };
+        }
+
+        private void OnEnterKeyTextBoxKeyUp(object sender, KeyEventArgs e)
+        {
+            this.EnterKeyTextBox.Text = e.Key.ToString();
+            this.rule.InputAction.Argument = e.Key;
+            UpdateRule();
+        }
+
+        private void OnEnterKeyTextBoxClicked(object sender, MouseButtonEventArgs e)
+        {
+            this.EnterKeyTextBox.Focus();
+            this.EnterKeyTextBox.SelectAll();
+        }
+
+        private void OnKeyBoardBarSelection(object sender, KeyboardButtonBarEventArgs e)
+        {
+            this.Rule = new DiscreteRule(this.eventType);
+            switch (e.State)
+            {
+                case KeyboardButtonBarState.Down:
+                    this.rule.InputAction.InputEvent = PCInputEventType.KeyDown;
+                    break;
+                case KeyboardButtonBarState.Up:
+                    this.rule.InputAction.InputEvent = PCInputEventType.KeyUp;
+                    break;
+                case KeyboardButtonBarState.Press:
+                    this.rule.InputAction.InputEvent = PCInputEventType.KeyPress;
+                    break;
+                default:
+                    break;
+            }
+            UpdateRule();
+        }
+
+        private void KeyboardSelected()
+        {
+            this.AllKeyboardCanvas.Visibility = Visibility.Visible;
+            this.AllMouseCommands.Visibility = Visibility.Hidden;
+        }
+
+        private void MouseSelected()
+        {
+            this.AllMouseCommands.Visibility = Visibility.Visible;
+            this.AllKeyboardCanvas.Visibility = Visibility.Hidden;
+        }
+
+        private void OnMouseOrKeyboardSelected(object sender, MouseOrKeyboardEventArgs e)
+        {
+            if(e.MouseOrKey == MouseOrKeyboard.Keyboard)
+            {
+                KeyboardSelected();
+            }
+            else
+            {
+                MouseSelected();
+            }
         }
 
         private void OnAddRuleButtonClicked(object sender, RoutedEventArgs e)

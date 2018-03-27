@@ -103,11 +103,25 @@ namespace TestingConcepts
                     }
                     break;
                 case PCInputEventType.KeyDown:
-                    Key argumentKey = (Key)Enum.Parse(typeof(Key), action.Argument.ToString());
+                    if (action.Argument != null)
+                    {
+                        Key argumentKey = (Key)Enum.Parse(typeof(Key), action.Argument.ToString());
+                        this.keyboardSimulator.KeyDown(argumentKey);
+                    }
                     break;
                 case PCInputEventType.KeyUp:
+                    if (action.Argument != null)
+                    {
+                        Key argumentKey = (Key)Enum.Parse(typeof(Key), action.Argument.ToString());
+                        this.keyboardSimulator.KeyUp(argumentKey);
+                    }
                     break;
                 case PCInputEventType.KeyPress:
+                    if (action.Argument != null)
+                    {
+                        Key argumentKey = (Key)Enum.Parse(typeof(Key), action.Argument.ToString());
+                        this.keyboardSimulator.PressKey(argumentKey);
+                    }
                     break;
                 default:
                     break;

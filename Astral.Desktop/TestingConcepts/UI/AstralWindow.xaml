@@ -99,10 +99,6 @@
             <Button x:Name="NewRuleSetOkay" Content="Button" Height="25.25" Canvas.Left="327" Style="{DynamicResource OkayButtonStyle}" Canvas.Top="451.5" Width="24"/>
             <Button x:Name="NewRuleSetCancel" Content="Button" Height="25.25" Canvas.Left="298" Style="{DynamicResource CancelButtonStyle}" Canvas.Top="451.5" Width="24"/>
         </Canvas>
-        <StackPanel x:Name="ActiveRuleContainer" Height="569.196" Canvas.Left="57.876" Canvas.Top="255.5" Width="319.46">
-            <local:RuleDisplayControl />
-            <local:RuleDisplayControl />
-        </StackPanel>
-        <local:RadialPlotter Height="174.118" Canvas.Left="60.876" Canvas.Top="540.855" Width="174.118"/>
+        <StackPanel x:Name="ActiveRuleContainer" Height="569.196" Canvas.Left="57.876" Canvas.Top="255.5" Width="319.46"/>
     </Canvas>
 </Window>
