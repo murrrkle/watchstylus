@@ -6,26 +6,26 @@ using Astral.Net;
 
 namespace Astral.Messaging
 {
-    #region Sealed Class 'ModuleStatusMessage'
-    public sealed class ModuleStatusMessage : Message
+    #region Sealed Class 'DeviceOrientationMessage'
+    public sealed class DeviceOrientationMessage : Message
     {
         #region Constant Class Members
-        private const string MessageName = "AstralSet";
+        private const string MessageName = "AstralOri";
 
-        private const string StatusDataField = "state";
+        private const string OrientationField = "ori";
         #endregion
 
         #region Constructors
-        private ModuleStatusMessage()
+        private DeviceOrientationMessage()
             : base(MessageName)
         { }
         #endregion
 
         #region Static Creation
-        public static Message CreateInstance(bool enableModule)
+        public static Message CreateInstance(DeviceOrientation orientation)
         {
-            ModuleStatusMessage msg = new ModuleStatusMessage();
-            msg.AddField(StatusDataField, enableModule);
+            DeviceOrientationMessage msg = new DeviceOrientationMessage();
+            msg.AddField(OrientationField, (int)orientation);
 
             return msg;
         }
@@ -41,15 +41,16 @@ namespace Astral.Messaging
             }
 
             return (msg.Name == MessageName
-                && msg.ContainsField(StatusDataField));
+                && msg.ContainsField(OrientationField));
         }
         #endregion
 
         #region Conversion
-        public static bool ToStatus(Message msg)
+        public static DeviceOrientation ToOrientation(Message msg)
         {
-            bool enableModule = msg.GetBoolField(StatusDataField);
-            return enableModule;
+            DeviceOrientation orientation = (DeviceOrientation)Enum.ToObject(
+                typeof(DeviceOrientation), msg.GetIntField(OrientationField));
+            return orientation;
         }
         #endregion
     }

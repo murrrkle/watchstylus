@@ -39,7 +39,7 @@ namespace Astral.Device
     public class Magnetometer : IDeviceModule
     {
         #region Class Members
-
+        private MagnetometerData m_prevData;
         #endregion
 
         #region Events
@@ -91,8 +91,32 @@ namespace Astral.Device
         #region Data Handling
         public void UpdateMagnetometerData(MagnetometerData magnetometerData)
         {
-            Message magnetometerDataMessage = MagnetometerDataMessage.CreateInstance(magnetometerData);
-            SendMessage(magnetometerDataMessage);
+            // first check whether we should even send it
+            bool shouldSend = true;
+            if (m_prevData == null
+                || Accuracy <= 0.0)
+            {
+                shouldSend = true;
+            }
+            else
+            {
+                double deltaX = Math.Abs(magnetometerData.X - m_prevData.X);
+                double deltaY = Math.Abs(magnetometerData.Y - m_prevData.Y);
+                double deltaZ = Math.Abs(magnetometerData.Z - m_prevData.Z);
+
+                shouldSend = (deltaX >= Accuracy
+                    || deltaY >= Accuracy
+                    || deltaZ >= Accuracy);
+            }
+
+            if (shouldSend)
+            {
+                // store the current value
+                m_prevData = magnetometerData;
+
+                Message magnetometerDataMessage = MagnetometerDataMessage.CreateInstance(magnetometerData);
+                SendMessage(magnetometerDataMessage);
+            }
         }
         #endregion
 

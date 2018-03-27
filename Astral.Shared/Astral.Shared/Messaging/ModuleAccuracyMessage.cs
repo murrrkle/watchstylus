@@ -6,26 +6,26 @@ using Astral.Net;
 
 namespace Astral.Messaging
 {
-    #region Sealed Class 'ModuleStatusMessage'
-    public sealed class ModuleStatusMessage : Message
+    #region Sealed Class 'ModuleAccuracyMessage'
+    public sealed class ModuleAccuracyMessage : Message
     {
         #region Constant Class Members
-        private const string MessageName = "AstralSet";
+        private const string MessageName = "AstralFid";
 
-        private const string StatusDataField = "state";
+        private const string AccuracyDataField = "fid";
         #endregion
 
         #region Constructors
-        private ModuleStatusMessage()
+        private ModuleAccuracyMessage()
             : base(MessageName)
         { }
         #endregion
 
         #region Static Creation
-        public static Message CreateInstance(bool enableModule)
+        public static Message CreateInstance(double accuracy)
         {
-            ModuleStatusMessage msg = new ModuleStatusMessage();
-            msg.AddField(StatusDataField, enableModule);
+            ModuleAccuracyMessage msg = new ModuleAccuracyMessage();
+            msg.AddField(AccuracyDataField, accuracy);
 
             return msg;
         }
@@ -41,15 +41,15 @@ namespace Astral.Messaging
             }
 
             return (msg.Name == MessageName
-                && msg.ContainsField(StatusDataField));
+                && msg.ContainsField(AccuracyDataField));
         }
         #endregion
 
         #region Conversion
-        public static bool ToStatus(Message msg)
+        public static double ToAccuracy(Message msg)
         {
-            bool enableModule = msg.GetBoolField(StatusDataField);
-            return enableModule;
+            double accuracy = msg.GetDoubleField(AccuracyDataField);
+            return accuracy;
         }
         #endregion
     }

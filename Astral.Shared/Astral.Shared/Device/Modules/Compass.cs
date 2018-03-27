@@ -38,6 +38,10 @@ namespace Astral.Device
     #region Class 'Compass'
     public class Compass : IDeviceModule
     {
+        #region Class Members
+        private CompassData m_prevData;
+        #endregion
+
         #region Events
         private event AstralCompassEventHandler InternalHeadingChanged;
 
@@ -83,8 +87,27 @@ namespace Astral.Device
         #region Data Handling
         public void UpdateCompassData(CompassData compassData)
         {
-            Message compassDataMsg = CompassDataMessage.CreateInstance(compassData);
-            SendMessage(compassDataMsg);
+            // first check whether we should even send it
+            bool shouldSend = true;
+            if (m_prevData == null
+                || Accuracy <= 0.0)
+            {
+                shouldSend = true;
+            }
+            else
+            {
+                double deltaHdg = Math.Abs(compassData.Heading - m_prevData.Heading);
+                shouldSend = (deltaHdg >= Accuracy);
+            }
+
+            if (shouldSend)
+            {
+                // store the current value
+                m_prevData = compassData;
+
+                Message compassDataMsg = CompassDataMessage.CreateInstance(compassData);
+                SendMessage(compassDataMsg);
+            }
         }
         #endregion
 

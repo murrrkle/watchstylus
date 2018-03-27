@@ -311,6 +311,10 @@ namespace Astral
                 m_session = session;
                 EnableUI();
 
+                m_session.Device[ModuleType.Accelerometer].Accuracy = 0.01; // force
+                m_session.Device[ModuleType.Gyroscope].Accuracy = 0.1; // torque
+                m_session.Device[ModuleType.Compass].Accuracy = 1.0; // deg
+
                 // add selection window event handlers (for demonstration)
                 m_session.CaptureSelectionWindowClosed += SessionCaptureSelectionWindowClosed;
                 m_session.InputSelectionWindowClosed += SessionInputSelectionWindowClosed;

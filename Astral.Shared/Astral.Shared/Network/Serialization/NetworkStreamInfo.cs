@@ -71,7 +71,6 @@ namespace Astral.Net.Serialization
                 || type == TransferType.Array
                 || type == TransferType.List
                 || type == TransferType.Dictionary);
-                // || type == TransferType.Binary);
         }
         #endregion
 

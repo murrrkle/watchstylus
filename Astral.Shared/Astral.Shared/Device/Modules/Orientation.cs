@@ -38,7 +38,7 @@ namespace Astral.Device
     public class Orientation : IDeviceModule
     {
         #region Class Members
-
+        private OrientationData m_prevData;
         #endregion
 
         #region Events
@@ -90,8 +90,32 @@ namespace Astral.Device
         #region Data Handling
         public void UpdateOrientationData(OrientationData orientationData)
         {
-            Message orientationDataMessage = OrientationDataMessage.CreateInstance(orientationData);
-            SendMessage(orientationDataMessage);
+            // first check whether we should even send it
+            bool shouldSend = true;
+            if (m_prevData == null
+                || Accuracy <= 0.0)
+            {
+                shouldSend = true;
+            }
+            else
+            {
+                double deltaRoll = Math.Abs(orientationData.RollDegrees - m_prevData.RollDegrees);
+                double deltaPitch = Math.Abs(orientationData.PitchDegrees - m_prevData.PitchDegrees);
+                double deltaYaw = Math.Abs(orientationData.YawDegrees - m_prevData.YawDegrees);
+
+                shouldSend = (deltaRoll >= Accuracy
+                    || deltaPitch >= Accuracy
+                    || deltaYaw >= Accuracy);
+            }
+
+            if (shouldSend)
+            {
+                // store the current value
+                m_prevData = orientationData;
+
+                Message orientationDataMessage = OrientationDataMessage.CreateInstance(orientationData);
+                SendMessage(orientationDataMessage);
+            }
         }
         #endregion
 

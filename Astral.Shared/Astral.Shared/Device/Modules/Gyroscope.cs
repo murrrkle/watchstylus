@@ -39,7 +39,7 @@ namespace Astral.Device
     public class Gyroscope : IDeviceModule
     {
         #region Class Members
-
+        private GyroscopeData m_prevData;
         #endregion
 
         #region Events
@@ -91,8 +91,32 @@ namespace Astral.Device
         #region Data Handling
         public void UpdateGyroscopeData(GyroscopeData gyroscopeData)
         {
-            Message gyroscopeDataMsg = GyroscopeDataMessage.CreateInstance(gyroscopeData);
-            SendMessage(gyroscopeDataMsg);
+            // first check whether we should even send it
+            bool shouldSend = true;
+            if (m_prevData == null
+                || Accuracy <= 0.0)
+            {
+                shouldSend = true;
+            }
+            else
+            {
+                double deltaX = Math.Abs(gyroscopeData.X - m_prevData.X);
+                double deltaY = Math.Abs(gyroscopeData.Y - m_prevData.Y);
+                double deltaZ = Math.Abs(gyroscopeData.Z - m_prevData.Z);
+
+                shouldSend = (deltaX >= Accuracy
+                    || deltaY >= Accuracy
+                    || deltaZ >= Accuracy);
+            }
+
+            if (shouldSend)
+            {
+                // store the current value
+                m_prevData = gyroscopeData;
+
+                Message gyroscopeDataMsg = GyroscopeDataMessage.CreateInstance(gyroscopeData);
+                SendMessage(gyroscopeDataMsg);
+            }
         }
         #endregion
 

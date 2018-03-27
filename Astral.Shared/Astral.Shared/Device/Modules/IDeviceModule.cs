@@ -23,6 +23,8 @@ namespace Astral.Device
         private string m_name;
 
         private bool m_active = false;
+
+        private double m_accuracy = 0.0;
         #endregion
 
         #region Events
@@ -70,7 +72,30 @@ namespace Astral.Device
             set { m_host = value; }
         }
 
+        public double Accuracy
+        {
+            get { return m_accuracy; }
+            set
+            {
+                bool changed = (m_accuracy != value);
+                m_accuracy = value;
+
+                if (changed)
+                {
+                    SendAccuracyMessage(m_accuracy);
+                }
+            }
+        }
+
         public abstract ModuleType Type { get; }
+        #endregion
+
+        #region Accuracy
+        private void SendAccuracyMessage(double accuracy)
+        {
+            Message msg = ModuleAccuracyMessage.CreateInstance(accuracy);
+            SendMessage(msg);
+        }
         #endregion
 
         #region Activation/Deactivation
@@ -114,7 +139,7 @@ namespace Astral.Device
 
                 bool changed = (m_active != activate);
                 m_active = activate;
-                
+
                 if (changed)
                 {
                     if (m_active)
@@ -126,6 +151,11 @@ namespace Astral.Device
                         Deactivated?.Invoke(this, EventArgs.Empty);
                     }
                 }
+            }
+            else if (ModuleAccuracyMessage.IsKindOf(msg))
+            {
+                // handle it here
+                m_accuracy = ModuleAccuracyMessage.ToAccuracy(msg);
             }
             else
             {

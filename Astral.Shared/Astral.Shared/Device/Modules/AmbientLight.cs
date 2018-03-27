@@ -38,7 +38,7 @@ namespace Astral.Device
     public class AmbientLight : IDeviceModule
     {
         #region Class Members
-
+        private AmbientLightData m_prevData;
         #endregion
 
         #region Events
@@ -90,8 +90,27 @@ namespace Astral.Device
         #region Data Handling
         public void UpdateAmbientLightData(AmbientLightData ambientLightData)
         {
-            Message ambientLightDataMessage = AmbientLightDataMessage.CreateInstance(ambientLightData);
-            SendMessage(ambientLightDataMessage);
+            // first check whether we should even send it
+            bool shouldSend = true;
+            if (m_prevData == null
+                || Accuracy <= 0.0)
+            {
+                shouldSend = true;
+            }
+            else
+            {
+                double deltaLight = Math.Abs(ambientLightData.AmbientLight - m_prevData.AmbientLight);
+                shouldSend = (deltaLight >= Accuracy);
+            }
+
+            if (shouldSend)
+            {
+                // store the current value
+                m_prevData = ambientLightData;
+
+                Message ambientLightDataMessage = AmbientLightDataMessage.CreateInstance(ambientLightData);
+                SendMessage(ambientLightDataMessage);
+            }
         }
         #endregion
 
