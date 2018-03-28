@@ -38,10 +38,7 @@ namespace Astral.Device
 
         public double Amplitude
         {
-            get
-            {
-                return Math.Abs(Array.ConvertAll<short, int>(m_micData, s => (int)s).Sum() / m_micData.Length);
-            }
+            get { return Math.Abs(Array.ConvertAll(m_micData, s => (int)s).Sum() / m_micData.Length); }
         }
 
 

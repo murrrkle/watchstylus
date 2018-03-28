@@ -175,6 +175,7 @@
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="26" />
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" Grid.Row="0" Grid.Column="0">
@@ -184,6 +185,12 @@
 
                 <Border x:Name="MicrophoneBorder"  Background="LightGray" BorderBrush="DarkGray" BorderThickness="1" Margin="4,4,4,4" Grid.Row="1" Grid.Column="0">
                     <Image x:Name="MicrophoneCanvas" ClipToBounds="True" />
+                </Border>
+
+                <Border x:Name="AmplitudeBorder"  Background="LightGray" BorderBrush="DarkGray" BorderThickness="1" Margin="4,4,4,4" Grid.Row="1" Grid.Column="1">
+                    <Canvas x:Name="AmplitudeCanvas" ClipToBounds="True">
+                        <Rectangle x:Name="AmplitudeValue" Canvas.Bottom="0" Canvas.Left="0" Height="0" Width="16" Fill="Green" />
+                    </Canvas>
                 </Border>
             </Grid>
         </Grid>

@@ -166,6 +166,12 @@ namespace Astral
                 m_service = null;
             }
 
+            if (m_fpsTimer != null)
+            {
+                m_fpsTimer.Stop();
+                m_fpsTimer = null;
+            }
+
             GC.Collect();
         }
         #endregion
@@ -244,6 +250,10 @@ namespace Astral
                 {
                     Microphone microphone = m_session.Device[ModuleType.Microphone] as Microphone;
                     microphone.MicrophoneUpdated -= OnMicrophoneUpdated;
+
+                    // also reset the rendering
+                    m_waveBitmap.Clear();
+                    AmplitudeValue.Height = 0.0;
                 }
             }
         }
@@ -489,7 +499,13 @@ namespace Astral
                 new Action(
                     delegate ()
                     {
-                        if (m_samples.Count >= 3)
+                        // amplitude first
+                        int maxAmplitude = 200;
+                        double amplitudeFactor = e.MicrophoneData.Amplitude / maxAmplitude;
+                        AmplitudeValue.Height = amplitudeFactor * AmplitudeCanvas.ActualHeight;
+
+                        // now the waveform
+                        if (m_samples.Count >= 4)
                         {
                             m_samples.RemoveAt(0);
                         }
@@ -509,7 +525,8 @@ namespace Astral
                         {
                             // draw axis
                             context.DrawLine(new Pen(Brushes.Black, 1.0), 
-                                new Point(0, height / 2 - 0.5), new Point(width, height / 2 - 0.5));
+                                new Point(0, height / 2 - 0.5), 
+                                new Point(width, height / 2 - 0.5));
 
                             // draw data
                             List<short> allData = new List<short>();
@@ -521,10 +538,11 @@ namespace Astral
                                 }
                             }
 
-                            for (int i = 0; i < allData.Count - 1; i++)
+                            int stepping = 2;
+                            for (int i = 0; i < allData.Count - stepping; i+=stepping)
                             {
                                 double factor1 = i / (double)allData.Count;
-                                double factor2 = i / (double)allData.Count;
+                                double factor2 = (i + stepping) / (double)allData.Count;
                                 double scale = 0.005;
 
                                 Point start = new Point(
@@ -532,11 +550,9 @@ namespace Astral
                                     height / 2 - 0.5 + allData[i] * scale);
                                 Point end = new Point(
                                     factor2 * width,
-                                    height / 2 - 0.5 + allData[i + 1] * scale);
+                                    height / 2 - 0.5 + allData[i + stepping] * scale);
 
-                                context.DrawLine(
-                                    new Pen(Brushes.Green, 1.0),
-                                    start, end);
+                                context.DrawLine(new Pen(Brushes.Green, 1.0), start, end);
                             }
                         }
 

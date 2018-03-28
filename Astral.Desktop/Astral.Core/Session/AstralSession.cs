@@ -259,6 +259,17 @@ namespace Astral
                 m_captureTask.Stop();
             }
 
+            if (m_inputSelectionWindow != null)
+            {
+                Application.Current.Dispatcher.Invoke(
+                    new Action(
+                        delegate ()
+                        {
+                            m_inputSelectionWindow.SelectionWindowClosed -= OnInputSelectionWindowClosed;
+                            m_inputSelectionWindow.Close();
+                        }));
+            }
+
             m_device.Stop();
         }
         #endregion
