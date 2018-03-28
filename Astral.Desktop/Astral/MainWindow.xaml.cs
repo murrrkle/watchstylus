@@ -35,6 +35,12 @@ namespace Astral
         private AstralSession m_session;
         #endregion
 
+        #region Imaging Class Members
+        private RenderTargetBitmap m_waveBitmap;
+
+        private List<short[]> m_samples = new List<short[]>();
+        #endregion
+
         #region Touch Class Members
         private Dictionary<int, Ellipse> m_touchPts;
         #endregion
@@ -112,6 +118,8 @@ namespace Astral
                             CompassPanel.IsEnabled = true;
                             MotionPanel.IsEnabled = true;
                         }
+
+                        MicrophonePanel.IsEnabled = m_session.Device.HasMicrophone;
                     }));
         }
 
@@ -222,6 +230,24 @@ namespace Astral
             }
         }
 
+        private void OnMicrophoneCheckBoxCheckedChanged(object sender, RoutedEventArgs e)
+        {
+            if (m_session != null)
+            {
+                CheckBox checkBox = sender as CheckBox;
+                if ((bool)checkBox.IsChecked)
+                {
+                    Microphone microphone = m_session.Device[ModuleType.Microphone] as Microphone;
+                    microphone.MicrophoneUpdated += OnMicrophoneUpdated;
+                }
+                else
+                {
+                    Microphone microphone = m_session.Device[ModuleType.Microphone] as Microphone;
+                    microphone.MicrophoneUpdated -= OnMicrophoneUpdated;
+                }
+            }
+        }
+
         private void OnAccelerometerCheckBoxCheckedChanged(object sender, RoutedEventArgs e)
         {
             if (m_session != null)
@@ -311,9 +337,9 @@ namespace Astral
                 m_session = session;
                 EnableUI();
 
-                m_session.Device[ModuleType.Accelerometer].Accuracy = 0.01; // force
-                m_session.Device[ModuleType.Gyroscope].Accuracy = 0.1; // torque
-                m_session.Device[ModuleType.Compass].Accuracy = 1.0; // deg
+                if (m_session.Device.HasAccelerometer) m_session.Device[ModuleType.Accelerometer].Accuracy = 0.01; // force
+                if (m_session.Device.HasGyroscope) m_session.Device[ModuleType.Gyroscope].Accuracy = 0.1; // torque
+                if (m_session.Device.HasCompass) m_session.Device[ModuleType.Compass].Accuracy = 1.0; // deg
 
                 // add selection window event handlers (for demonstration)
                 m_session.CaptureSelectionWindowClosed += SessionCaptureSelectionWindowClosed;
@@ -453,6 +479,71 @@ namespace Astral
                     delegate ()
                     {
                         CompassHeadingLabel.Content = e.CompassData.Heading.ToString("F4");
+                    }));
+        }
+
+        private void OnMicrophoneUpdated(object sender, AstralMicrophoneEventArgs e)
+        {
+            // let's update the sound image
+            Dispatcher.Invoke(
+                new Action(
+                    delegate ()
+                    {
+                        if (m_samples.Count >= 3)
+                        {
+                            m_samples.RemoveAt(0);
+                        }
+                        m_samples.Add(e.MicrophoneData.Data);
+
+                        int width = (int)MicrophoneBorder.ActualWidth - 2;
+                        int height = (int)MicrophoneBorder.ActualHeight - 2;
+
+                        if (m_waveBitmap == null)
+                        {
+                            m_waveBitmap = new RenderTargetBitmap(
+                                width, height, 96.0, 96.0, PixelFormats.Pbgra32);
+                        }
+
+                        DrawingVisual visual = new DrawingVisual();
+                        using (DrawingContext context = visual.RenderOpen())
+                        {
+                            // draw axis
+                            context.DrawLine(new Pen(Brushes.Black, 1.0), 
+                                new Point(0, height / 2 - 0.5), new Point(width, height / 2 - 0.5));
+
+                            // draw data
+                            List<short> allData = new List<short>();
+                            foreach (short[] subSamples in m_samples)
+                            {
+                                foreach (short sample in subSamples)
+                                {
+                                    allData.Add(sample);
+                                }
+                            }
+
+                            for (int i = 0; i < allData.Count - 1; i++)
+                            {
+                                double factor1 = i / (double)allData.Count;
+                                double factor2 = i / (double)allData.Count;
+                                double scale = 0.005;
+
+                                Point start = new Point(
+                                    factor1 * width, 
+                                    height / 2 - 0.5 + allData[i] * scale);
+                                Point end = new Point(
+                                    factor2 * width,
+                                    height / 2 - 0.5 + allData[i + 1] * scale);
+
+                                context.DrawLine(
+                                    new Pen(Brushes.Green, 1.0),
+                                    start, end);
+                            }
+                        }
+
+                        m_waveBitmap.Clear();
+                        m_waveBitmap.Render(visual);
+
+                        MicrophoneCanvas.Source = m_waveBitmap;
                     }));
         }
         #endregion

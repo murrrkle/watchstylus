@@ -24,10 +24,12 @@
                 <ColumnDefinition Width="200" />
                 <ColumnDefinition Width="15" />
                 <ColumnDefinition Width="250" />
+                <ColumnDefinition Width="15" />
+                <ColumnDefinition Width="400" />
             </Grid.ColumnDefinitions>
 
             <!-- Device Information -->
-            <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
+            <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="200" />
@@ -45,7 +47,7 @@
             </Grid>
 
             <!-- Horizontal Separator -->
-            <Canvas Height="1" Background="DarkGray" Margin="4,0,4,0"  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" />
+            <Canvas Height="1" Background="DarkGray" Margin="4,0,4,0"  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="5" />
 
             <!-- Touch Panel -->
             <Grid x:Name="TouchPanel" Grid.Row="2" Grid.Column="0" IsEnabled="False">
@@ -160,6 +162,29 @@
                     <Label Content="Heading:" VerticalAlignment="Center" Grid.Row="1" Grid.Column="0" />
                     <Label x:Name="CompassHeadingLabel" Content="N/A" FontWeight="Bold" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" />
                 </Grid>
+            </Grid>
+
+            <!-- Vertical Separator -->
+            <Canvas Width="1" Background="DarkGray" Margin="0,4,0,4"  Grid.Row="2" Grid.Column="3" />
+
+            <!-- Touch Panel -->
+            <Grid x:Name="MicrophonePanel" Grid.Row="2" Grid.Column="4" IsEnabled="False">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="300" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" Grid.Row="0" Grid.Column="0">
+                    <Label Content="Microphone:" Width="90" HorizontalAlignment="Left" VerticalContentAlignment="Center" />
+                    <CheckBox x:Name="MicrophoneCheckBox" Content="Active" Margin="0,1,0,0" IsChecked="False" VerticalContentAlignment="Center" Checked="OnMicrophoneCheckBoxCheckedChanged" Unchecked="OnMicrophoneCheckBoxCheckedChanged"/>
+                </StackPanel>
+
+                <Border x:Name="MicrophoneBorder"  Background="LightGray" BorderBrush="DarkGray" BorderThickness="1" Margin="4,4,4,4" Grid.Row="1" Grid.Column="0">
+                    <Image x:Name="MicrophoneCanvas" ClipToBounds="True" />
+                </Border>
             </Grid>
         </Grid>
     </DockPanel>

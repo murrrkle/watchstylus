@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+
 using Android.App;
 using Android.Content;
 using Android.Hardware;
@@ -19,9 +21,11 @@ namespace Astral.Droid.Media
     public class AndroidMicrophone : Microphone
     {
         #region Class Members
+        private AudioRecord m_recorder;
+
         private int m_bufferSize;
 
-        private AudioRecord m_recorder;
+        private Thread m_recordThread;
         #endregion
 
         #region Constructors
@@ -49,64 +53,68 @@ namespace Astral.Droid.Media
         }
         #endregion
 
-        #region Start/Stop
-        internal Task<bool> Start()
+        #region Start / Stop
+        internal void Start()
         {
-            return Task.Run(
-                () =>
-                    {
-                        if (!(SupportedSampleRates.Contains((int)SamplingRate)))
-                        {
-                            return false;
-                        }
+            // setup buffers
+            m_bufferSize = AudioRecord.GetMinBufferSize(
+                (int)SamplingRate, ChannelIn.Mono,
+                Encoding.Pcm16bit);
 
-                        m_bufferSize = AudioRecord.GetMinBufferSize(
-                            (int)SamplingRate, ChannelIn.Mono, Encoding.Pcm16bit);
+            if (m_bufferSize < 0)
+            {
+                m_bufferSize = (int)SamplingRate * 2;
+            }
 
-                        m_recorder = new AudioRecord(AudioSource.Mic, (int)SamplingRate, 
-                            ChannelIn.Mono, Encoding.Pcm16bit, m_bufferSize);
+            m_recorder = new AudioRecord(
+                AudioSource.Default, (int)SamplingRate,
+                ChannelIn.Mono, Encoding.Pcm16bit, m_bufferSize);
 
-                        StartRecording();
+            Console.WriteLine(m_bufferSize);
 
-                        return true;
-                    });
+            if (m_recorder.State != State.Initialized)
+            {
+                Console.WriteLine("Audio Record cannot initialize: " + m_recorder.State);
+                return;
+            }
+
+            m_recordThread = new Thread(new ThreadStart(RecordAudio));
+            m_recordThread.IsBackground = true;
+            m_recordThread.Name = "AndroidMicrophone#RecordAudio";
+            m_recordThread.Start();
         }
 
-        internal Task Stop()
+        internal void Stop()
         {
-            return Task.Run(
-                () =>
-                    {
-                        m_recorder.Stop();
-                        m_recorder = null;
-                    });
+            if (m_recordThread != null
+                && m_recordThread.IsAlive
+                && !(m_recordThread.Join(100)))
+            {
+                m_recordThread.Abort();
+            }
+
+            m_recordThread = null;
+            GC.Collect();
         }
         #endregion
 
         #region Recording
-        private void StartRecording()
+        private void RecordAudio()
         {
+            Process.SetThreadPriority(Android.OS.ThreadPriority.Audio);
+            short[] audioBuffer = new short[m_bufferSize / 2];
+
             m_recorder.StartRecording();
-            Task.Run(
-                async () =>
-                {
-                    do
-                    {
-                        await Record();
-                    }
-                    while (IsMicrophoneActive);
-                });
-        }
+            while (IsActive)
+            {
+                m_recorder.Read(audioBuffer, 0, audioBuffer.Length);
 
-        private async Task Record()
-        {
-            var buffer = new short[m_bufferSize / 2];
-            var readCount = await m_recorder.ReadAsync(buffer, 0, m_bufferSize / 2);
+                MicrophoneData micData = new MicrophoneData(audioBuffer);
+                UpdateMicrophoneData(micData);
+            }
 
-            // send it right away
-            MicrophoneData micData = new MicrophoneData(buffer);
-            UpdateMicrophoneData(micData);
-            Console.WriteLine("RECORDED" + buffer.Length);
+            m_recorder.Stop();
+            m_recorder.Release();
         }
         #endregion
 
