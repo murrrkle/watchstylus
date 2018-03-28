@@ -213,13 +213,38 @@ namespace TestingConcepts
             device.Display.TouchMove += TouchMove;
             device.Display.TouchUp += TouchUp;
 
-            if (device.Device.HasCompass) device.Compass.HeadingChanged += CompassUpdated;
-            if (device.Device.HasAccelerometer) device.Accelerometer.AccelerationChanged += AccelerationChanged;
-            if (device.Device.HasAmbientLight) device.AmbientLight.AmbientLightChanged += AmbientLightChanged;
-            if (device.Device.HasGyroscope) device.Gyroscope.RotationChanged += RotationChanged;
-            if (device.Device.HasMagnetometer) device.Magnetometer.MagnetometerChanged += MagnetometerChanged;
+            if (device.Device.HasCompass)
+            {
+                device.Compass.Accuracy = 10.0;
+                device.Compass.HeadingChanged += CompassUpdated;
+            }
+
+            if (device.Device.HasAccelerometer)
+            {
+                device.Accelerometer.Accuracy = 0.5;
+                device.Accelerometer.AccelerationChanged += AccelerationChanged;
+            }
+
+            if (device.Device.HasAmbientLight)
+            {
+                device.AmbientLight.Accuracy = 1.0;
+                device.AmbientLight.AmbientLightChanged += AmbientLightChanged;
+            }
+
+            if (device.Device.HasGyroscope)
+            {
+                device.Gyroscope.Accuracy = 0.5;
+                device.Gyroscope.RotationChanged += RotationChanged;
+            }
+
+            if (device.Device.HasMagnetometer)
+            {
+                device.Magnetometer.Accuracy = 1.0;
+                device.Magnetometer.MagnetometerChanged += MagnetometerChanged;
+            }
+
             if (device.Device.HasOrientation) device.Orientation.OrientationChanged += OrientationChanged;
-            if(device.Device.HasMicrophone) device.Microphone.MicrophoneUpdated += OnMicrophoneUpdated;
+            if (device.Device.HasMicrophone) device.Microphone.MicrophoneUpdated += OnMicrophoneUpdated;
             
         }
 
