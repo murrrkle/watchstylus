@@ -95,6 +95,7 @@
       <DependentUpon>MouseButtonBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model\Visualizations\RadialPlotter.cs" />
+    <Compile Include="MovingAverageFilter.cs" />
     <Compile Include="MultiTouchPathPlotter.cs" />
     <Compile Include="OrientationVisualizer.xaml.cs">
       <DependentUpon>OrientationVisualizer.xaml</DependentUpon>

@@ -44,6 +44,8 @@ namespace TestingConcepts
         private bool invert = false;
         private EasingType easing = EasingType.Linear;
 
+        MovingAverageFilter microphoneClean = new MovingAverageFilter();
+
         public event EventHandler<EventArgs> RuleAdded;
 
         string activeRuleSetName = "";
@@ -87,6 +89,7 @@ namespace TestingConcepts
 
         private void UpdateRule()
         {
+            this.rule.EventType = this.eventType;
             this.rule.SourceRect = this.source;
             this.rule.DestinationRect = this.destination;
             if(this.rule is ContinuousRule)
@@ -95,6 +98,8 @@ namespace TestingConcepts
                 (this.rule as ContinuousRule).Easing = this.easing;
             }
             this.manager.UpdateTempRule(this.rule);
+
+            this.DebugText.Text = DateTime.Now.TimeOfDay.ToString() + " :: " + this.eventType + " :: " + this.rule.InputAction.InputEvent; 
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -111,6 +116,8 @@ namespace TestingConcepts
             this.TouchPlotter.SelectionChanged += OnSelectionChanged;
             this.Plotter.SelectionChanged += OnSelectionChanged;
             this.OrientationVisualizer.Plotter.SelectionChanged += OnSelectionChanged;
+            this.MicPlotter.SelectionChanged += OnSelectionChanged;
+            this.AccPlotter.SelectionChanged += OnSelectionChanged;
 
             this.DoButton.Click += OnDoClick;
 
@@ -154,6 +161,9 @@ namespace TestingConcepts
             this.EnterKeyTextBox.KeyUp += OnEnterKeyTextBoxKeyUp;
 
             InitializeTouchCanvas();
+
+            this.MicCanvas.Visibility = Visibility.Hidden;
+
         }
 
         private void InitializeTouchCanvas()
@@ -381,6 +391,7 @@ namespace TestingConcepts
             this.TouchCanvas.Visibility = Visibility.Hidden;
             this.CompassCanvas.Visibility = Visibility.Hidden;
             this.OrientationCanvas.Visibility = Visibility.Hidden;
+            this.MicCanvas.Visibility = Visibility.Hidden;
         }
 
         private void UnhookAllEvents(ModuleType sensorType)
@@ -396,6 +407,7 @@ namespace TestingConcepts
                         this.deviceModel.Display.TouchUp -= OnTouchUp;
                         break;
                     case ModuleType.Accelerometer:
+                        this.deviceModel.Accelerometer.AccelerationChanged -= OnAccelerationUpdated;
                         break;
                     case ModuleType.Gyroscope:
                         break;
@@ -409,12 +421,17 @@ namespace TestingConcepts
                         break;
                     case ModuleType.AmbientLight:
                         break;
+                    case ModuleType.Microphone:
+                        this.deviceModel.Microphone.MicrophoneUpdated -= OnMicrophoneUpdated;
+                        break;
                     default:
                         break;
                 }
             }
 
         }
+
+
 
         private void OnSensorButtonClicked(object sender, SensorButtonClickEventArgs e)
         {
@@ -437,6 +454,9 @@ namespace TestingConcepts
                         this.eventType = MobileEventType.TouchMove;
                         break;
                     case ModuleType.Accelerometer:
+                        this.AccelerometerCanvas.Visibility = Visibility.Visible;
+                        this.eventType = MobileEventType.AccelerationMagnitudeChanged;
+                        this.deviceModel.Accelerometer.AccelerationChanged += OnAccelerationUpdated;
                         break;
                     case ModuleType.Gyroscope:
                         break;
@@ -456,6 +476,13 @@ namespace TestingConcepts
                         break;
                     case ModuleType.AmbientLight:
                         break;
+                    case ModuleType.Microphone:
+                        this.eventType = MobileEventType.AmplitudeChanged;
+                        this.deviceModel.Microphone.MicrophoneUpdated += OnMicrophoneUpdated;
+                        this.MicCanvas.Visibility = Visibility.Visible;
+                        this.MicPlotter.MaxRange = 1000;
+                        this.MicPlotter.StartAtZero = true;
+                        break;
                     default:
                         break;
                 }
@@ -464,7 +491,7 @@ namespace TestingConcepts
 
         }
 
-
+  
 
         public RuleEditingWindow()
         {
@@ -491,8 +518,29 @@ namespace TestingConcepts
                 this.TouchPlotter.DrawPoints();
             }
             this.Plotter.DrawPoints();
+            this.MicPlotter.DrawPoints();
+            this.AccPlotter.DrawPoints();
         }
 
+        private void OnAccelerationUpdated(object sender, AstralAccelerometerEventArgs e)
+        {
+            Dispatcher.Invoke(new Action(delegate
+            {
+                this.AccPlotter.PushPoint(Utils.Magnitude(e.AccelerationData.X, e.AccelerationData.Y, e.AccelerationData.Z));
+
+            }));
+        }
+
+        private void OnMicrophoneUpdated(object sender, AstralMicrophoneEventArgs e)
+        {
+            Dispatcher.Invoke(new Action(delegate
+            {
+                this.microphoneClean.ComputeAverage(e.MicrophoneData.Amplitude);
+                double micValue = (microphoneClean.Average > 1000 ? 1000 : microphoneClean.Average);
+                this.MicPlotter.PushPoint(micValue);
+                this.MicReading.Text = micValue + " :: " + MicPlotter.SelectionInRuleCoordinates.Left + " :: " + this.MicPlotter.SelectionInRuleCoordinates.Right;
+            }));
+        }
 
         private void OnTouchDown(object sender, AstralTouchEventArgs e)
         {
@@ -561,11 +609,10 @@ namespace TestingConcepts
                 this.SelectionTopLabel.Text = top;
                 this.SelectionSizeLabel.Text = size;
             }
-
-            if (this.eventType == MobileEventType.TouchMove)
-                this.source = this.TouchPlotter.SelectionInDeviceCoords;
-            else
-                this.source = this.Plotter.Selection;
+            //   this.source = this.TouchPlotter.SelectionInRuleCoordinates;
+            this.source = this.AccPlotter.SelectionInRuleCoordinates;
+            //else
+            //this.source = this.MicPlotter.SelectionInRuleCoordinates;
             UpdateRule();
         }
 

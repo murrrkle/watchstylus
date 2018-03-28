@@ -190,6 +190,16 @@
             <ToggleButton x:Name="ShiftButton" Content="Shift" Height="51" Canvas.Left="287.951" Style="{DynamicResource AstralToggleButtonStyle}" Canvas.Top="351.435" Width="93"/>
 
         </Canvas>
+        <TextBlock x:Name="DebugText" Height="40.25" Canvas.Left="14.935" TextWrapping="Wrap" Text="DEBUG" Canvas.Top="675" Width="893.596" FontFamily="{DynamicResource RobotoBold}" FontSize="20"/>
+        <Canvas x:Name="MicCanvas" Height="613.341" Canvas.Left="78" Canvas.Top="56.659" Width="342">
+            <Rectangle Fill="#FFF4F4F5" Height="310.5" Canvas.Left="27" Canvas.Top="43.091" Width="292.5"/>
+            <local:LinearPlotter x:Name="MicPlotter" Height="310.5" Canvas.Left="27" Canvas.Top="43.091" Width="292.5"/>
+            <TextBlock x:Name="MicReading" Height="31.5" Canvas.Left="27" TextWrapping="Wrap" Text="Mic" Canvas.Top="358.591" Width="292.5"/>
+        </Canvas>
+        <Canvas x:Name="AccelerometerCanvas" Height="613.341" Canvas.Left="78" Canvas.Top="56.659" Width="342">
+            <Rectangle Fill="#FFF4F4F5" Height="310.5" Canvas.Left="27" Canvas.Top="43.091" Width="292.5"/>
+            <local:LinearPlotter x:Name="AccPlotter" Height="310.5" Canvas.Left="27" Canvas.Top="43.091" Width="292.5"/>
+        </Canvas>
 
     </Canvas>
 </Window>

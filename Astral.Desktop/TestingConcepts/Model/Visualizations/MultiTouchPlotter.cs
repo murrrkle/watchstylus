@@ -30,7 +30,7 @@ namespace TestingConcepts
             }
         }
 
-        public Rect SelectionInDeviceCoords
+        public override Rect SelectionInRuleCoordinates
         {
             get
             {

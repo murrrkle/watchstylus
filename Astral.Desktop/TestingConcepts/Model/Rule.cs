@@ -47,6 +47,14 @@ namespace TestingConcepts
         public event EventHandler<SelectionCrossedEventArgs> SelectionEntered;
         public event EventHandler<SelectionCrossedEventArgs> SelectionExited;
 
+        public string ToString()
+        {
+            string s = "RULE: " + this.name + " (" + (this is ContinuousRule ? "Continuous" : "Discrete") + ") \n" +
+                " Sensor Event " + this.eventType + "\n" +
+                " PC Input Action: " + this.inputAction.InputEvent + " Arg (" + this.inputAction.Argument + ")\n Source " + this.sourceRect + "\n Destination ";
+            return s;
+        }
+
         protected void RaiseSelectionEntered(SelectionCrossedEventArgs e)
         {
             SelectionEntered?.Invoke(this, e);

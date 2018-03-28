@@ -269,8 +269,15 @@ namespace TestingConcepts
 
         private void OnMicrophoneUpdated(object sender, AstralMicrophoneEventArgs e)
         {
-            Console.WriteLine("DATA!");
-            //Console.WriteLine(e.MicrophoneData.Amplitude);
+            foreach (Rule rule in this.activeRules.Where(r => r.EventType == MobileEventType.AmplitudeChanged))
+            {
+                if (this.isActive)
+                {
+                    bool inRange = rule.ExecuteRule(new Point(e.MicrophoneData.Amplitude, e.MicrophoneData.Amplitude));
+                    if (inRange)
+                        this.inputHandler.ExecuteInputAction(rule.InputAction);
+                }
+            }
         }
 
         private void OrientationChanged(object sender, AstralOrientationEventArgs e)
@@ -306,6 +313,16 @@ namespace TestingConcepts
         {
             //  this.activeRules.ExecuteRules(MobileEventType.AccelerationMagnitudeChanged, e.AccelerationData.Magnitude);
             //this.activeRules.ExecuteRules(MobileEventType.AccelerationChanged, e.AccelerationData.X, e.AccelerationData.Y, e.AccelerationData.Z);
+            foreach (Rule rule in this.activeRules.Where(r => r.EventType == MobileEventType.AccelerationMagnitudeChanged))
+            {
+                if (this.isActive)
+                {
+                    double magnitude = Utils.Magnitude(e.AccelerationData.X, e.AccelerationData.Y, e.AccelerationData.Z);
+                    bool inRange = rule.ExecuteRule(new Point(magnitude, magnitude));
+                    if (inRange)
+                        this.inputHandler.ExecuteInputAction(rule.InputAction);
+                }
+            }
 
         }
 
