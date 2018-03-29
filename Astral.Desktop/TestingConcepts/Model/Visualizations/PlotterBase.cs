@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -59,6 +60,14 @@ namespace TestingConcepts
             set
             {
                 this.selection = value;
+            }
+        }
+
+        public virtual Rect SelectionInRuleCoordinates
+        {
+            get
+            {
+                return this.selection;
             }
         }
 
@@ -154,6 +163,12 @@ namespace TestingConcepts
 
         protected virtual void OnLoaded(object sender, RoutedEventArgs e)
         {
+            // prevent the Visual Studio designer from drawing null things
+            // stop rendering on the designer view
+#if DEBUG
+            if (DesignerProperties.GetIsInDesignMode(new DependencyObject())) return;
+#endif
+
             ReinitializeImage();
         }
 

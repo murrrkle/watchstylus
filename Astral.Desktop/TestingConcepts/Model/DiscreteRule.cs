@@ -37,11 +37,13 @@ namespace TestingConcepts
         {
             if (current.IsInsideRect(this.sourceRect) && !previous.IsInsideRect(this.sourceRect))
             {
+                Console.WriteLine("ENTERED");
                 RaiseSelectionEntered(new SelectionCrossedEventArgs(current, previous, this.sourceRect, this.destinationRect));
             }
 
             if (previous.IsInsideRect(this.sourceRect) && !current.IsInsideRect(this.sourceRect))
             {
+                Console.WriteLine("LEFT");
                 RaiseSelectionExited(new SelectionCrossedEventArgs(current, previous, this.sourceRect, this.destinationRect));
             }
         }
@@ -63,12 +65,13 @@ namespace TestingConcepts
                 }
 
                 this.previousPoint = new Point(point.X, point.Y);
+
+                return true;
             }
             else
             {
                 return false;
             }
-            return true;
         }
     }
 }

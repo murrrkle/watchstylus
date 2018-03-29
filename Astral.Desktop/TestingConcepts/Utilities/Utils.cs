@@ -102,9 +102,6 @@ namespace TestingConcepts
                 case MobileEventType.AccelerationChanged:
                     moduleType = ModuleType.Accelerometer;
                     break;
-                case MobileEventType.AccelerationMagnitudeChanged:
-                    moduleType = ModuleType.Accelerometer;
-                    break;
                 case MobileEventType.AmbientLightChanged:
                     moduleType = ModuleType.AmbientLight;
                     break;

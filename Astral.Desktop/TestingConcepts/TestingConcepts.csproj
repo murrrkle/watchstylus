@@ -61,6 +61,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\lz4net.1.0.15.93\lib\net2\LZ4.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationFramework.Aero2" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -85,6 +86,9 @@
     <Compile Include="KeyboardButtonBar.xaml.cs">
       <DependentUpon>KeyboardButtonBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="LinearPlotterWrapper.xaml.cs">
+      <DependentUpon>LinearPlotterWrapper.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Model\ContinuousRule.cs" />
     <Compile Include="Model\DiscreteRule.cs" />
     <Compile Include="Model\PCInputAction.cs" />
@@ -95,6 +99,7 @@
       <DependentUpon>MouseButtonBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model\Visualizations\RadialPlotter.cs" />
+    <Compile Include="MovingAverageFilter.cs" />
     <Compile Include="MultiTouchPathPlotter.cs" />
     <Compile Include="OrientationVisualizer.xaml.cs">
       <DependentUpon>OrientationVisualizer.xaml</DependentUpon>
@@ -145,6 +150,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="LinearPlotterWrapper.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MouseButtonBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -156,6 +165,10 @@
     <Page Include="RuleDisplayControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Simple Styles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\UI Elements\RangeSlider.xaml">
       <SubType>Designer</SubType>
@@ -231,6 +244,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="Design\projectGuides.guides" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

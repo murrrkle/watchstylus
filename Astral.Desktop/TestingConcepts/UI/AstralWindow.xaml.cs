@@ -56,10 +56,14 @@ namespace TestingConcepts
             this.Closed += OnClosed;
 
             this.ruleEditingWindow.RuleAdded += OnRuleAdded;
+
+            this.DebugText.Visibility = Visibility.Hidden;
+            this.MouseRightButtonDown += (s, e) => { this.DebugText.Visibility = (this.DebugText.Visibility == Visibility.Hidden ? Visibility.Visible : Visibility.Hidden); };
         }
 
         private void OnRuleAdded(object sender, EventArgs e)
         {
+            this.DebugText.Text = "";
             this.ActiveRuleContainer.Children.Clear();
             foreach(Rule r in this.ruleManager.ActiveRules)
             {
@@ -67,6 +71,7 @@ namespace TestingConcepts
                 {
                     RuleDisplayControl ruleDisplay = new RuleDisplayControl(r);
                     this.ActiveRuleContainer.Children.Add(ruleDisplay);
+                    this.DebugText.Text += r.ToString() + "\n";
                 }
             }
             this.ruleEditingWindow.Close();

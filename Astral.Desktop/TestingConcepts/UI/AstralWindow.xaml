@@ -100,5 +100,6 @@
             <Button x:Name="NewRuleSetCancel" Content="Button" Height="25.25" Canvas.Left="298" Style="{DynamicResource CancelButtonStyle}" Canvas.Top="451.5" Width="24"/>
         </Canvas>
         <StackPanel x:Name="ActiveRuleContainer" Height="569.196" Canvas.Left="57.876" Canvas.Top="255.5" Width="319.46"/>
+        <TextBlock x:Name="DebugText" Height="213.708" Canvas.Left="46.135" TextWrapping="Wrap" Text="DEBUG" Canvas.Top="599.442" Width="311.274" FontFamily="{DynamicResource RobotoBold}" FontSize="12"/>
     </Canvas>
 </Window>

@@ -44,9 +44,13 @@ namespace TestingConcepts
         private bool invert = false;
         private EasingType easing = EasingType.Linear;
 
+        MovingAverageFilter microphoneClean = new MovingAverageFilter();
+
         public event EventHandler<EventArgs> RuleAdded;
 
         string activeRuleSetName = "";
+
+        private RuleArgument accelerationArg = RuleArgument.Magnitude;
 
         private void RaiseRuleAdded(EventArgs e)
         {
@@ -87,6 +91,7 @@ namespace TestingConcepts
 
         private void UpdateRule()
         {
+            this.rule.EventType = this.eventType;
             this.rule.SourceRect = this.source;
             this.rule.DestinationRect = this.destination;
             if(this.rule is ContinuousRule)
@@ -95,6 +100,8 @@ namespace TestingConcepts
                 (this.rule as ContinuousRule).Easing = this.easing;
             }
             this.manager.UpdateTempRule(this.rule);
+
+            this.DebugText.Text = DateTime.Now.TimeOfDay.ToString() + " :: " + this.eventType + " :: " + this.rule.InputAction.InputEvent; 
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -111,6 +118,8 @@ namespace TestingConcepts
             this.TouchPlotter.SelectionChanged += OnSelectionChanged;
             this.Plotter.SelectionChanged += OnSelectionChanged;
             this.OrientationVisualizer.Plotter.SelectionChanged += OnSelectionChanged;
+            this.MicPlotter.SelectionChanged += OnSelectionChanged;
+            this.AccelerometerPlotter.Plotter.SelectionChanged += OnSelectionChanged;
 
             this.DoButton.Click += OnDoClick;
 
@@ -154,6 +163,59 @@ namespace TestingConcepts
             this.EnterKeyTextBox.KeyUp += OnEnterKeyTextBoxKeyUp;
 
             InitializeTouchCanvas();
+            InitializeAcceleration();
+            this.MicCanvas.Visibility = Visibility.Hidden;
+
+        }
+
+        private void InitializeAcceleration()
+        {
+            this.AccelerometerPlotter.Plotter.StartAtZero = true;
+            this.AccMagButton.Click += (s, e) => 
+            {
+                this.accelerationArg = RuleArgument.Magnitude;
+                this.AccelerometerPlotter.Plotter.Stroke = AstralColors.Blue;
+                this.AccArgText.Text = "MAGNITUDE";
+                this.AccArgText.Foreground = AstralColors.Blue;
+                this.rule.ArgumentInfo = this.accelerationArg;
+                this.AccelerometerPlotter.Plotter.StartAtZero = true;
+                rule.FilterInfo = (AccFilterBox.SelectedItem as ComboBoxItem).Content.ToString();
+                UpdateRule();
+            };
+            this.AccXButton.Click += (s, e) =>
+            {
+                this.accelerationArg = RuleArgument.X;
+                this.AccelerometerPlotter.Plotter.Stroke = AstralColors.Red;
+                this.AccArgText.Text = "X";
+                this.AccArgText.Foreground = AstralColors.Red;
+                this.rule.ArgumentInfo = this.accelerationArg;
+                this.AccelerometerPlotter.Plotter.StartAtZero = false;
+                rule.FilterInfo = (AccFilterBox.SelectedItem as ComboBoxItem).Content.ToString();
+                UpdateRule();
+            };
+            this.AccYButton.Click += (s, e) =>
+            {
+                this.accelerationArg = RuleArgument.Y;
+                this.AccelerometerPlotter.Plotter.Stroke = AstralColors.Orange;
+                this.AccArgText.Text = "Y";
+                this.AccArgText.Foreground = AstralColors.Orange;
+                this.rule.ArgumentInfo = this.accelerationArg;
+                this.AccelerometerPlotter.Plotter.StartAtZero = false;
+                rule.FilterInfo = (AccFilterBox.SelectedItem as ComboBoxItem).Content.ToString(); 
+                UpdateRule();
+            };
+            this.AccZButton.Click += (s, e) =>
+            {
+                this.accelerationArg = RuleArgument.Z;
+                this.AccelerometerPlotter.Plotter.Stroke = AstralColors.Teal;
+                this.AccArgText.Text = "Z";
+                this.AccArgText.Foreground = AstralColors.Teal;
+                this.rule.ArgumentInfo = this.accelerationArg;
+                this.AccelerometerPlotter.Plotter.StartAtZero = false;
+                rule.FilterInfo = (AccFilterBox.SelectedItem as ComboBoxItem).Content.ToString();
+                UpdateRule();
+            };
+
         }
 
         private void InitializeTouchCanvas()
@@ -381,6 +443,7 @@ namespace TestingConcepts
             this.TouchCanvas.Visibility = Visibility.Hidden;
             this.CompassCanvas.Visibility = Visibility.Hidden;
             this.OrientationCanvas.Visibility = Visibility.Hidden;
+            this.MicCanvas.Visibility = Visibility.Hidden;
         }
 
         private void UnhookAllEvents(ModuleType sensorType)
@@ -396,6 +459,7 @@ namespace TestingConcepts
                         this.deviceModel.Display.TouchUp -= OnTouchUp;
                         break;
                     case ModuleType.Accelerometer:
+                        this.deviceModel.AccelerationChanged -= OnAccelerationUpdated;
                         break;
                     case ModuleType.Gyroscope:
                         break;
@@ -409,12 +473,17 @@ namespace TestingConcepts
                         break;
                     case ModuleType.AmbientLight:
                         break;
+                    case ModuleType.Microphone:
+                        this.deviceModel.Microphone.MicrophoneUpdated -= OnMicrophoneUpdated;
+                        break;
                     default:
                         break;
                 }
             }
 
         }
+
+
 
         private void OnSensorButtonClicked(object sender, SensorButtonClickEventArgs e)
         {
@@ -437,6 +506,9 @@ namespace TestingConcepts
                         this.eventType = MobileEventType.TouchMove;
                         break;
                     case ModuleType.Accelerometer:
+                        this.AccelerometerCanvas.Visibility = Visibility.Visible;
+                        this.eventType = MobileEventType.AccelerationChanged;
+                        this.deviceModel.AccelerationChanged += OnAccelerationUpdated;
                         break;
                     case ModuleType.Gyroscope:
                         break;
@@ -456,6 +528,13 @@ namespace TestingConcepts
                         break;
                     case ModuleType.AmbientLight:
                         break;
+                    case ModuleType.Microphone:
+                        this.eventType = MobileEventType.AmplitudeChanged;
+                        this.deviceModel.Microphone.MicrophoneUpdated += OnMicrophoneUpdated;
+                        this.MicCanvas.Visibility = Visibility.Visible;
+                        this.MicPlotter.MaxRange = 1000;
+                        this.MicPlotter.StartAtZero = true;
+                        break;
                     default:
                         break;
                 }
@@ -464,7 +543,7 @@ namespace TestingConcepts
 
         }
 
-
+  
 
         public RuleEditingWindow()
         {
@@ -491,8 +570,51 @@ namespace TestingConcepts
                 this.TouchPlotter.DrawPoints();
             }
             this.Plotter.DrawPoints();
+            this.MicPlotter.DrawPoints();
+            this.AccelerometerPlotter.Update();
+
+            this.AccelPlot3D.DrawPoints();
         }
 
+        private void OnAccelerationUpdated(object sender, AccelerationDeviceModelEventArgs e)
+        {
+            Dispatcher.Invoke(new Action(delegate
+            {
+                double x, y, z, mag;
+                if(this.AccFilterBox.SelectedItem == this.AccNoFilter)
+                {
+                    rule.FilterInfo = (AccFilterBox.SelectedItem as ComboBoxItem).Content.ToString();
+                    x = e.AccelerationX; y = e.AccelerationY; z = e.AccelerationZ; mag = e.Magnitude;
+                }
+                else if(this.AccFilterBox.SelectedItem == this.AccGravityFilter)
+                {
+                    rule.FilterInfo = AccFilterBox.SelectedItem.ToString();
+                    x = e.GravityX; y = e.GravityY; z = e.GravityZ; mag = e.GravityMagnitude;
+                }
+                else
+                {
+                    rule.FilterInfo = AccFilterBox.SelectedItem.ToString();
+                    x = e.LinearX; y = e.LinearY; z = e.LinearZ; mag = e.LinearMagnitude;
+                }
+
+                this.rule.ArgumentInfo = this.accelerationArg;
+                UpdateRule();
+                double value = (this.accelerationArg == RuleArgument.Magnitude ? mag : this.accelerationArg == RuleArgument.X ? x : this.accelerationArg == RuleArgument.Y ? y : z);
+                this.AccelerometerPlotter.Plotter.PushPoint(value);
+                this.AccelPlot3D.PushPoint(x, y, z);
+            }));
+        }
+
+        private void OnMicrophoneUpdated(object sender, AstralMicrophoneEventArgs e)
+        {
+            Dispatcher.Invoke(new Action(delegate
+            {
+                this.microphoneClean.ComputeAverage(e.MicrophoneData.Amplitude);
+                double micValue = (microphoneClean.Average > 1000 ? 1000 : microphoneClean.Average);
+                this.MicPlotter.PushPoint(micValue);
+                this.MicReading.Text = micValue + " :: " + MicPlotter.SelectionInRuleCoordinates.Left + " :: " + this.MicPlotter.SelectionInRuleCoordinates.Right;
+            }));
+        }
 
         private void OnTouchDown(object sender, AstralTouchEventArgs e)
         {
@@ -561,11 +683,11 @@ namespace TestingConcepts
                 this.SelectionTopLabel.Text = top;
                 this.SelectionSizeLabel.Text = size;
             }
-
-            if (this.eventType == MobileEventType.TouchMove)
-                this.source = this.TouchPlotter.SelectionInDeviceCoords;
-            else
-                this.source = this.Plotter.Selection;
+            //   this.source = this.TouchPlotter.SelectionInRuleCoordinates;
+            this.source = this.AccelerometerPlotter.Plotter.SelectionInRuleCoordinates;
+            Console.WriteLine("SOURCE " + this.source);
+            //else
+            //this.source = this.MicPlotter.SelectionInRuleCoordinates;
             UpdateRule();
         }
 

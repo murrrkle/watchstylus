@@ -14,6 +14,18 @@ namespace TestingConcepts
         XY = X | Y
     }
 
+    public enum RuleArgument
+    {
+        None,
+        X,
+        Y,
+        Z,
+        Magnitude,
+        Angle,
+        Amplitude,
+        Pitch
+    }
+
     public class SelectionCrossedEventArgs : EventArgs
     {
         public Rect SourceRect { get; set; }
@@ -44,8 +56,18 @@ namespace TestingConcepts
 
         public virtual PCInputAction InputAction { get; }
         
+        public virtual RuleArgument ArgumentInfo { get; set; }
+
         public event EventHandler<SelectionCrossedEventArgs> SelectionEntered;
         public event EventHandler<SelectionCrossedEventArgs> SelectionExited;
+
+        public override string ToString()
+        {
+            string s = "RULE: " + this.name + " (" + (this is ContinuousRule ? "Continuous" : "Discrete") + ") \n" +
+                " Sensor Event " + this.eventType + "\n" +
+                " PC Input Action: " + this.inputAction.InputEvent + " Arg (" + this.inputAction.Argument + ")\n Source " + this.sourceRect + "\n Destination ";
+            return s;
+        }
 
         protected void RaiseSelectionEntered(SelectionCrossedEventArgs e)
         {
@@ -108,7 +130,7 @@ namespace TestingConcepts
         public Rect SourceRect { get => sourceRect; set => sourceRect = value; }
         public Rect DestinationRect { get => destinationRect; set => destinationRect = value; }
         public Point PreviousPoint { get => this.previousPoint; }
-
+        public string FilterInfo { get; set; }
 
         public Rule(MobileEventType eventType)
         {

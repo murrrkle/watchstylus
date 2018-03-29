@@ -22,7 +22,6 @@ namespace TestingConcepts
         TouchUp = 1,
         TouchMove = 2,
         AccelerationChanged = 3,
-        AccelerationMagnitudeChanged = 4,
         AmbientLightChanged = 5,
         CompassChanged = 6,
         MagnetometerChanged = 7,
@@ -32,6 +31,154 @@ namespace TestingConcepts
         OrientationChanged = 11,
         AmplitudeChanged = 12,
         FrequencyChanged = 13
+    }
+
+    #endregion
+
+    #region AccelerationDeviceModelEventArgs
+
+    public class AccelerationDeviceModelEventArgs : EventArgs
+    {
+        private double accelerationX, accelerationY, accelerationZ;
+        private double linearX, linearY, linearZ;
+        private double gravityX, gravityY, gravityZ;
+
+        #region Properties
+
+        public double Magnitude
+        {
+            get
+            {
+                return Utils.Magnitude(this.accelerationX, this.accelerationY, this.accelerationZ);
+            }
+        }
+
+        public double LinearMagnitude
+        {
+            get
+            {
+                return Utils.Magnitude(this.linearX, this.linearY, this.linearZ);
+            }
+        }
+
+        public double GravityMagnitude
+        {
+            get
+            {
+                return Utils.Magnitude(this.gravityX, this.gravityY, this.gravityZ);
+            }
+        }
+
+        public double AccelerationX
+        {
+            get
+            {
+                return this.accelerationX;
+            }
+            internal set
+            {
+                this.accelerationX = value;
+            }
+        }
+
+        public double AccelerationY
+        {
+            get
+            {
+                return this.accelerationY;
+            }
+            internal set
+            {
+                this.accelerationY = value;
+            }
+        }
+
+        public double AccelerationZ
+        {
+            get
+            {
+                return this.accelerationZ;
+            }
+            internal set
+            {
+                this.accelerationZ = value;
+            }
+        }
+
+        public double GravityX
+        {
+            get
+            {
+                return this.gravityX;
+            }
+        }
+
+        public double GravityY
+        {
+            get
+            {
+                return this.gravityY;
+            }
+        }
+
+        public double GravityZ
+        {
+            get
+            {
+                return this.gravityZ;
+            }
+        }
+
+        public double LinearX
+        {
+            get
+            {
+                return this.linearX;
+            }
+        }
+
+        public double LinearY
+        {
+            get
+            {
+                return this.linearY;
+            }
+        }
+
+        public double LinearZ
+        {
+            get
+            {
+                return this.linearZ;
+            }
+        }
+
+        #endregion
+
+        private void SetGravityAndLinear()
+        {
+            // get the gravity
+            float alpha = 0.8f;
+
+            // Isolate the force of gravity with the low-pass filter.
+            this.gravityX = alpha * gravityX + (1 - alpha) * accelerationX;
+            this.gravityY = alpha * gravityY + (1 - alpha) * accelerationY;
+            this.gravityZ = alpha * gravityZ + (1 - alpha) * accelerationZ;
+
+            // now that we have gravity get the linear
+            // using a high pass filter
+            linearX = accelerationX - gravityX;
+            linearY = accelerationY - gravityY;
+            linearZ = accelerationZ - gravityZ;
+        }
+
+        public AccelerationDeviceModelEventArgs(double x, double y, double z)
+        {
+            this.accelerationX = x;
+            this.accelerationY = y;
+            this.accelerationZ = z;
+            SetGravityAndLinear();
+        }
     }
 
     #endregion
@@ -52,8 +199,10 @@ namespace TestingConcepts
         private Microphone microphone;
         private AstralSession session;
 
+        private MovingAverageFilter accFilterX = new MovingAverageFilter();
+        private MovingAverageFilter accFilterY = new MovingAverageFilter();
+        private MovingAverageFilter accFilterZ = new MovingAverageFilter();
 
-        // add microphone and step counter
         #endregion
 
         #region Properties
@@ -99,6 +248,13 @@ namespace TestingConcepts
 
         #endregion
 
+        public event EventHandler<AccelerationDeviceModelEventArgs> AccelerationChanged;
+
+        private void RaiseAccelerationChanged(AccelerationDeviceModelEventArgs e)
+        {
+            AccelerationChanged?.Invoke(this, e);
+        }
+
         #region Constructor
 
         public DeviceModel(AstralDevice device, AstralSession session)
@@ -115,7 +271,17 @@ namespace TestingConcepts
             if (device.HasOrientation) this.orientation = device[ModuleType.Orientation] as Orientation;
             if (device.HasMicrophone) this.microphone = device[ModuleType.Microphone] as Microphone;
 
+            this.accelerometer.AccelerationChanged += OnAccelerationChanged;
             
+        }
+
+        private void OnAccelerationChanged(object sender, AstralAccelerometerEventArgs e)
+        {
+            this.accFilterX.ComputeAverage(e.AccelerationData.X);
+            this.accFilterY.ComputeAverage(e.AccelerationData.Y);
+            this.accFilterZ.ComputeAverage(e.AccelerationData.Z);
+
+            RaiseAccelerationChanged(new AccelerationDeviceModelEventArgs(this.accFilterX.Average, this.accFilterY.Average, this.accFilterZ.Average));
         }
 
         #endregion

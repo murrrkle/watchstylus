@@ -20,6 +20,9 @@ namespace TestingConcepts
 
         protected double offset = 0;
 
+        protected bool isMaxManuallySet = false;
+        protected bool startAtZero = false;
+
         public SolidColorBrush Stroke
         {
             get
@@ -30,6 +33,31 @@ namespace TestingConcepts
             {
                 this.stroke = value;
                 this.defaultPen = new Pen(stroke, 2);
+            }
+        }
+
+        public bool StartAtZero
+        {
+            get
+            {
+                return this.startAtZero;
+            }
+            set
+            {
+                this.startAtZero = value;
+            }
+        }
+
+        public double MaxRange
+        {
+            get
+            {
+                return this.maxRange;
+            }
+            set
+            {
+                this.maxRange = value;
+                this.isMaxManuallySet = true;
             }
         }
 
@@ -48,12 +76,20 @@ namespace TestingConcepts
 
         public void PushPoint(double value)
         {
-            if (Math.Abs(value) > this.maxRange)
+            if (Math.Abs(value) > this.maxRange && !this.isMaxManuallySet)
             {
                 this.maxRange = value;
             }
 
-            double newValue = Utils.Map(value, -this.maxRange, this.maxRange, this.Height, 0);
+            double newValue = 0;
+            if(!startAtZero)
+            {
+                newValue = Utils.Map(value, -this.maxRange, this.maxRange, this.Height, 0);
+            }
+            else
+            {
+                newValue = Utils.Map(value, 0, this.maxRange, this.Height, 0);
+            }
             points.Add(newValue);
 
             if (points.Count > this.numberOfValues)
