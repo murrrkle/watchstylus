@@ -221,8 +221,8 @@ namespace TestingConcepts
 
             if (device.Device.HasAccelerometer)
             {
-                device.Accelerometer.Accuracy = 0.5;
-                device.Accelerometer.AccelerationChanged += AccelerationChanged;
+                device.Accelerometer.Accuracy = 0.25;
+                device.AccelerationChanged += AccelerationChanged;
             }
 
             if (device.Device.HasAmbientLight)
@@ -256,7 +256,7 @@ namespace TestingConcepts
             device.Display.TouchUp -= TouchUp;
 
             device.Compass.HeadingChanged -= CompassUpdated;
-            device.Accelerometer.AccelerationChanged -= AccelerationChanged;
+            device.AccelerationChanged -= AccelerationChanged;
             device.AmbientLight.AmbientLightChanged -= AmbientLightChanged;
             device.Gyroscope.RotationChanged -= RotationChanged;
             device.Magnetometer.MagnetometerChanged -= MagnetometerChanged;
@@ -309,18 +309,42 @@ namespace TestingConcepts
 
         }
 
-        private void AccelerationChanged(object sender, AstralAccelerometerEventArgs e)
+        private void AccelerationChanged(object sender, AccelerationDeviceModelEventArgs e)
         {
-            //  this.activeRules.ExecuteRules(MobileEventType.AccelerationMagnitudeChanged, e.AccelerationData.Magnitude);
-            //this.activeRules.ExecuteRules(MobileEventType.AccelerationChanged, e.AccelerationData.X, e.AccelerationData.Y, e.AccelerationData.Z);
-            foreach (Rule rule in this.activeRules.Where(r => r.EventType == MobileEventType.AccelerationMagnitudeChanged))
+            foreach (Rule rule in this.activeRules.Where(r => r.EventType == MobileEventType.AccelerationChanged))
             {
-                if (this.isActive)
+                try
                 {
-                    double magnitude = Utils.Magnitude(e.AccelerationData.X, e.AccelerationData.Y, e.AccelerationData.Z);
-                    bool inRange = rule.ExecuteRule(new Point(magnitude, magnitude));
-                    if (inRange)
-                        this.inputHandler.ExecuteInputAction(rule.InputAction);
+                    if (this.isActive)
+                    {
+                        double x, y, z, mag;
+                        if (rule.FilterInfo.Contains("None"))
+                        {
+                            x = e.AccelerationX; y = e.AccelerationY; z = e.AccelerationZ; mag = e.Magnitude;
+                        }
+                        else if (rule.FilterInfo.Contains("Gravity"))
+                        {
+                            x = e.GravityX; y = e.GravityY; z = e.GravityZ; mag = e.GravityMagnitude;
+                        }
+                        else
+                        {
+                            x = e.LinearX; y = e.LinearY; z = e.LinearZ; mag = e.LinearMagnitude;
+                        }
+
+                        double value = (rule.ArgumentInfo == RuleArgument.Magnitude ? mag :
+                            rule.ArgumentInfo == RuleArgument.X ? x :
+                            rule.ArgumentInfo == RuleArgument.Y ? y : z);
+                        Console.WriteLine(rule.FilterInfo + " : " + rule.ArgumentInfo);
+                        bool inRange = rule.ExecuteRule(new Point(value, value));
+                        if (inRange)
+                            this.inputHandler.ExecuteInputAction(rule.InputAction);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.StackTrace);
+                    Console.WriteLine("LOL NOOB");
                 }
             }
 

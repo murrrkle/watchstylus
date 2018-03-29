@@ -50,6 +50,8 @@ namespace TestingConcepts
 
         string activeRuleSetName = "";
 
+        private RuleArgument accelerationArg = RuleArgument.Magnitude;
+
         private void RaiseRuleAdded(EventArgs e)
         {
             RuleAdded?.Invoke(this, e);
@@ -117,7 +119,7 @@ namespace TestingConcepts
             this.Plotter.SelectionChanged += OnSelectionChanged;
             this.OrientationVisualizer.Plotter.SelectionChanged += OnSelectionChanged;
             this.MicPlotter.SelectionChanged += OnSelectionChanged;
-            this.AccPlotter.SelectionChanged += OnSelectionChanged;
+            this.AccelerometerPlotter.Plotter.SelectionChanged += OnSelectionChanged;
 
             this.DoButton.Click += OnDoClick;
 
@@ -161,8 +163,58 @@ namespace TestingConcepts
             this.EnterKeyTextBox.KeyUp += OnEnterKeyTextBoxKeyUp;
 
             InitializeTouchCanvas();
-
+            InitializeAcceleration();
             this.MicCanvas.Visibility = Visibility.Hidden;
+
+        }
+
+        private void InitializeAcceleration()
+        {
+            this.AccelerometerPlotter.Plotter.StartAtZero = true;
+            this.AccMagButton.Click += (s, e) => 
+            {
+                this.accelerationArg = RuleArgument.Magnitude;
+                this.AccelerometerPlotter.Plotter.Stroke = AstralColors.Blue;
+                this.AccArgText.Text = "MAGNITUDE";
+                this.AccArgText.Foreground = AstralColors.Blue;
+                this.rule.ArgumentInfo = this.accelerationArg;
+                this.AccelerometerPlotter.Plotter.StartAtZero = true;
+                rule.FilterInfo = (AccFilterBox.SelectedItem as ComboBoxItem).Content.ToString();
+                UpdateRule();
+            };
+            this.AccXButton.Click += (s, e) =>
+            {
+                this.accelerationArg = RuleArgument.X;
+                this.AccelerometerPlotter.Plotter.Stroke = AstralColors.Red;
+                this.AccArgText.Text = "X";
+                this.AccArgText.Foreground = AstralColors.Red;
+                this.rule.ArgumentInfo = this.accelerationArg;
+                this.AccelerometerPlotter.Plotter.StartAtZero = false;
+                rule.FilterInfo = (AccFilterBox.SelectedItem as ComboBoxItem).Content.ToString();
+                UpdateRule();
+            };
+            this.AccYButton.Click += (s, e) =>
+            {
+                this.accelerationArg = RuleArgument.Y;
+                this.AccelerometerPlotter.Plotter.Stroke = AstralColors.Orange;
+                this.AccArgText.Text = "Y";
+                this.AccArgText.Foreground = AstralColors.Orange;
+                this.rule.ArgumentInfo = this.accelerationArg;
+                this.AccelerometerPlotter.Plotter.StartAtZero = false;
+                rule.FilterInfo = (AccFilterBox.SelectedItem as ComboBoxItem).Content.ToString(); 
+                UpdateRule();
+            };
+            this.AccZButton.Click += (s, e) =>
+            {
+                this.accelerationArg = RuleArgument.Z;
+                this.AccelerometerPlotter.Plotter.Stroke = AstralColors.Teal;
+                this.AccArgText.Text = "Z";
+                this.AccArgText.Foreground = AstralColors.Teal;
+                this.rule.ArgumentInfo = this.accelerationArg;
+                this.AccelerometerPlotter.Plotter.StartAtZero = false;
+                rule.FilterInfo = (AccFilterBox.SelectedItem as ComboBoxItem).Content.ToString();
+                UpdateRule();
+            };
 
         }
 
@@ -407,7 +459,7 @@ namespace TestingConcepts
                         this.deviceModel.Display.TouchUp -= OnTouchUp;
                         break;
                     case ModuleType.Accelerometer:
-                        this.deviceModel.Accelerometer.AccelerationChanged -= OnAccelerationUpdated;
+                        this.deviceModel.AccelerationChanged -= OnAccelerationUpdated;
                         break;
                     case ModuleType.Gyroscope:
                         break;
@@ -455,8 +507,8 @@ namespace TestingConcepts
                         break;
                     case ModuleType.Accelerometer:
                         this.AccelerometerCanvas.Visibility = Visibility.Visible;
-                        this.eventType = MobileEventType.AccelerationMagnitudeChanged;
-                        this.deviceModel.Accelerometer.AccelerationChanged += OnAccelerationUpdated;
+                        this.eventType = MobileEventType.AccelerationChanged;
+                        this.deviceModel.AccelerationChanged += OnAccelerationUpdated;
                         break;
                     case ModuleType.Gyroscope:
                         break;
@@ -519,15 +571,37 @@ namespace TestingConcepts
             }
             this.Plotter.DrawPoints();
             this.MicPlotter.DrawPoints();
-            this.AccPlotter.DrawPoints();
+            this.AccelerometerPlotter.Update();
+
+            this.AccelPlot3D.DrawPoints();
         }
 
-        private void OnAccelerationUpdated(object sender, AstralAccelerometerEventArgs e)
+        private void OnAccelerationUpdated(object sender, AccelerationDeviceModelEventArgs e)
         {
             Dispatcher.Invoke(new Action(delegate
             {
-                this.AccPlotter.PushPoint(Utils.Magnitude(e.AccelerationData.X, e.AccelerationData.Y, e.AccelerationData.Z));
+                double x, y, z, mag;
+                if(this.AccFilterBox.SelectedItem == this.AccNoFilter)
+                {
+                    rule.FilterInfo = (AccFilterBox.SelectedItem as ComboBoxItem).Content.ToString();
+                    x = e.AccelerationX; y = e.AccelerationY; z = e.AccelerationZ; mag = e.Magnitude;
+                }
+                else if(this.AccFilterBox.SelectedItem == this.AccGravityFilter)
+                {
+                    rule.FilterInfo = AccFilterBox.SelectedItem.ToString();
+                    x = e.GravityX; y = e.GravityY; z = e.GravityZ; mag = e.GravityMagnitude;
+                }
+                else
+                {
+                    rule.FilterInfo = AccFilterBox.SelectedItem.ToString();
+                    x = e.LinearX; y = e.LinearY; z = e.LinearZ; mag = e.LinearMagnitude;
+                }
 
+                this.rule.ArgumentInfo = this.accelerationArg;
+                UpdateRule();
+                double value = (this.accelerationArg == RuleArgument.Magnitude ? mag : this.accelerationArg == RuleArgument.X ? x : this.accelerationArg == RuleArgument.Y ? y : z);
+                this.AccelerometerPlotter.Plotter.PushPoint(value);
+                this.AccelPlot3D.PushPoint(x, y, z);
             }));
         }
 
@@ -610,7 +684,8 @@ namespace TestingConcepts
                 this.SelectionSizeLabel.Text = size;
             }
             //   this.source = this.TouchPlotter.SelectionInRuleCoordinates;
-            this.source = this.AccPlotter.SelectionInRuleCoordinates;
+            this.source = this.AccelerometerPlotter.Plotter.SelectionInRuleCoordinates;
+            Console.WriteLine("SOURCE " + this.source);
             //else
             //this.source = this.MicPlotter.SelectionInRuleCoordinates;
             UpdateRule();

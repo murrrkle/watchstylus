@@ -51,7 +51,8 @@ namespace TestingConcepts
                 double yStart = Math.Round(Utils.Map(this.selection.Top, this.Height, 0, min, this.maxRange));
                 double yEnd = Math.Round(Utils.Map(this.selection.Bottom, this.Height, 0, min, this.maxRange));
                 double width = Math.Abs(yStart - yEnd);
-                return new Rect(yStart, yStart, width, width);
+                double rangeStart = Math.Min(yStart, yEnd);
+                return new Rect(rangeStart, rangeStart, width, width);
             }
         }
 

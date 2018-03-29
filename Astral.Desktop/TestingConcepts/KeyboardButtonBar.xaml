@@ -6,43 +6,38 @@
              xmlns:local="clr-namespace:TestingConcepts"
              mc:Ignorable="d" 
              d:DesignHeight="300" Width="294" Height="45">
-    <Canvas>
-        <Rectangle Width="45.667" RadiusX="5" RadiusY="5" HorizontalAlignment="Left" Height="45" Canvas.Left="-0.5" Canvas.Top="-0.667">
+    <Canvas Width="381">
+        <Rectangle Width="381.5" RadiusX="5" RadiusY="5" HorizontalAlignment="Left" Height="45" Canvas.Left="-0.5" Canvas.Top="-0.667">
             <Rectangle.Fill>
                 <SolidColorBrush Color="{DynamicResource AstralTeal}"/>
             </Rectangle.Fill>
         </Rectangle>
-        <Rectangle Width="45.667" RadiusX="5" RadiusY="5" HorizontalAlignment="Right" Height="45" Canvas.Left="248.174" Canvas.Top="-0.667">
+        <Rectangle x:Name="UpRect" Width="82.859" HorizontalAlignment="Left" Cursor="Hand" Height="45" Canvas.Left="67.833" Canvas.Top="-0.667">
             <Rectangle.Fill>
                 <SolidColorBrush Color="{DynamicResource AstralTeal}"/>
             </Rectangle.Fill>
         </Rectangle>
-        <Rectangle x:Name="UpRect" Width="82.859" HorizontalAlignment="Left" Cursor="Hand" Height="45" Canvas.Left="24.833" Canvas.Top="-0.667">
+        <Rectangle x:Name="DownRect" Width="82.858" HorizontalAlignment="Left" Cursor="Hand" Height="45" Canvas.Left="149.882" Canvas.Top="-0.667">
             <Rectangle.Fill>
                 <SolidColorBrush Color="{DynamicResource AstralTeal}"/>
             </Rectangle.Fill>
         </Rectangle>
-        <Rectangle x:Name="DownRect" Width="82.858" HorizontalAlignment="Left" Cursor="Hand" Height="45" Canvas.Left="106.882" Canvas.Top="-0.667">
+        <Rectangle x:Name="MoveRect" Cursor="Hand" Height="45" Canvas.Left="232.176" Canvas.Top="-0.667" Width="82.859">
             <Rectangle.Fill>
                 <SolidColorBrush Color="{DynamicResource AstralTeal}"/>
             </Rectangle.Fill>
         </Rectangle>
-        <Rectangle x:Name="MoveRect" Cursor="Hand" Height="45" Canvas.Left="189.176" Canvas.Top="-0.667" Width="82.859">
-            <Rectangle.Fill>
-                <SolidColorBrush Color="{DynamicResource AstralTeal}"/>
-            </Rectangle.Fill>
-        </Rectangle>
-        <TextBlock x:Name="UpText" TextWrapping="Wrap" Text="UP" FontFamily="{DynamicResource RobotoBold}" Width="82.859" OpacityMask="Black" FontSize="18" TextAlignment="Center" HorizontalAlignment="Left" Cursor="Hand" Height="25.333" Canvas.Left="24.833" Canvas.Top="10">
+        <TextBlock x:Name="UpText" TextWrapping="Wrap" Text="UP" FontFamily="{DynamicResource RobotoBold}" Width="82.859" OpacityMask="Black" FontSize="18" TextAlignment="Center" HorizontalAlignment="Left" Cursor="Hand" Height="25.333" Canvas.Left="67.833" Canvas.Top="10">
             <TextBlock.Foreground>
                 <SolidColorBrush Color="{DynamicResource AstralWhite}"/>
             </TextBlock.Foreground>
         </TextBlock>
-        <TextBlock x:Name="DownText" TextWrapping="Wrap" Text="DOWN" FontFamily="{DynamicResource RobotoBold}" Width="80.858" OpacityMask="Black" FontSize="18" TextAlignment="Center" HorizontalAlignment="Left" Cursor="Hand" Height="25.333" Canvas.Left="108.318" Canvas.Top="10">
+        <TextBlock x:Name="DownText" TextWrapping="Wrap" Text="DOWN" FontFamily="{DynamicResource RobotoBold}" Width="80.858" OpacityMask="Black" FontSize="18" TextAlignment="Center" HorizontalAlignment="Left" Cursor="Hand" Height="25.333" Canvas.Left="151.318" Canvas.Top="10">
             <TextBlock.Foreground>
                 <SolidColorBrush Color="{DynamicResource AstralWhite}"/>
             </TextBlock.Foreground>
         </TextBlock>
-        <TextBlock x:Name="MoveText" TextWrapping="Wrap" Text="PRESS" FontFamily="{DynamicResource RobotoBold}" OpacityMask="Black" FontSize="18" TextAlignment="Center" Cursor="Hand" Height="25.333" Canvas.Left="189.843" Canvas.Top="10" Width="80.858">
+        <TextBlock x:Name="MoveText" TextWrapping="Wrap" Text="PRESS" FontFamily="{DynamicResource RobotoBold}" OpacityMask="Black" FontSize="18" TextAlignment="Center" Cursor="Hand" Height="25.333" Canvas.Left="232.843" Canvas.Top="10" Width="80.858">
             <TextBlock.Foreground>
                 <SolidColorBrush Color="{DynamicResource AstralWhite}"/>
             </TextBlock.Foreground>

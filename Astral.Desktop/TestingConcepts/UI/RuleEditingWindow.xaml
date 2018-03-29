@@ -7,6 +7,8 @@
         
         mc:Ignorable="d"
         Title="RuleEditingWindow" Height="725.25" Width="933.087" ResizeMode="NoResize" WindowStyle="None" BorderBrush="#FFE7E7E7">
+    <Window.Resources>
+    </Window.Resources>
 
     <Canvas x:Name="Container">
         <TextBlock Height="44.331" Canvas.Left="29.491" TextWrapping="Wrap" Canvas.Top="7.328" Width="235.833" FontFamily="{DynamicResource RobotoBold}" FontSize="36" Text="RULE EDITOR">
@@ -59,11 +61,11 @@
 
         </Canvas>
 
-        <local:MouseOrKeyboardControl x:Name="MouseOrKeyboardControl" Canvas.Left="440.5" Canvas.Top="54.205" d:LayoutOverrides="Width"/>
-        <StackPanel x:Name="SensorButtonPanel" Height="435.01" Canvas.Top="123.12" Width="30" Canvas.Left="30" Margin="0" RenderTransformOrigin="0.5,0.5">
+        <local:MouseOrKeyboardControl x:Name="MouseOrKeyboardControl" Canvas.Left="440.5" Canvas.Top="57.205"/>
+        <StackPanel x:Name="SensorButtonPanel" Height="435.01" Canvas.Top="189.12" Width="30" Canvas.Left="42" Margin="0" RenderTransformOrigin="0.5,0.5">
             <StackPanel.RenderTransform>
                 <TransformGroup>
-                    <ScaleTransform ScaleX="1.25" ScaleY="1.25"/>
+                    <ScaleTransform ScaleX="1.6" ScaleY="1.6"/>
                     <SkewTransform/>
                     <RotateTransform/>
                     <TranslateTransform/>
@@ -162,12 +164,7 @@
                     <SolidColorBrush Color="{DynamicResource AstralBlack}"/>
                 </TextBlock.Foreground>
             </TextBlock>
-            <Rectangle Height="45" RadiusY="5" RadiusX="6" Canvas.Top="33" Width="381.339">
-                <Rectangle.Fill>
-                    <SolidColorBrush Color="{DynamicResource AstralTeal}"/>
-                </Rectangle.Fill>
-            </Rectangle>
-            <local:KeyboardButtonBar x:Name="KeyboardBar" Height="50.5" Canvas.Left="43.281" Canvas.Top="33" Width="293.5"/>
+            <local:KeyboardButtonBar x:Name="KeyboardBar" Height="50.5" Canvas.Top="33" Width="380.951"/>
             <Button x:Name="PlayPauseButton" Content="&#xF04B; &#xF04C;" Height="45" Canvas.Left="54.781" Canvas.Top="198.795" Width="54.33"  FontFamily="FontAwesome" Style="{DynamicResource FontAwesomeButton}"/>
             <Button x:Name="PreviousSongButton" Content="&#xF04A;" Height="45" Canvas.Left="130.789" Canvas.Top="198.795" Width="54.33"  FontFamily="FontAwesome" Style="{DynamicResource FontAwesomeButton}"/>
             <Button x:Name="NextSongButton" Content="&#xF04E;" Height="45" Canvas.Left="206.788" Canvas.Top="198.795" Width="54.33"  FontFamily="FontAwesome" Style="{DynamicResource FontAwesomeButton}"/>
@@ -191,14 +188,50 @@
 
         </Canvas>
         <TextBlock x:Name="DebugText" Height="40.25" Canvas.Left="14.935" TextWrapping="Wrap" Text="DEBUG" Canvas.Top="675" Width="893.596" FontFamily="{DynamicResource RobotoBold}" FontSize="20"/>
-        <Canvas x:Name="MicCanvas" Height="613.341" Canvas.Left="78" Canvas.Top="56.659" Width="342">
+        <Canvas x:Name="MicCanvas" Height="613.341" Canvas.Left="78" Canvas.Top="56.659" Width="342" d:IsHidden="True">
             <Rectangle Fill="#FFF4F4F5" Height="310.5" Canvas.Left="27" Canvas.Top="43.091" Width="292.5"/>
             <local:LinearPlotter x:Name="MicPlotter" Height="310.5" Canvas.Left="27" Canvas.Top="43.091" Width="292.5"/>
             <TextBlock x:Name="MicReading" Height="31.5" Canvas.Left="27" TextWrapping="Wrap" Text="Mic" Canvas.Top="358.591" Width="292.5"/>
         </Canvas>
         <Canvas x:Name="AccelerometerCanvas" Height="613.341" Canvas.Left="78" Canvas.Top="56.659" Width="342">
-            <Rectangle Fill="#FFF4F4F5" Height="310.5" Canvas.Left="27" Canvas.Top="43.091" Width="292.5"/>
-            <local:LinearPlotter x:Name="AccPlotter" Height="310.5" Canvas.Left="27" Canvas.Top="43.091" Width="292.5"/>
+            <local:LinearPlotterWrapper x:Name="AccelerometerPlotter" Height="307" Canvas.Left="27" Canvas.Top="204.591" Width="305"/>
+            <TextBlock Height="21" Canvas.Left="26.22" TextWrapping="Wrap" Text="ACCELEROMETER" Canvas.Top="-1.159" Width="305.78" FontFamily="{DynamicResource RobotoBold}" FontSize="18">
+                <TextBlock.Foreground>
+                    <SolidColorBrush Color="{DynamicResource AstralBlack}"/>
+                </TextBlock.Foreground>
+            </TextBlock>
+            <local:LinearPlotter3D x:Name="AccelPlot3D"  Height="61.75" Canvas.Left="27" Canvas.Top="33.341" Width="305"/>
+            <Button x:Name="AccMagButton" Content="Mag." Height="39" Canvas.Left="26.22" Canvas.Top="110.841" Width="70" Style="{DynamicResource AstralButtonBlue}"/>
+            <Button x:Name="AccXButton" Content="X" Height="39" Canvas.Left="104.5" Canvas.Top="110.841" Width="70" Style="{DynamicResource AstralButtonRed}"/>
+            <Button x:Name="AccYButton" Content="Y" Height="39" Canvas.Left="183.44" Canvas.Top="110.841" Width="70" Style="{DynamicResource AstralButtonOrange}"/>
+            <Button x:Name="AccZButton" Content="Z" Height="39" Canvas.Left="262" Canvas.Top="110.841" Width="70" Style="{DynamicResource AstralButtonTeal}"/>
+            <TextBlock x:Name="AccArgText" Height="28.5" Canvas.Left="26.22" TextWrapping="Wrap" Text="MAGNITUDE" Canvas.Top="165.341" Width="305.78" FontFamily="{DynamicResource RobotoBold}" FontSize="20" TextAlignment="Center">
+                <TextBlock.Foreground>
+                    <SolidColorBrush Color="{DynamicResource AstralBlue}"/>
+                </TextBlock.Foreground>
+            </TextBlock>
+            <ComboBox x:Name="AccFilterBox" Height="43.75" Canvas.Left="27" Canvas.Top="556.591" Width="305" Style="{DynamicResource SimpleComboBox}" SelectedIndex="0" >
+                <ComboBoxItem x:Name="AccNoFilter" Content="None" TextBlock.FontFamily="{DynamicResource RobotoCondensed}" FontSize="18">
+                    <ComboBoxItem.Foreground>
+                        <SolidColorBrush Color="{DynamicResource AstralBlack}"/>
+                    </ComboBoxItem.Foreground>
+                </ComboBoxItem>
+                <ComboBoxItem x:Name="AccGravityFilter" Content="Gravity" TextBlock.FontFamily="{DynamicResource RobotoCondensed}" FontSize="18">
+                    <ComboBoxItem.Foreground>
+                        <SolidColorBrush Color="{DynamicResource AstralBlack}"/>
+                    </ComboBoxItem.Foreground>
+                </ComboBoxItem>
+                <ComboBoxItem x:Name="AccLinearFilter" Content="Linear" TextBlock.FontFamily="{DynamicResource RobotoCondensed}" FontSize="18">
+                    <ComboBoxItem.Foreground>
+                        <SolidColorBrush Color="{DynamicResource AstralBlack}"/>
+                    </ComboBoxItem.Foreground>
+                </ComboBoxItem>
+            </ComboBox>
+            <TextBlock Height="27.917" Canvas.Left="28.669" TextWrapping="Wrap" Text="Filter" Canvas.Top="523.341" Width="302" FontFamily="{DynamicResource RobotoBold}" FontSize="20">
+                <TextBlock.Foreground>
+                    <SolidColorBrush Color="{DynamicResource AstralBlack}"/>
+                </TextBlock.Foreground>
+            </TextBlock>
         </Canvas>
 
     </Canvas>
