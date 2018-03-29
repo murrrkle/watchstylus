@@ -517,7 +517,7 @@ namespace Astral.Session.Tasks
 
             while (IsRunning)
             {
-                Thread.Sleep(5);
+                Thread.Sleep(1);
 
                 lock (this)
                 {
