@@ -131,6 +131,7 @@ namespace Astral.Net
 
                     m_receivingThread = new Thread(new ThreadStart(Receive))
                     {
+                        Priority = ThreadPriority.AboveNormal,
                         IsBackground = true,
                         Name = "TcpConnection#receivingThread_0"
                     };
@@ -203,7 +204,7 @@ namespace Astral.Net
         }
         #endregion
 
-        #region Sending/Receiving
+        #region Sending / Receiving
         #region Sending
         public void SendMessage(Message msg)
         {

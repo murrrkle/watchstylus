@@ -18,7 +18,7 @@ namespace Astral.Session.Tasks
     internal class ScreenCaptureTask
     {
         #region Static Class Members
-        internal static int KeyFrameCounter = 72;
+        internal static int KeyFrameCounter = 100;
         #endregion
 
         #region Class Members
@@ -28,6 +28,8 @@ namespace Astral.Session.Tasks
         private CaptureTaskState m_state;
 
         private double m_framesPerSecond = -1.0;
+
+        private bool m_canSend = true;
         #endregion
 
         #region Thread Class Members
@@ -144,6 +146,18 @@ namespace Astral.Session.Tasks
         internal double FramesPerSecond
         {
             get { return m_framesPerSecond; }
+        }
+
+        internal bool CanSend
+        {
+            get { return m_canSend; }
+            set
+            {
+                lock (this)
+                {
+                    m_canSend = value;
+                }
+            }
         }
         #endregion
 
@@ -345,7 +359,7 @@ namespace Astral.Session.Tasks
             }
         }
 
-        private unsafe void ApplyXor(BitmapData prevData, BitmapData currData, ref bool hasData)
+        private unsafe void ApplyXor(BitmapData prevData, BitmapData currData, ref bool hasData, ref Rectangle updateRect)
         {
             byte* prev = (byte*)prevData.Scan0.ToPointer();
             byte* curr = (byte*)currData.Scan0.ToPointer();
@@ -353,7 +367,14 @@ namespace Astral.Session.Tasks
             int height = prevData.Height;
             int width = currData.Width;
 
+            int minX = int.MaxValue;
+            int minY = int.MaxValue;
+            int maxX = int.MinValue;
+            int maxY = int.MinValue;
+
             hasData = false;
+            updateRect = Rectangle.Empty;
+
             fixed (byte* target = m_buffer)
             {
                 uint* dst = (uint*)target;
@@ -367,14 +388,55 @@ namespace Astral.Session.Tasks
                         uint tmp = curRow[x] ^ prevRow[x];
                         *(dst++) = tmp;
 
-                        hasData |= (tmp != 0);
+                        bool hasLocalData = (tmp != 0);
+                        hasData |= hasLocalData;
+
+                        if (hasLocalData)
+                        {
+                            minX = Math.Min(minX, x);
+                            maxX = Math.Max(maxX, x);
+
+                            minY = Math.Min(minY, y);
+                            maxY = Math.Max(maxY, y);
+                        }
                     }
                 }
             }
+
+            if (hasData)
+            {
+                updateRect = new Rectangle(minX, minY, maxX - minX + 1, maxY - minY + 1);
+            }
         }
 
-        private void CaptureAndSendScreenshot(Rect captureRegion)
+        private unsafe byte[] ClipData(Rectangle updateRect, Rectangle fullRect)
         {
+            byte[] clippedBuffer = new byte[updateRect.Width * updateRect.Height * 4];
+            fixed (byte* source = m_buffer)
+            {
+                uint* src = (uint*)source;
+                fixed (byte* target = clippedBuffer)
+                {
+                    uint* dst = (uint*)target;
+                    for (int y = 0; y < updateRect.Height; y++)
+                    {
+                        uint* srcPos = src + fullRect.Width * (updateRect.Y + y) + updateRect.X;
+                        uint* dstPos = dst + updateRect.Width * y;
+
+                        for (int x = 0; x < updateRect.Width; x++)
+                        {
+                            dstPos[x] = srcPos[x];
+                        }
+                    }
+                }
+            }
+
+            return clippedBuffer;
+        }
+
+        private bool CaptureAndSendScreenshot(Rect captureRegion)
+        {
+            bool didSend = false;
             int currStride = 0;
 
             CaptureScreen(captureRegion);
@@ -391,9 +453,11 @@ namespace Astral.Session.Tasks
             currStride = currData.Stride;
 
             bool hasData = false;
+            Rectangle updateRect = Rectangle.Empty;
+
             try
             {
-                ApplyXor(prevData, currData, ref hasData);
+                ApplyXor(prevData, currData, ref hasData, ref updateRect);
 
                 // swap buffers
                 Bitmap tmp = m_currScreenshot;
@@ -408,9 +472,15 @@ namespace Astral.Session.Tasks
 
             if (hasData)
             {
-                Screenshot screenshot = new Screenshot(m_buffer,
+                // now we need to clip the update
+                byte[] clipped = ClipData(updateRect, new Rectangle(0, 0, width, height));
+
+                // Screenshot screenshot = new Screenshot(m_buffer, updateRect,
+                Screenshot screenshot = new Screenshot(clipped, updateRect,
                     new System.Drawing.Size(width, height), currStride, m_firstRun);
                 ProcessedScreenshotCaptured?.Invoke(this, screenshot);
+
+                didSend = true;
             }
 
             ScreenshotCaptured?.Invoke(this, (Bitmap)m_prevScreenshot.Clone());
@@ -422,6 +492,8 @@ namespace Astral.Session.Tasks
             {
                 Reset(captureRegion);
             }
+
+            return didSend;
         }
 
         private bool ShouldResetBuffers(Rect newCaptureRegion)
@@ -445,8 +517,17 @@ namespace Astral.Session.Tasks
 
             while (IsRunning)
             {
-                Thread.Sleep(1);
-                
+                Thread.Sleep(5);
+
+                lock (this)
+                {
+                    if (!(m_canSend))
+                    {
+                        continue;
+                    }
+                    m_canSend = false;
+                }
+
                 Rect captureRegion = m_selectionWindow.CaptureRegion;
                 bool shouldReset = ShouldResetBuffers(captureRegion);
 
@@ -455,7 +536,15 @@ namespace Astral.Session.Tasks
                     Reset(captureRegion);
                 }
 
-                CaptureAndSendScreenshot(captureRegion);
+                bool didSend = CaptureAndSendScreenshot(captureRegion);
+
+                lock (this)
+                {
+                    if (!(didSend))
+                    {
+                        m_canSend = true;
+                    }
+                }
 
                 numFrames++;
                 m_framesPerSecond = numFrames / (s.ElapsedMilliseconds / 1000.0);

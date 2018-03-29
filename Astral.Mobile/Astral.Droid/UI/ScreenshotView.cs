@@ -31,14 +31,8 @@ namespace Astral.Droid.UI
         private Device.Display m_display;
         #endregion
 
-        // private BackgroundWorker m_renderBitmap;
-
         #region Imaging Class Members
         private Android.Graphics.Bitmap m_currImg;
-
-        private Queue<AstralContentEventArgs> m_rawQueue;
-
-        private Thread m_queueWorker;
         #endregion
 
         #region Touch Class Members
@@ -64,18 +58,7 @@ namespace Astral.Droid.UI
         private void Initialize()
         {
             m_touchPts = new Dictionary<int, TouchPoint>();
-
             m_currImg = null;
-            m_rawQueue = new Queue<AstralContentEventArgs>();
-
-            m_queueWorker = new Thread(new ThreadStart(ProcessQueue));
-            m_queueWorker.IsBackground = true;
-            m_queueWorker.Start();
-
-            // Set up backgroundworker to decode bitmaps out of the UI thread
-            //m_renderBitmap = new BackgroundWorker();
-            //m_renderBitmap.DoWork += OnRenderBitmapDoWork;
-            //m_renderBitmap.RunWorkerCompleted += OnRenderBitmapCompleted;
         }
         #endregion
 
@@ -249,8 +232,6 @@ namespace Astral.Droid.UI
 
         private void UpdateContent(AstralContentEventArgs e)
         {
-            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
-
             int width = e.Size.Width;
             int height = e.Size.Height;
 
@@ -282,117 +263,20 @@ namespace Astral.Droid.UI
                 }
             }
 
-            Console.WriteLine(sw.ElapsedMilliseconds + " ms ...");
-
             ByteBuffer buffer = ByteBuffer.Wrap(e.BitmapData);
             buffer.Order(ByteOrder.BigEndian);
-
             m_currImg.CopyPixelsFromBuffer(buffer);
 
             ((Activity)Context).RunOnUiThread(() =>
             {
                 SetImageBitmap(RotateBitmap(m_currImg));
-
             });
         }
 
         private void OnDisplayContentUpdated(object sender, AstralContentEventArgs content)
         {
-            /* lock (m_rawQueue)
-            {
-                m_rawQueue.Enqueue(content);
-                Monitor.PulseAll(m_rawQueue);
-            } */
-
-
-            ((Activity)Context).RunOnUiThread(() =>
-            {
-                UpdateContent(content);
-            });
-            
-
-            // TODO: is this actually thread safe?
-            // i.e., could it be that you call it while it's not completed yet (because it calls things outside the worker)
-            //m_renderBitmap.RunWorkerAsync(content);
-        }
-
-        private void ProcessQueue()
-        {
-            while (true)
-            {
-                AstralContentEventArgs content = null;
-                lock (m_rawQueue)
-                {
-                    Monitor.Wait(m_rawQueue);
-             
-                    if (m_rawQueue.Count > 0)
-                    {
-                        content = m_rawQueue.Last();
-                        m_rawQueue.Clear();
-                    }
-                }
-
-                if (content != null)
-                {
-                    UpdateContent(content);
-                }
-            }
+            UpdateContent(content);
         }
         #endregion
-
-        /*
-        #region BackgroundWorker Events
-        private void OnRenderBitmapCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            // Update the Bitmap in the view (need to do this on UI thread)
-            ((Activity)Context).RunOnUiThread(() =>
-            {
-                SetImageBitmap(m_currImg);
-            });
-        }
-
-        private void OnRenderBitmapDoWork(object sender, DoWorkEventArgs e)
-        {
-            AstralContentEventArgs args = (AstralContentEventArgs) e.Argument;
-
-            int width = args.Size.Width;
-            int height = args.Size.Height;
-
-            int bytesPerPixel = 4;
-            int bytesPerRow = bytesPerPixel * width;
-            int numBytes = bytesPerRow * height;
-
-            if (m_currImg == null
-                || m_currImg.Width != args.Size.Width
-                || m_currImg.Height != args.Size.Height)
-            {
-                m_currImg = Bitmap.CreateBitmap(width, height,
-                    Bitmap.Config.Argb8888);
-            }
-
-            // we need to adjust the bytes here (flip R and B)
-            unsafe
-            {
-                fixed (byte* bytes = args.BitmapData)
-                {
-                    uint* pixels = (uint*)bytes;
-                    int length = args.BitmapData.Length / bytesPerPixel;
-
-                    for (int i = 0; i < length; i++)
-                    {
-                        *pixels = ABGRtoARGB(*pixels);
-                        pixels++;
-                    }
-                }
-            }
-
-            ByteBuffer buffer = ByteBuffer.Wrap(args.BitmapData);
-            buffer.Order(ByteOrder.BigEndian);
-
-            m_currImg.CopyPixelsFromBuffer(buffer);
-            m_currImg = RotateBitmap(m_currImg);
-        }
-        #endregion
-        */
     }
 }

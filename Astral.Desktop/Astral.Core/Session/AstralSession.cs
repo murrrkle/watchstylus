@@ -60,6 +60,8 @@ namespace Astral
             m_captureTask.ProcessedScreenshotCaptured += ProcessedScreenshotCaptured;
             m_captureTask.SelectionWindowClosed += OnCaptureSelectionWindowClosed;
 
+            (m_device[ModuleType.Display] as Display).DisplayReady += OnDisplayReady;
+
             Application.Current.Dispatcher.Invoke(
                 new Action(
                     delegate ()
@@ -308,6 +310,11 @@ namespace Astral
             {
                 ((Display)m_device[ModuleType.Display]).UpdateContent(screenshot);
             }
+        }
+
+        private void OnDisplayReady(object sender, EventArgs e)
+        {
+            m_captureTask.CanSend = true;
         }
         #endregion
         #endregion

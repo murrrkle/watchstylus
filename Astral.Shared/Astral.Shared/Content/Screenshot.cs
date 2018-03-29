@@ -20,6 +20,8 @@ namespace Astral.Content
 
         private byte[] m_compressedData;
 
+        private Rectangle m_updateRect;
+
         private Size m_size;
 
         private int m_stride;
@@ -28,10 +30,11 @@ namespace Astral.Content
         #endregion
 
         #region Constructors
-        public Screenshot(byte[] rawData, Size size, int stride, bool isFullFrame)
+        public Screenshot(byte[] rawData, Rectangle updateRect, Size size, int stride, bool isFullFrame)
         {
             // raw data is XOR or full
             m_rawData = rawData;
+            m_updateRect = updateRect;
             m_size = size;
             m_stride = stride;
             m_fullFrame = isFullFrame;
@@ -41,7 +44,12 @@ namespace Astral.Content
 
         public Screenshot(NetworkStreamInfo info)
         {
+            m_updateRect = new Rectangle(
+                info.GetInt("uX"), info.GetInt("uY"),
+                info.GetInt("uW"), info.GetInt("uH"));
+
             m_size = new Size(info.GetInt("w"), info.GetInt("h"));
+
             m_stride = info.GetInt("str");
             m_fullFrame = info.GetBool("full");
             m_compressedData = (byte[])info.GetValue("data", typeof(byte[]));
@@ -53,8 +61,16 @@ namespace Astral.Content
         #region Overrides (ITransferrable)
         public void GetStreamData(NetworkStreamInfo info)
         {
+            // update rect
+            info.AddValue("uX", m_updateRect.X);
+            info.AddValue("uY", m_updateRect.Y);
+            info.AddValue("uW", m_updateRect.Width);
+            info.AddValue("uH", m_updateRect.Height);
+
+            // image size
             info.AddValue("w", m_size.Width);
             info.AddValue("h", m_size.Height);
+
             info.AddValue("str", m_stride);
             info.AddValue("full", m_fullFrame);
             info.AddValue("data", m_compressedData);
@@ -65,6 +81,11 @@ namespace Astral.Content
         public byte[] Data
         {
             get { return m_rawData; }
+        }
+
+        public Rectangle UpdateArea
+        {
+            get { return m_updateRect; }
         }
 
         public Size Size

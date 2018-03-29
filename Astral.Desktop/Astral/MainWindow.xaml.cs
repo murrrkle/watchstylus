@@ -142,6 +142,7 @@ namespace Astral
                         AccelerometerPanel.IsEnabled = false;
                         GyroscopePanel.IsEnabled = false;
                         CompassPanel.IsEnabled = false;
+                        MicrophonePanel.IsEnabled = false;
                     }));
         }
         #endregion

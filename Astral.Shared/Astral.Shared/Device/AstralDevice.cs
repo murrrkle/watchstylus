@@ -348,8 +348,6 @@ namespace Astral.Device
                     ModuleType type = (ModuleType)Enum.ToObject(typeof(ModuleType),
                         msg.GetIntField(IDeviceModule.ModuleHandlerField));
 
-                  //  Debug.WriteLine("MODULE: " + type);
-
                     if (m_modules.ContainsKey(type))
                     {
                         m_modules[type].HandleModuleMessage(msg);

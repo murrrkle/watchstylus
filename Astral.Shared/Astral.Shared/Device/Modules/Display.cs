@@ -110,6 +110,8 @@ namespace Astral.Device
         public event AstralTouchEventHandler TouchUp;
 
         public event AstralContentEventHandler ContentUpdated;
+
+        public event EventHandler DisplayReady;
         #endregion
 
         #region Constructors
@@ -236,6 +238,12 @@ namespace Astral.Device
             int height = screenshot.Size.Height;
             int stride = screenshot.Stride;
 
+            Rectangle updateArea = screenshot.UpdateArea;
+            int offsetX = updateArea.X;
+            int offsetY = updateArea.Y;
+            int updateWidth = updateArea.Width;
+            int updateHeight = updateArea.Height;
+
             byte[] result = new byte[width * height * pixelSize];
 
             if (screenshot.IsFullFrame
@@ -247,27 +255,36 @@ namespace Astral.Device
 
             unsafe
             {
-                fixed (byte* prev = m_currBuffer)
+                // create temporary copy
+                Array.Copy(m_currBuffer, result, m_currBuffer.Length);
+
+                fixed (byte* tmpPrev = m_currBuffer)
                 {
-                    fixed (byte* curr = screenshot.Data)
+                    uint* prev = (uint*)tmpPrev;
+                    fixed (byte* tmpCurr = screenshot.Data)
                     {
+                        uint* curr = (uint*)tmpCurr;
                         fixed (byte* target = result)
                         {
                             uint* dst = (uint*)target;
-                            for (int y = 0; y < height; y++)
+                            for (int y = 0; y < updateHeight; y++)
                             {
-                                uint* prevRow = (uint*)(prev + stride * y);
-                                uint* curRow = (uint*)(curr + stride * y);
+                                int offset = width * (offsetY + y);
 
-                                for (int x = 0; x < width; x++)
+                                uint* targetPos = dst + offset;
+                                uint* prevRow = prev + offset;
+                                uint* curRow = curr + updateWidth * y;
+
+                                for (int x = 0; x < updateWidth; x++)
                                 {
-                                    *(dst++) = curRow[x] ^ prevRow[x];
+                                    targetPos[x + offsetX] = curRow[x] ^ prevRow[x + offsetX];
                                 }
                             }
                         }
                     }
                 }
 
+                // copy it back
                 Array.Copy(result, m_currBuffer, result.Length);
             }
 
@@ -326,10 +343,18 @@ namespace Astral.Device
 
                 AstralContentEventArgs rawData = ProcessScreenshot(screenshot);
                 ContentUpdated?.Invoke(this, rawData);
+
+                // send response
+                Message recvMsg = ContentReceivedMessage.CreateInstance(ContentType.Screenshot);
+                SendMessage(recvMsg);
             }
             else if (DeviceOrientationMessage.IsKindOf(msg))
             {
                 m_orientation = DeviceOrientationMessage.ToOrientation(msg);
+            }
+            else if (ContentReceivedMessage.IsKindOf(msg))
+            {
+                DisplayReady?.Invoke(this, EventArgs.Empty);
             }
         }
         #endregion
