@@ -63,7 +63,7 @@ namespace Astral.iOS
             Display display = new Display(new Size(
                 (int)(UIScreen.MainScreen.Bounds.Size.Width * UIScreen.MainScreen.Scale),
                 (int)(UIScreen.MainScreen.Bounds.Size.Height * UIScreen.MainScreen.Scale)),
-                DeviceOrientation.Portrait, TouchCapabilities.Multi);
+                DeviceOrientation.Portrait, TouchCapabilities.Multi, ConnectivityType.ContinuousStream);
             m_device.AddModule(display);
 
             // accelerometer
@@ -126,8 +126,6 @@ namespace Astral.iOS
             // Release any cached data, images, etc that aren't in use.     
         }
         #endregion
-
-        
 
         #region Evnet Handler
         #region Astral Event Handler

@@ -58,7 +58,8 @@ namespace Astral.Droid
             Display display = new Display(new Size(
                 Resources.DisplayMetrics.WidthPixels,
                 Resources.DisplayMetrics.HeightPixels),
-                DeviceOrientation.Portrait, TouchCapabilities.Multi);
+                DeviceOrientation.Portrait, TouchCapabilities.Multi,
+                ConnectivityType.RequestResponse);
             m_device.AddModule(display);
 
             //microhpone

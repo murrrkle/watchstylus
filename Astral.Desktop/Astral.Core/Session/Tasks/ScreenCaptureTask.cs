@@ -18,7 +18,7 @@ namespace Astral.Session.Tasks
     internal class ScreenCaptureTask
     {
         #region Static Class Members
-        internal static int KeyFrameCounter = 100;
+        internal static int KeyFrameCounter = 10000;
         #endregion
 
         #region Class Members
@@ -512,20 +512,24 @@ namespace Astral.Session.Tasks
         #region Threading
         private void Iterate()
         {
-            Stopwatch s = Stopwatch.StartNew();
+            Stopwatch stopWatch = Stopwatch.StartNew();
+            bool shouldStream = (m_session.Device[Device.ModuleType.Display] as Device.Display).ConnectivityType == ConnectivityType.ContinuousStream;
             int numFrames = 0;
 
             while (IsRunning)
             {
                 Thread.Sleep(1);
 
-                lock (this)
+                if (!(shouldStream))
                 {
-                    if (!(m_canSend))
+                    lock (this)
                     {
-                        continue;
+                        if (!(m_canSend))
+                        {
+                            continue;
+                        }
+                        m_canSend = false;
                     }
-                    m_canSend = false;
                 }
 
                 Rect captureRegion = m_selectionWindow.CaptureRegion;
@@ -538,16 +542,19 @@ namespace Astral.Session.Tasks
 
                 bool didSend = CaptureAndSendScreenshot(captureRegion);
 
-                lock (this)
+                if (!(shouldStream))
                 {
-                    if (!(didSend))
+                    lock (this)
                     {
-                        m_canSend = true;
+                        if (!(didSend))
+                        {
+                            m_canSend = true;
+                        }
                     }
                 }
 
                 numFrames++;
-                m_framesPerSecond = numFrames / (s.ElapsedMilliseconds / 1000.0);
+                m_framesPerSecond = numFrames / (stopWatch.ElapsedMilliseconds / 1000.0);
             }
         }
         #endregion

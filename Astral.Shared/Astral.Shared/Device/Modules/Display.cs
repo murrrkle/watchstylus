@@ -90,10 +90,14 @@ namespace Astral.Device
         private const string OrientationField = "ori";
 
         private const string TouchCapabilitiesField = "touC";
+
+        private const string ConnectivityTypeField = "conT";
         #endregion
 
         #region Class Members
         private Size m_resolution;
+
+        private ConnectivityType m_connectivityType = ConnectivityType.ContinuousStream;
 
         private DeviceOrientation m_orientation;
 
@@ -115,13 +119,15 @@ namespace Astral.Device
         #endregion
 
         #region Constructors
-        public Display(Size resolution, 
-            DeviceOrientation orientation, TouchCapabilities touchCapabilities)
+        public Display(Size resolution, DeviceOrientation orientation, 
+            TouchCapabilities touchCapabilities, ConnectivityType connectivityType)
             : base("Display")
         {
             m_resolution = resolution;
             m_orientation = orientation;
             m_touchCaps = touchCapabilities;
+
+            m_connectivityType = connectivityType;
         }
 
         public Display(NetworkStreamInfo info)
@@ -135,6 +141,9 @@ namespace Astral.Device
                 typeof(DeviceOrientation), info.GetInt(OrientationField));
             m_touchCaps = (TouchCapabilities)Enum.ToObject(
                 typeof(TouchCapabilities), info.GetInt(TouchCapabilitiesField));
+
+            m_connectivityType = (ConnectivityType)Enum.ToObject(
+                typeof(ConnectivityType), info.GetInt(ConnectivityTypeField));
         }
         #endregion
 
@@ -168,6 +177,11 @@ namespace Astral.Device
         public TouchCapabilities TouchCapabilities
         {
             get { return m_touchCaps; }
+        }
+
+        public ConnectivityType ConnectivityType
+        {
+            get { return m_connectivityType; }
         }
         #endregion
 
@@ -309,6 +323,7 @@ namespace Astral.Device
             info.AddValue(ResolutionHeightField, m_resolution.Height);
             info.AddValue(OrientationField, (int)m_orientation);
             info.AddValue(TouchCapabilitiesField, (int)m_touchCaps);
+            info.AddValue(ConnectivityTypeField, (int)m_connectivityType);
         }
 
         protected override void ProcessModuleMessage(Message msg)
@@ -341,12 +356,15 @@ namespace Astral.Device
             {
                 Screenshot screenshot = ScreenshotMessage.ToScreenshot(msg);
 
+                if (ConnectivityType == ConnectivityType.RequestResponse)
+                {
+                    // send response
+                    Message recvMsg = ContentReceivedMessage.CreateInstance(ContentType.Screenshot);
+                    SendMessage(recvMsg);
+                }
+
                 AstralContentEventArgs rawData = ProcessScreenshot(screenshot);
                 ContentUpdated?.Invoke(this, rawData);
-
-                // send response
-                Message recvMsg = ContentReceivedMessage.CreateInstance(ContentType.Screenshot);
-                SendMessage(recvMsg);
             }
             else if (DeviceOrientationMessage.IsKindOf(msg))
             {
