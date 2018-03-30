@@ -70,10 +70,7 @@ namespace TestingConcepts
             set
             {
                 this.deviceModel = value;
-
-                // remove later
-                //this.manager.AddRule(this.rule);
-          //      (rule as ContinuousRule).DestinationMouseMapping = AstralContinuousRuleMapping.Scroll;
+                
             }
         }
 
@@ -119,13 +116,18 @@ namespace TestingConcepts
             this.timer.Tick += OnTimerTick;
             this.timer.Start();
 
+            // Initialize Canvases for Sensors
+            InitializeTouchCanvas();
+            InitializeAcceleration();
+
+            // Selection events
             this.TouchPlotter.SelectionChanged += OnSelectionChanged;
             this.Plotter.SelectionChanged += OnSelectionChanged;
             this.OrientationVisualizer.Plotter.SelectionChanged += OnSelectionChanged;
             this.MicPlotter.SelectionChanged += OnSelectionChanged;
             this.AccelerometerPlotter.Plotter.SelectionChanged += OnSelectionChanged;
 
-            this.DoButton.Click += OnDoClick;
+            this.DoButton.Click += OnSelectMouseCoordinates;
 
             this.deviceModel.Session.InputSelectionWindowClosed += OnInputSelectionWindowClosed;
 
@@ -166,11 +168,12 @@ namespace TestingConcepts
             this.EnterKeyTextBox.MouseLeftButtonUp += OnEnterKeyTextBoxClicked;
             this.EnterKeyTextBox.KeyUp += OnEnterKeyTextBoxKeyUp;
 
-            InitializeTouchCanvas();
-            InitializeAcceleration();
             this.MicCanvas.Visibility = Visibility.Hidden;
 
         }
+
+
+        #region Initialize Acceleration
 
         private void InitializeAcceleration()
         {
@@ -222,6 +225,10 @@ namespace TestingConcepts
 
         }
 
+        #endregion
+
+        #region Initialize Touch
+
         private void InitializeTouchCanvas()
         {
             this.ToggleTouchDown.Click += (s, e) =>
@@ -247,6 +254,16 @@ namespace TestingConcepts
                 this.eventType = MobileEventType.TouchUp;
                 UpdateRule();
             };
+        }
+
+        #endregion
+
+        #region Keyboard Rule Methods
+
+        private void KeyboardSelected()
+        {
+            this.AllKeyboardCanvas.Visibility = Visibility.Visible;
+            this.AllMouseCommands.Visibility = Visibility.Hidden;
         }
 
         private void OnEnterKeyTextBoxKeyUp(object sender, KeyEventArgs e)
@@ -282,11 +299,9 @@ namespace TestingConcepts
             UpdateRule();
         }
 
-        private void KeyboardSelected()
-        {
-            this.AllKeyboardCanvas.Visibility = Visibility.Visible;
-            this.AllMouseCommands.Visibility = Visibility.Hidden;
-        }
+        #endregion
+
+        #region Mouse Rule Methods
 
         private void MouseSelected()
         {
@@ -305,6 +320,115 @@ namespace TestingConcepts
                 MouseSelected();
             }
         }
+
+        private void OnInputSelectionWindowClosed(object sender, Astral.UI.SelectionWindowEventArgs e)
+        {
+            if (e.Reason == Astral.UI.ClosingReason.OK)
+            {
+                Console.WriteLine(this.deviceModel.InputRegion);
+                this.destination = this.deviceModel.InputRegion;
+                UpdateRule();
+            }
+        }
+
+        private void OnSelectMouseCoordinates(object sender, RoutedEventArgs e)
+        {
+            this.deviceModel.ShowInputWindow();
+        }
+
+        /// <summary>
+        /// For mouse move events to click when entering or leaving a range
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnClickRangeChanged(object sender, RoutedEventArgs e)
+        {
+            this.rule.ChecksBounds = this.ClickInRangeCheckBox.IsChecked.Value;
+            UpdateRule();
+        }
+
+        /// <summary>
+        /// To perform a click instead of just an up or down event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnMouseClickCheckBox(object sender, RoutedEventArgs e)
+        {
+            if (this.MouseClickCheckBox.IsChecked.Value)
+            {
+                this.rule.InputAction.InputEvent = PCInputEventType.MouseClick;
+            }
+            else
+            {
+                if (this.RuleMouseButtonBar.CurrentMouseBarState == MouseButtonBarState.Down)
+                {
+                    this.rule.InputAction.InputEvent = PCInputEventType.MouseDown;
+                }
+                else
+                {
+                    this.rule.InputAction.InputEvent = PCInputEventType.MouseUp;
+                }
+            }
+        }
+
+        private void OnMoveMouseButtonClick(object sender, RoutedEventArgs e)
+        {
+            // set a position to move the mouse cursor
+        }
+
+        private void HideMouseCanvases()
+        {
+            this.ScrollCanvas.Visibility = Visibility.Hidden;
+            this.EasingButton.Visibility = Visibility.Hidden;
+            this.MouseMoveCanvas.Visibility = Visibility.Hidden;
+            this.MouseUpCanvas.Visibility = Visibility.Hidden;
+        }
+
+        private void OnNewMouseButtonBarSelection(object sender, MouseButtonBarEventArgs e)
+        {
+            HideMouseCanvases();
+            switch (e.State)
+            {
+                case MouseButtonBarState.Down:
+                    this.Rule = new DiscreteRule(this.eventType);
+                    this.Rule.InputAction.InputEvent = PCInputEventType.MouseDown;
+                    this.MouseUpCanvas.Visibility = Visibility.Visible;
+                    break;
+                case MouseButtonBarState.Up:
+                    this.Rule = new DiscreteRule(this.eventType);
+                    this.Rule.InputAction.InputEvent = PCInputEventType.MouseDown;
+                    break;
+                case MouseButtonBarState.Move:
+                    this.Rule = new ContinuousRule(this.eventType);
+                    this.Rule.InputAction.InputEvent = PCInputEventType.MouseMove;
+                    this.Rule.Dimension = MappingDimension.XY;
+                    this.MouseMoveCanvas.Visibility = Visibility.Visible;
+                    this.EasingButton.Visibility = Visibility.Visible;
+                    break;
+                case MouseButtonBarState.Scroll:
+                    this.Rule = new ContinuousRule(this.eventType);
+                    this.Rule.InputAction.InputEvent = PCInputEventType.MouseScroll;
+                    this.Rule.Dimension = MappingDimension.Y;
+                    Console.WriteLine(this.eventType);
+                    this.ScrollCanvas.Visibility = Visibility.Visible;
+                    this.EasingButton.Visibility = Visibility.Visible;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void OnScrollRangeSliderChanged(object sender, RangeSliderChangedEventArgs e)
+        {
+            if (this.Rule.InputAction.InputEvent == PCInputEventType.MouseScroll)
+            {
+                this.destination = new Rect(new Point(e.Low, e.Low), new Point(e.High, e.High));
+                UpdateRule();
+            }
+        }
+
+
+        #endregion
 
         private void OnAddRuleButtonClicked(object sender, RoutedEventArgs e)
         {
@@ -334,106 +458,17 @@ namespace TestingConcepts
             }
             this.manager.RemoveRuleSet("temp");
             Console.WriteLine("RAISE");
-            UnhookAllEvents(this.activeSensor);
+            UnhookAllEvents();
             RaiseRuleAdded(new EventArgs());
             
         }
 
-        private void OnMouseClickCheckBox(object sender, RoutedEventArgs e)
-        {
-            if(this.MouseClickCheckBox.IsChecked.Value)
-            {
-                this.rule.InputAction.InputEvent = PCInputEventType.MouseClick;
-            }
-            else
-            {
-                if(this.RuleMouseButtonBar.CurrentMouseBarState == MouseButtonBarState.Down)
-                {
-                    this.rule.InputAction.InputEvent = PCInputEventType.MouseDown;
-                }
-                else
-                {
-                    this.rule.InputAction.InputEvent = PCInputEventType.MouseUp;
-                }
-            }
-        }
-
-        private void OnMoveMouseButtonClick(object sender, RoutedEventArgs e)
-        {
-            // set a position to move the mouse cursor
-        }
-
-        private void OnClickRangeChanged(object sender, RoutedEventArgs e)
-        {
-            this.rule.ChecksBounds = this.ClickInRangeCheckBox.IsChecked.Value;
-            UpdateRule();
-        }
+        #region Easings
 
         private void OnInvertCheck(object sender, RoutedEventArgs e)
         {
             this.invert = this.EasingSelector.InvertCheckBox.IsChecked.Value;
             UpdateRule();
-        }
-
-        private void OnExit(object sender, RoutedEventArgs e)
-        {
-            this.Hide();
-        }
-
-        private void WindowDragClick(object sender, MouseButtonEventArgs e)
-        {
-            this.DragMove();
-        }
-
-        private void OnScrollRangeSliderChanged(object sender, RangeSliderChangedEventArgs e)
-        {
-            if(this.Rule.InputAction.InputEvent == PCInputEventType.MouseScroll)
-            {
-                this.destination = new Rect(new Point(e.Low, e.Low), new Point(e.High, e.High));
-                UpdateRule();
-            }
-        }
-
-        private void HideMouseCanvases()
-        {
-            this.ScrollCanvas.Visibility = Visibility.Hidden;
-            this.EasingButton.Visibility = Visibility.Hidden;
-            this.MouseMoveCanvas.Visibility = Visibility.Hidden;
-            this.MouseUpCanvas.Visibility = Visibility.Hidden;
-        }
-
-        private void OnNewMouseButtonBarSelection(object sender, MouseButtonBarEventArgs e)
-        {
-            HideMouseCanvases();
-            switch (e.State)
-            {
-                case MouseButtonBarState.Down:
-                    this.Rule = new DiscreteRule(this.eventType);
-                    this.Rule.InputAction.InputEvent = PCInputEventType.MouseDown;
-                    this.MouseUpCanvas.Visibility = Visibility.Visible;
-                    break;
-                case MouseButtonBarState.Up:
-                    this.Rule = new DiscreteRule(this.eventType);
-                    this.Rule.InputAction.InputEvent = PCInputEventType.MouseDown; 
-                    break;
-                case MouseButtonBarState.Move:
-                    this.Rule = new ContinuousRule(this.eventType);
-                    this.Rule.InputAction.InputEvent = PCInputEventType.MouseMove;
-                    this.Rule.Dimension = MappingDimension.XY;
-                    this.MouseMoveCanvas.Visibility = Visibility.Visible;
-                    this.EasingButton.Visibility = Visibility.Visible;
-                    break;
-                case MouseButtonBarState.Scroll:
-                    this.Rule = new ContinuousRule(this.eventType);
-                    this.Rule.InputAction.InputEvent = PCInputEventType.MouseScroll;
-                    this.Rule.Dimension = MappingDimension.Y;
-                    Console.WriteLine(this.eventType);
-                    this.ScrollCanvas.Visibility = Visibility.Visible;
-                    this.EasingButton.Visibility = Visibility.Visible;
-                    break;
-                default:
-                    break;
-            }
         }
 
         private void OnEasingPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -447,7 +482,24 @@ namespace TestingConcepts
         {
             this.EasingSelector.Visibility = Visibility.Visible;
         }
-                
+
+        #endregion
+
+        #region Window Related Events
+        
+        private void OnExit(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void WindowDragClick(object sender, MouseButtonEventArgs e)
+        {
+            this.DragMove();
+        }
+
+        #endregion
+
+
 
         private void InitializeSensorButtons()
         {
@@ -467,9 +519,11 @@ namespace TestingConcepts
             this.CompassCanvas.Visibility = Visibility.Hidden;
             this.OrientationCanvas.Visibility = Visibility.Hidden;
             this.MicCanvas.Visibility = Visibility.Hidden;
+            this.AccelerometerCanvas.Visibility = Visibility.Hidden;
+            this.LightCanvas.Visibility = Visibility.Hidden;
         }
 
-        private void UnhookAllEvents(ModuleType sensorType)
+        private void UnhookAllEvents()
         {
             ModuleType[] allModules = (ModuleType[])Enum.GetValues(typeof(ModuleType));
             foreach (ModuleType module in allModules)
@@ -505,14 +559,12 @@ namespace TestingConcepts
             }
 
         }
-
-
-
+        
         private void OnSensorButtonClicked(object sender, SensorButtonClickEventArgs e)
         {
             if(deviceModel != null)
             {
-                UnhookAllEvents(activeSensor);
+                UnhookAllEvents();
                 HideSensorCanvases();
 
                 this.activeSensor = e.SensorType;
@@ -539,7 +591,7 @@ namespace TestingConcepts
                     case ModuleType.Gyroscope:
                         break;
                     case ModuleType.Compass:
-                        this.deviceModel.Compass.HeadingChanged += OnCompassChanged;
+                        this.deviceModel.Compass.HeadingChanged += OnCompassUpdated;
                         this.CompassCanvas.Visibility = Visibility.Visible;
                         this.eventType = MobileEventType.CompassChanged;
 
@@ -547,12 +599,17 @@ namespace TestingConcepts
                     case ModuleType.Magnetometer:
                         break;
                     case ModuleType.Orientation:
-                        this.deviceModel.Orientation.OrientationChanged += OnOrientationChanged;
+                        this.deviceModel.Orientation.OrientationChanged += OnOrientationUpdated;
                         this.CompassCanvas.Visibility = Visibility.Visible;
                         this.eventType = MobileEventType.OrientationChanged;
 
                         break;
                     case ModuleType.AmbientLight:
+                        this.eventType = MobileEventType.AmbientLightChanged;
+                        this.deviceModel.AmbientLight.AmbientLightChanged += OnAmbientLightUpdated;
+                        this.LightCanvas.Visibility = Visibility.Visible;
+                        this.LightPlotter.Plotter.Stroke = AstralColors.Orange;
+                        this.LightPlotter.Plotter.StartAtZero = true;
                         break;
                     case ModuleType.Microphone:
                         this.eventType = MobileEventType.AmplitudeChanged;
@@ -569,7 +626,8 @@ namespace TestingConcepts
 
         }
 
-  
+
+        #region Constructors
 
         public RuleEditingWindow()
         {
@@ -596,20 +654,40 @@ namespace TestingConcepts
 
         #endregion
 
+        #endregion
+
 
 
         private void OnTimerTick(object sender, EventArgs e)
         {
-            if (this.currentModule == ModuleType.Display)
-            {
-                this.TouchPlotter.DrawPoints();
-            }
-            this.Plotter.DrawPoints();
-            this.MicPlotter.DrawPoints();
+            //if (this.currentModule == ModuleType.Display)
+            //{
+            //    this.TouchPlotter.DrawPoints();
+            //}
+            //this.Plotter.DrawPoints();
+            //this.MicPlotter.DrawPoints();
             this.AccelerometerPlotter.Update();
-
-            this.AccelPlot3D.DrawPoints();
+            this.LightPlotter.Update();
+            //this.AccelPlot3D.DrawPoints();
+            if (this.activePlotter != null)
+            {
+                this.activePlotter.DrawPoints();
+            }
         }
+
+        #region Sensor Events
+
+        private void OnAmbientLightUpdated(object sender, AstralAmbientLightEventArgs e)
+        {
+            Dispatcher.Invoke(new Action(delegate
+            {
+                double light = (e.AmbientLightData.AmbientLight > 1000 ? 1000 : e.AmbientLightData.AmbientLight);
+                this.LightPlotter.Plotter.PushPoint(light);
+                LightBar.Width = Utils.Map(light, 0, this.LightPlotter.Plotter.MaxRange, 0, 305);
+                this.LightValueLabel.Text = Math.Round(light).ToString();
+            }));
+        }
+
 
         private void OnAccelerationUpdated(object sender, AccelerationDeviceModelEventArgs e)
         {
@@ -660,24 +738,21 @@ namespace TestingConcepts
             }));
         }
 
-        private void OnOrientationChanged(object sender, AstralOrientationEventArgs e)
+        private void OnOrientationUpdated(object sender, AstralOrientationEventArgs e)
         {
             this.Plotter.UpdateValue(Utils.Map(e.OrientationData.PitchDegrees, -90, 90, 270, 90));
             Dispatcher.Invoke(new Action(delegate
             {
                 this.CompassTextBlock.Text = string.Format("{0:0}", e.OrientationData.PitchDegrees);
-                //Console.WriteLine(e.OrientationData.PitchDegrees);
-                Console.WriteLine(RuleString());
             }));
         }
 
-        private void OnCompassChanged(object sender, AstralCompassEventArgs e)
+        private void OnCompassUpdated(object sender, AstralCompassEventArgs e)
         {
             this.Plotter.UpdateValue(e.CompassData.Heading);
             Dispatcher.Invoke(new Action(delegate
             {
                 this.CompassTextBlock.Text = string.Format("{0:0}", e.CompassData.Heading);
-           //     Console.WriteLine(RuleString());
             }));
         }
 
@@ -695,11 +770,10 @@ namespace TestingConcepts
             Dispatcher.Invoke(new Action(delegate
             {
                 this.TouchPlotter.RemovePoint(e.TouchPoint.Id, new Point(e.TouchPoint.X, e.TouchPoint.Y));
-
-                //m.LeftUp();
             }));
         }
 
+        #endregion
 
         private void OnSelectionChanged(object sender, SelectionEventArgs e)
         {
@@ -718,44 +792,13 @@ namespace TestingConcepts
                 this.SelectionTopLabel.Text = top;
                 this.SelectionSizeLabel.Text = size;
             }
-            //   this.source = this.TouchPlotter.SelectionInRuleCoordinates;
+
             this.source = this.activePlotter.SelectionInRuleCoordinates;
             Console.WriteLine("SOURCE " + this.source);
-            //else
-            //this.source = this.MicPlotter.SelectionInRuleCoordinates;
-            UpdateRule();
-        }
-
-        private void OnInputSelectionWindowClosed(object sender, Astral.UI.SelectionWindowEventArgs e)
-        {
-            if(e.Reason == Astral.UI.ClosingReason.OK)
-            {
-                Console.WriteLine(this.deviceModel.InputRegion);
-                this.destination = this.deviceModel.InputRegion;
-            }
-        }
-
-        private void OnDoClick(object sender, RoutedEventArgs e)
-        {
-            // show mouse capture window
-            //  this.source = this.TouchPlotter.SelectionInDeviceCoords;
-            this.deviceModel.ShowInputWindow();
-         //   this.destination = this.mouseCapture.Selection;
 
             UpdateRule();
         }
 
-        private string RuleString()
-        {
-            string s = this.source + "\n"
-                + this.destination + "\n"
-                + this.eventType + "\n"
-                + this.rule.InputAction.InputEvent + "\n"
-                + this.rule.InputAction.Argument + "\n"
-                + "================= \n";
-
-            return s;
-
-        }
+        
     }
 }

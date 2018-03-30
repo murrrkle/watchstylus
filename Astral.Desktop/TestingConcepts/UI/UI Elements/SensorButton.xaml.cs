@@ -115,27 +115,35 @@ namespace TestingConcepts
             {
                 case ModuleType.Display:
                     canvasForSensor = this.TouchCanvas;
+                    this.ToolTip = "Touchscreen";
                     break;
                 case ModuleType.Accelerometer:
                     canvasForSensor = this.AccelerometerCanvas;
+                    this.ToolTip = "Accelerometer";
                     break;
                 case ModuleType.Gyroscope:
                     canvasForSensor = this.GyroCanvas;
+                    this.ToolTip = "Gyroscope";
                     break;
                 case ModuleType.Compass:
                     canvasForSensor = this.CompassCanvas;
+                    this.ToolTip = "Compass";
                     break;
                 case ModuleType.Magnetometer:
                     canvasForSensor = this.MagnetCanvas;
+                    this.ToolTip = "Magnetometer";
                     break;
                 case ModuleType.Orientation:
                     canvasForSensor = this.OrientationCanvas;
+                    this.ToolTip = "Orientation";
                     break;
                 case ModuleType.AmbientLight:
                     canvasForSensor = this.LightCanvas;
+                    this.ToolTip = "Ambient Light";
                     break;
                 case ModuleType.Microphone:
                     canvasForSensor = this.MicCanvas;
+                    this.ToolTip = "Microphone";
                     break;
                     // need microphone
             }

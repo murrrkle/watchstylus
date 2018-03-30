@@ -328,7 +328,16 @@ namespace TestingConcepts
 
         private void AmbientLightChanged(object sender, AstralAmbientLightEventArgs e)
         {
-
+            foreach (Rule rule in this.activeRules.Where(r => r.EventType == MobileEventType.CompassChanged))
+            {
+                if (this.isActive)
+                {
+                    double light = (e.AmbientLightData.AmbientLight > 1000 ? 1000 : e.AmbientLightData.AmbientLight);
+                    bool inRange = rule.ExecuteRule(new Point(light, light));
+                    if (inRange)
+                        this.inputHandler.ExecuteInputAction(rule.InputAction);
+                }
+            }
         }
 
         private void AccelerationChanged(object sender, AccelerationDeviceModelEventArgs e)
