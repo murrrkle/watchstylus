@@ -81,7 +81,9 @@
             </Canvas>
             <TextBlock x:Name="DeviceInfoText" Height="26.857" Canvas.Left="44.194" TextWrapping="Wrap" Text="No Device Connected" Canvas.Top="10.842" Width="267.291" FontFamily="{DynamicResource ResourceKey=RobotoBold}" FontSize="20" Foreground="{DynamicResource AstralBlackBrush}"/>
         </Canvas>
-        <Canvas x:Name="MainButtonsPanel" Height="38" Canvas.Left="13.347" Canvas.Top="95.667" Width="376.653"/>
+        <Canvas x:Name="MainButtonsPanel" Height="38" Canvas.Left="13.347" Canvas.Top="95.667" Width="376.653">
+            <Button x:Name="CaptureButton" Content="Button" Height="37.98" Canvas.Left="5.653" Canvas.Top="0.02" Width="40.5" Style="{DynamicResource AstralCaptureButtonStyle}"/>
+        </Canvas>
         <TextBlock Height="44.331" Canvas.Left="60.876" TextWrapping="Wrap" Canvas.Top="197.524" Width="235.833" FontFamily="{DynamicResource RobotoBold}" FontSize="36">
             <TextBlock.Foreground>
                 <SolidColorBrush Color="{DynamicResource AstralBlack}"/>

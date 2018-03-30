@@ -160,7 +160,9 @@ namespace TestingConcepts
                 if(newRule is ContinuousRule && newRule.ChecksBounds)
                 {
                     DiscreteRule downRule = new DiscreteRule(MobileEventType.TouchDown, newRule);
+                    downRule.InputAction.InputEvent = PCInputEventType.MouseDown;
                     DiscreteRule upRule = new DiscreteRule(MobileEventType.TouchUp, newRule);
+                    upRule.InputAction.InputEvent = PCInputEventType.MouseDown;
                     AddRule(downRule);
                     AddRule(upRule);
                 }
@@ -168,7 +170,27 @@ namespace TestingConcepts
             // check if DestinationMapping is MoveAndMouseDown, create event for selection entered
             // do the same for thresholds?
         }
-        
+
+        List<Rule> activeRulesClone = new List<Rule>();
+
+        internal void GiveChildToRule(Rule child, string parentName)
+        {
+            for(int i = 0; i < this.activeRules.Count; i++)
+            {
+                if(this.activeRules[i].Name == parentName)
+                {
+                    this.activeRules[i].Child = child;
+                    Console.WriteLine("Rule " + activeRules[i].Name + " now has child " + this.activeRules[i].Child.Name);
+                    this.activeRulesClone = new List<Rule>(this.activeRules);
+                }
+            }
+        }
+
+        internal void SwapWithClone()
+        {
+            this.activeRules = this.activeRulesClone;
+        }
+
         internal void UpdateTempRule(Rule sameRule)
         {
             this.activeRules[0] = sameRule;
@@ -315,9 +337,11 @@ namespace TestingConcepts
             {
                 try
                 {
+                    Console.WriteLine(activeRules.Count);
                     if (this.isActive)
                     {
                         double x, y, z, mag;
+                        if (rule.FilterInfo == null) rule.FilterInfo = "None";
                         if (rule.FilterInfo.Contains("None"))
                         {
                             x = e.AccelerationX; y = e.AccelerationY; z = e.AccelerationZ; mag = e.Magnitude;
@@ -334,7 +358,7 @@ namespace TestingConcepts
                         double value = (rule.ArgumentInfo == RuleArgument.Magnitude ? mag :
                             rule.ArgumentInfo == RuleArgument.X ? x :
                             rule.ArgumentInfo == RuleArgument.Y ? y : z);
-                        Console.WriteLine(rule.FilterInfo + " : " + rule.ArgumentInfo);
+
                         bool inRange = rule.ExecuteRule(new Point(value, value));
                         if (inRange)
                             this.inputHandler.ExecuteInputAction(rule.InputAction);
@@ -377,6 +401,7 @@ namespace TestingConcepts
 
         private void TouchMove(object sender, AstralTouchEventArgs e)
         {
+
             foreach (Rule rule in this.activeRules.Where(r => r.EventType == MobileEventType.TouchMove))
             {
                 bool inRange = rule.ExecuteRule(new Point(e.TouchPoint.X, e.TouchPoint.Y));
@@ -389,13 +414,22 @@ namespace TestingConcepts
 
         private void TouchDown(object sender, AstralTouchEventArgs e)
         {
-            foreach (Rule rule in this.activeRules.Where(r => r.EventType == MobileEventType.TouchDown))
+            try
             {
-                bool inRange = rule.ExecuteRule(new Point(e.TouchPoint.X, e.TouchPoint.Y));
-                if (inRange)
+                foreach (Rule rule in this.activeRules.Where(r => r.EventType == MobileEventType.TouchDown))
                 {
-                    this.inputHandler.ExecuteInputAction(rule.InputAction);
+                    bool inRange = rule.ExecuteRule(new Point(e.TouchPoint.X, e.TouchPoint.Y));
+                    if (inRange)
+                    {
+                        this.inputHandler.ExecuteInputAction(rule.InputAction);
+                    }
                 }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+                Console.WriteLine("LOL");
             }
         }
 

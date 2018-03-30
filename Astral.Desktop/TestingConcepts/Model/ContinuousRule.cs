@@ -78,6 +78,16 @@ namespace TestingConcepts
         
         public override bool ExecuteRule(Point point)
         {
+            if(this.parent != null)
+            {
+                if (!parent.ExecutedOnce)
+                {
+                    Console.WriteLine("parent hasn't executed");
+                    return false;
+                }
+            }
+
+
             if(this.previousPoint.X == Double.NaN && this.previousPoint.Y == Double.NaN)
             {
                 // for the first exectution

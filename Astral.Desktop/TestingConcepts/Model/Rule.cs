@@ -51,6 +51,10 @@ namespace TestingConcepts
         protected Rect sourceRect;
         protected Rect destinationRect;
         protected Point previousPoint = new Point(Double.NaN, Double.NaN);
+        protected bool executedOnce = false;
+
+        protected Rule parent;
+        protected Rule child;
 
         protected PCInputAction inputAction;
 
@@ -127,6 +131,44 @@ namespace TestingConcepts
             }
         }
 
+        public Rule Child
+        {
+            get
+            {
+                return this.child;
+            }
+            set
+            {
+                this.child = value;
+                this.child.Parent = this;
+            }
+        }
+
+        public Rule Parent
+
+        {
+            get
+            {
+                return this.parent;
+            }
+            set
+            {
+                this.parent = value;
+            }
+        }
+
+        internal bool ExecutedOnce
+        {
+            get
+            {
+                return this.executedOnce;
+            }
+            set
+            {
+                this.executedOnce = value;
+            }
+        }
+
         public Rect SourceRect { get => sourceRect; set => sourceRect = value; }
         public Rect DestinationRect { get => destinationRect; set => destinationRect = value; }
         public Point PreviousPoint { get => this.previousPoint; }
@@ -145,6 +187,7 @@ namespace TestingConcepts
         }
 
         public abstract bool ExecuteRule(Point value);
+
             
     }
 }

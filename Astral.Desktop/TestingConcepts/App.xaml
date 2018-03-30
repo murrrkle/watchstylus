@@ -765,6 +765,61 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+            <Style x:Key="AstralCaptureButtonStyle" TargetType="{x:Type Button}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid>
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualStateGroup.Transitions>
+                                            <VisualTransition From="MouseOver" GeneratedDuration="0:0:0.1" To="Pressed">
+                                                <VisualTransition.GeneratedEasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </VisualTransition.GeneratedEasingFunction>
+                                            </VisualTransition>
+                                            <VisualTransition From="Normal" GeneratedDuration="0:0:0.3" To="MouseOver">
+                                                <VisualTransition.GeneratedEasingFunction>
+                                                    <CircleEase EasingMode="EaseInOut"/>
+                                                </VisualTransition.GeneratedEasingFunction>
+                                            </VisualTransition>
+                                        </VisualStateGroup.Transitions>
+                                        <VisualState x:Name="Normal"/>
+                                        <VisualState x:Name="MouseOver">
+                                            <Storyboard>
+                                                <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="rectangle">
+                                                    <EasingColorKeyFrame KeyTime="0" Value="{StaticResource AstralYellow}"/>
+                                                </ColorAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed">
+                                            <Storyboard>
+                                                <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="rectangle">
+                                                    <EasingColorKeyFrame KeyTime="0" Value="#FF498183"/>
+                                                </ColorAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="Disabled"/>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                                <Rectangle x:Name="rectangle" Cursor="Hand" RadiusX="6" RadiusY="5">
+                                    <Rectangle.Fill>
+                                        <SolidColorBrush Color="{DynamicResource AstralRed}"/>
+                                    </Rectangle.Fill>
+                                </Rectangle>                                <Path Width="27.639" Height="22.024" Canvas.Left="15.739" Stretch="Fill" Fill="#FFFFFFFF" Data="F1 M 863.783,202.159C 862.679,202.159 861.783,201.265 861.783,200.159C 861.783,199.055 862.679,198.159 863.783,198.159C 864.888,198.159 865.783,199.055 865.783,200.159C 865.783,201.265 864.888,202.159 863.783,202.159 Z M 826.295,258.897C 811.404,258.897 799.291,246.783 799.291,231.894C 799.291,217.003 811.404,204.89 826.295,204.89C 841.184,204.89 853.298,217.003 853.298,231.894C 853.298,246.783 841.184,258.897 826.295,258.897 Z M 812.807,189.689C 812.807,188.67 813.632,187.845 814.651,187.845L 837.938,187.845C 838.956,187.845 839.783,188.67 839.783,189.689L 839.783,196.935C 839.783,197.954 838.956,198.779 837.938,198.779L 814.651,198.779C 813.632,198.779 812.807,197.954 812.807,196.935M 870.211,192.254L 846.85,192.254L 846.85,187.246C 846.85,185.762 845.647,184.557 844.162,184.557L 808.428,184.557C 806.943,184.557 805.739,185.762 805.739,187.246L 805.739,192.254L 782.379,192.254C 779.264,192.254 776.739,194.779 776.739,197.894L 776.739,257.894C 776.739,261.009 779.264,263.534 782.379,263.534L 870.211,263.534C 873.326,263.534 875.85,261.009 875.85,257.894L 875.85,197.894C 875.85,194.779 873.326,192.254 870.211,192.254 Z " Canvas.Top="8.5" Margin="6.43,7.978"/>
+                                <Path Width="12.457" Height="12.458" Canvas.Left="23.33" Canvas.Top="15.472" Stretch="Fill" Fill="#FFFFFFFF" Data="F1 M 826.295,249.897C 816.352,249.897 808.292,241.837 808.292,231.894C 808.292,221.952 816.352,213.89 826.295,213.89C 836.237,213.89 844.297,221.952 844.297,231.894C 844.297,241.837 836.237,249.897 826.295,249.897 Z M 826.295,209.557C 813.979,209.557 803.957,219.578 803.957,231.894C 803.957,244.21 813.979,254.23 826.295,254.23C 838.611,254.23 848.631,244.21 848.631,231.894C 848.631,219.578 838.611,209.557 826.295,209.557 Z " Margin="14.021,15.011,14.021,10.511"/>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsFocused" Value="True"/>
+                                <Trigger Property="IsDefaulted" Value="True"/>
+                                <Trigger Property="IsMouseOver" Value="True"/>
+                                <Trigger Property="IsPressed" Value="True"/>
+                                <Trigger Property="IsEnabled" Value="False"/>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
 
 
 

@@ -50,6 +50,12 @@ namespace TestingConcepts
 
         public override bool ExecuteRule(Point point)
         {
+            if(this.child != null && executedOnce)
+            {
+                Console.WriteLine("returning child");
+                return this.child.ExecuteRule(point);
+            }
+
             if (this.previousPoint.X == Double.NaN && this.previousPoint.Y == Double.NaN)
             {
                 // for the first exectution
@@ -65,6 +71,8 @@ namespace TestingConcepts
                 }
 
                 this.previousPoint = new Point(point.X, point.Y);
+
+                this.executedOnce = true;
 
                 return true;
             }

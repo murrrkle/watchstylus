@@ -37,12 +37,16 @@ namespace TestingConcepts
 
         private ModuleType activeSensor = ModuleType.Display;
 
+        private PlotterBase activePlotter = null;
+
         // rule properties that get sent to the manager for update
         private MobileEventType eventType = MobileEventType.None;
         private Rect source = new Rect();
         private Rect destination = new Rect();
         private bool invert = false;
         private EasingType easing = EasingType.Linear;
+
+        private Rule parentRule = null;
 
         MovingAverageFilter microphoneClean = new MovingAverageFilter();
 
@@ -308,10 +312,29 @@ namespace TestingConcepts
             UpdateRule();
 
             this.manager.SetActiveRuleSet(this.activeRuleSetName);
-            this.manager.AddRule(this.rule);
+            if (parentRule == null)
+            {
+                this.manager.AddRule(this.rule);
+            }
+            else
+            {
+                // find rule by name in active rules
+                // give child
+                
+                this.rule.ExecutedOnce = false;
 
+                this.manager.GiveChildToRule(this.rule, parentRule.Name);
+                Console.WriteLine("parent - ");
+                Console.WriteLine(this.manager.ActiveRules[0]);
+                Console.WriteLine();
+                Console.WriteLine("child -");
+                Console.WriteLine(this.manager.ActiveRules[0].Child);
+
+                this.manager.AddRule(this.rule);
+            }
             this.manager.RemoveRuleSet("temp");
             Console.WriteLine("RAISE");
+            UnhookAllEvents(this.activeSensor);
             RaiseRuleAdded(new EventArgs());
             
         }
@@ -500,6 +523,7 @@ namespace TestingConcepts
                         this.deviceModel.Display.TouchMove += OnTouchMoved;
                         this.deviceModel.Display.TouchUp += OnTouchUp;
                         this.TouchPlotter.DeviceResolution = new Size(this.deviceModel.Display.Width, this.deviceModel.Display.Height);
+                        this.activePlotter = this.TouchPlotter;
                         this.TouchCanvas.Visibility = Visibility.Visible;
                         // change later
                         
@@ -509,6 +533,8 @@ namespace TestingConcepts
                         this.AccelerometerCanvas.Visibility = Visibility.Visible;
                         this.eventType = MobileEventType.AccelerationChanged;
                         this.deviceModel.AccelerationChanged += OnAccelerationUpdated;
+                        this.activePlotter = this.AccelerometerPlotter.Plotter;
+                        this.rule.FilterInfo = this.AccNoFilter.Content.ToString();
                         break;
                     case ModuleType.Gyroscope:
                         break;
@@ -557,6 +583,15 @@ namespace TestingConcepts
             this.manager = ruleManager;
                         
             this.Loaded += OnLoaded;
+        }
+
+        public RuleEditingWindow(RuleManager ruleManager, Rule parentRule)
+            : this()
+        {
+            this.manager = ruleManager;
+
+            this.Loaded += OnLoaded;
+            this.parentRule = parentRule;
         }
 
         #endregion
@@ -684,7 +719,7 @@ namespace TestingConcepts
                 this.SelectionSizeLabel.Text = size;
             }
             //   this.source = this.TouchPlotter.SelectionInRuleCoordinates;
-            this.source = this.AccelerometerPlotter.Plotter.SelectionInRuleCoordinates;
+            this.source = this.activePlotter.SelectionInRuleCoordinates;
             Console.WriteLine("SOURCE " + this.source);
             //else
             //this.source = this.MicPlotter.SelectionInRuleCoordinates;

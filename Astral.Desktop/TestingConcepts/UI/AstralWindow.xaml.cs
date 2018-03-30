@@ -58,23 +58,59 @@ namespace TestingConcepts
             this.ruleEditingWindow.RuleAdded += OnRuleAdded;
 
             this.DebugText.Visibility = Visibility.Hidden;
-            this.MouseRightButtonDown += (s, e) => { this.DebugText.Visibility = (this.DebugText.Visibility == Visibility.Hidden ? Visibility.Visible : Visibility.Hidden); };
+            this.MouseRightButtonDown += (s, e) => {
+                this.DebugText.Visibility = (this.DebugText.Visibility == Visibility.Hidden ? Visibility.Visible : Visibility.Hidden);
+                this.ruleManager.SwapWithClone();
+                UpdateDebug();
+            };
+        }
+
+        private void UpdateDebug()
+        {
+            this.DebugText.Text = "";
+            foreach (Rule r in this.ruleManager.ActiveRules)
+            {
+                if (r.Name != null || r.Name != "")
+                {
+                    this.DebugText.Text += r.ToString() + "\n";
+                }
+            }
         }
 
         private void OnRuleAdded(object sender, EventArgs e)
         {
             this.DebugText.Text = "";
             this.ActiveRuleContainer.Children.Clear();
-            foreach(Rule r in this.ruleManager.ActiveRules)
+
+            this.ruleEditingWindow.Close();
+            foreach (Rule r in this.ruleManager.ActiveRules)
             {
                 if(r.Name != null || r.Name != "")
                 {
                     RuleDisplayControl ruleDisplay = new RuleDisplayControl(r);
                     this.ActiveRuleContainer.Children.Add(ruleDisplay);
                     this.DebugText.Text += r.ToString() + "\n";
+                    if(r.Parent != null)
+                    {
+                        int offset = 20;
+                        Rule parent = r.Parent;
+                        while(parent.Parent != null)
+                        {
+                            parent = parent.Parent;
+                            offset += 20;
+                            Console.WriteLine(offset);
+                        }
+                        ruleDisplay.RenderTransform = new TranslateTransform(offset, 0);
+                    }
+                    ruleDisplay.MouseLeftButtonDown += (s, ev) => 
+                    {
+                        this.ruleEditingWindow = new RuleEditingWindow(this.ruleManager, (s as RuleDisplayControl).RuleItem);
+                        this.ruleEditingWindow.RuleAdded += OnRuleAdded;
+                        this.ruleEditingWindow.DeviceModel = ruleManager.DeviceModel;
+                        ruleEditingWindow.Show();
+                    };
                 }
             }
-            this.ruleEditingWindow.Close();
         }
 
         private void OnClosed(object sender, EventArgs e)
@@ -90,7 +126,7 @@ namespace TestingConcepts
             Dispatcher.Invoke(new Action(delegate
             {
                 this.DeviceInfoText.Text = e.Device.Class + " Connected";
-                if(e.Device.Class.ToLower().Contains("nexus"))
+                if(e.Device.Class.ToLower().Contains("nexus") || e.Device.Class.ToLower().Contains("pixel"))
                 {
                     this.AndroidLogoIcon.Visibility = Visibility.Visible;
                     this.PhoneIcon.Visibility = Visibility.Visible;
@@ -104,6 +140,8 @@ namespace TestingConcepts
                 {
                     this.WatchIcon.Visibility = Visibility.Visible;
                 }
+
+                this.CaptureButton.Click += (s, arg) => { this.ruleManager.DeviceModel.ShowCaptureWindow(); };
             }));
 
         }
