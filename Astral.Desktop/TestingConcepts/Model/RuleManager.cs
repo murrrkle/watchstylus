@@ -28,6 +28,8 @@ namespace TestingConcepts
             }       
         }
 
+        private Rule medleyRule = null;
+
         private List<Rule> activeRules = new List<Rule>();
 
         private Dictionary<string, List<Rule>> allRuleSets = new Dictionary<string, List<Rule>>();
@@ -70,6 +72,50 @@ namespace TestingConcepts
                 this.deviceModel = value;
                 EnableHandlers(this.deviceModel);
             }
+        }
+
+        public Rule MedleyRule
+        {
+            get
+            {
+                return this.medleyRule;
+            }
+            set
+            {
+                this.medleyRule = value;
+                this.medleyRule.IsMedleyRule = true;
+            }
+        }
+
+        public event EventHandler<EventArgs> MedleyExecuted;
+
+        private void RaiseMedley(EventArgs e)
+        {
+            MedleyExecuted?.Invoke(this, e);
+        }
+
+        public void ClearMedleyRule()
+        {
+            if (this.medleyRule != null)
+            {
+                foreach (List<Rule> ruleSet in this.allRuleSets.Values)
+                {
+                    ruleSet.Remove(medleyRule);
+                }
+                this.medleyRule = null;
+            }
+        }
+
+        public void AddMedley(Rule rule)
+        {
+            this.medleyRule = rule;
+            rule.IsMedleyRule = true;
+            foreach (List<Rule> ruleSet in this.allRuleSets.Values)
+            {
+                ruleSet.Add(medleyRule);
+            }
+
+            this.medleyRule.MedleyRuleExecuted += (s, e) => { NextRuleSet(); RaiseMedley(new EventArgs()); };
         }
 
         private RuleManager()
@@ -169,6 +215,19 @@ namespace TestingConcepts
             }
             // check if DestinationMapping is MoveAndMouseDown, create event for selection entered
             // do the same for thresholds?
+        }
+
+        public void NextRuleSet()
+        {
+            for(int i= 0; i < this.allRuleSets.Count; i++)
+            {
+               if(this.allRuleSets.Values.ElementAt(i) == this.activeRules)
+                {
+                    Console.WriteLine("Active: " + this.allRuleSets.Keys.ElementAt(i));
+                    this.activeRules = (this.allRuleSets.Values.ElementAt((i + 1) % this.allRuleSets.Count));
+                    break;
+                }
+            }
         }
 
         List<Rule> activeRulesClone = new List<Rule>();
@@ -328,7 +387,7 @@ namespace TestingConcepts
 
         private void AmbientLightChanged(object sender, AstralAmbientLightEventArgs e)
         {
-            foreach (Rule rule in this.activeRules.Where(r => r.EventType == MobileEventType.CompassChanged))
+            foreach (Rule rule in this.activeRules.Where(r => r.EventType == MobileEventType.AmbientLightChanged))
             {
                 if (this.isActive)
                 {
@@ -346,7 +405,6 @@ namespace TestingConcepts
             {
                 try
                 {
-                    Console.WriteLine(activeRules.Count);
                     if (this.isActive)
                     {
                         double x, y, z, mag;
@@ -413,6 +471,7 @@ namespace TestingConcepts
 
             foreach (Rule rule in this.activeRules.Where(r => r.EventType == MobileEventType.TouchMove))
             {
+                
                 bool inRange = rule.ExecuteRule(new Point(e.TouchPoint.X, e.TouchPoint.Y));
                 if(inRange)
                 {

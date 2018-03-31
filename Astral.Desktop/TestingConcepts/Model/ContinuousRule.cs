@@ -86,8 +86,7 @@ namespace TestingConcepts
                     return false;
                 }
             }
-
-
+            
             if(this.previousPoint.X == Double.NaN && this.previousPoint.Y == Double.NaN)
             {
                 // for the first exectution

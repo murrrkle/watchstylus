@@ -62,6 +62,23 @@ namespace TestingConcepts
             }
         }
 
+        public void SelectRuleSet(string name)
+        {
+            foreach (RuleSetItem item in this.RuleSetsPanel.Children)
+            {
+                if (item.Name != name)
+                {
+                    item.IsChecked = false;
+                }
+                else
+                {
+                    item.IsChecked = true;
+                    item.SetVisualFromCheckState();
+                }
+            }
+            RaiseRuleSetChanged(new RuleSetEventArgs(name));
+        }
+
         private void OnItemClicked(object sender, MouseEventArgs e)
         {
             RuleSetItem selection = sender as RuleSetItem;

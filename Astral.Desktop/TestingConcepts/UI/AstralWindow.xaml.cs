@@ -30,6 +30,8 @@ namespace TestingConcepts
 
             this.ruleManager = RuleManager.Instance;
 
+            this.MedleyButton.Click += OnMedleyRuleButtonClick;
+
             this.networkManager = NetworkManager.Instance;
             this.networkManager.Start();
             this.networkManager.DeviceAdded += OnDeviceConnected;
@@ -65,6 +67,33 @@ namespace TestingConcepts
             };
         }
 
+        private void OnMedleyRuleButtonClick(object sender, RoutedEventArgs e)
+        {
+            this.ruleEditingWindow = new RuleEditingWindow(this.ruleManager);
+
+            // if there's a medley rule, clear it
+            this.ruleManager.ClearMedleyRule();
+
+            // set rule editing window to MedleyRule flag
+            this.ruleEditingWindow.IsMedley = true;
+
+            this.ruleManager.MedleyExecuted += MedleyExecuted;
+
+            this.ruleEditingWindow.RuleAdded += OnRuleAdded;
+            this.ruleEditingWindow.DeviceModel = ruleManager.DeviceModel;
+            this.ruleEditingWindow.Show();
+        }
+
+        private void MedleyExecuted(object sender, EventArgs e)
+        {
+            string key = this.ruleManager.GetKey(this.ruleManager.ActiveRules);
+            Dispatcher.Invoke(new Action(delegate 
+            {
+                this.RuleSetsTab.SelectRuleSet(key);
+            }));
+            
+        }
+
         private void UpdateDebug()
         {
             this.DebugText.Text = "";
@@ -77,32 +106,33 @@ namespace TestingConcepts
             }
         }
 
-        private void OnRuleAdded(object sender, EventArgs e)
+        private void DrawActiveRulesUI()
         {
-            this.DebugText.Text = "";
             this.ActiveRuleContainer.Children.Clear();
-
-            this.ruleEditingWindow.Close();
             foreach (Rule r in this.ruleManager.ActiveRules)
             {
-                if(r.Name != null || r.Name != "")
+                if (r.Name != null || r.Name != "")
                 {
+               //     Console.WriteLine(r.DestinationRect);
                     RuleDisplayControl ruleDisplay = new RuleDisplayControl(r);
+                    if(r.IsMedleyRule)
+                    {
+                        ruleDisplay.BGRect.Fill = AstralColors.Green;
+                    }
                     this.ActiveRuleContainer.Children.Add(ruleDisplay);
                     this.DebugText.Text += r.ToString() + "\n";
-                    if(r.Parent != null)
+                    if (r.Parent != null)
                     {
                         int offset = 20;
                         Rule parent = r.Parent;
-                        while(parent.Parent != null)
+                        while (parent.Parent != null)
                         {
                             parent = parent.Parent;
                             offset += 20;
-                            Console.WriteLine(offset);
                         }
                         ruleDisplay.RenderTransform = new TranslateTransform(offset, 0);
                     }
-                    ruleDisplay.MouseLeftButtonDown += (s, ev) => 
+                    ruleDisplay.MouseLeftButtonDown += (s, ev) =>
                     {
                         this.ruleEditingWindow = new RuleEditingWindow(this.ruleManager, (s as RuleDisplayControl).RuleItem);
                         this.ruleEditingWindow.RuleAdded += OnRuleAdded;
@@ -111,6 +141,16 @@ namespace TestingConcepts
                     };
                 }
             }
+        }
+
+        private void OnRuleAdded(object sender, EventArgs e)
+        {
+            this.DebugText.Text = "";
+            this.ActiveRuleContainer.Children.Clear();
+
+            this.ruleEditingWindow.Close();
+
+            DrawActiveRulesUI();
         }
 
         private void OnClosed(object sender, EventArgs e)
@@ -199,6 +239,7 @@ namespace TestingConcepts
         private void OnRuleSetChanged(object sender, RuleSetEventArgs e)
         {
             this.ruleManager.SetActiveRuleSet(e.Name);
+            DrawActiveRulesUI();
         }
 
         private void AddRuleSetButtonClicked(object sender, RoutedEventArgs e)

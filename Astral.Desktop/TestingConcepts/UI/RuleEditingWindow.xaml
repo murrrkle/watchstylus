@@ -187,7 +187,7 @@
             <ToggleButton x:Name="ShiftButton" Content="Shift" Height="51" Canvas.Left="287.951" Style="{DynamicResource AstralToggleButtonStyle}" Canvas.Top="351.435" Width="93"/>
 
         </Canvas>
-        <TextBlock x:Name="DebugText" Height="40.25" Canvas.Left="14.935" TextWrapping="Wrap" Text="DEBUG" Canvas.Top="675" Width="893.596" FontFamily="{DynamicResource RobotoBold}" FontSize="20"/>
+        <TextBlock x:Name="DebugText" Height="130" Canvas.Left="14.935" TextWrapping="Wrap" Text="DEBUG" Canvas.Top="585.25" Width="405.065" FontFamily="{DynamicResource RobotoBold}" FontSize="10"/>
         <Canvas x:Name="MicCanvas" Height="613.341" Canvas.Left="78" Canvas.Top="56.659" Width="342" d:IsHidden="True">
             <Rectangle Fill="#FFF4F4F5" Height="310.5" Canvas.Left="27" Canvas.Top="43.091" Width="292.5"/>
             <local:LinearPlotter x:Name="MicPlotter" Height="310.5" Canvas.Left="27" Canvas.Top="43.091" Width="292.5"/>
@@ -245,7 +245,7 @@
                     <SolidColorBrush Color="{DynamicResource AstralLightGray}"/>
                 </Rectangle.Fill>
             </Rectangle>
-            
+
             <Rectangle x:Name="LightBar" Height="34" Canvas.Left="27" RadiusY="5" RadiusX="6" Canvas.Top="33.841" Width="305">
                 <Rectangle.Fill>
                     <SolidColorBrush Color="{DynamicResource AstralYellow}"/>

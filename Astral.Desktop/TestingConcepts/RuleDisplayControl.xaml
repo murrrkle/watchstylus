@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:TestingConcepts"
              mc:Ignorable="d" d:DesignWidth="319.46" Height="66" Width="250">
     <Canvas Width="250" >
-        <Rectangle RadiusY="5" RadiusX="6" Width="250" Height="58.42">
+        <Rectangle x:Name="BGRect" RadiusY="5" RadiusX="6" Width="250" Height="58.42">
             <Rectangle.Fill>
                 <SolidColorBrush Color="{DynamicResource AstralGrey}"/>
             </Rectangle.Fill>

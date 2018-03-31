@@ -74,6 +74,11 @@ namespace TestingConcepts
 
                 this.executedOnce = true;
 
+                if(IsMedleyRule)
+                {
+                    RaiseMedleyRule(new EventArgs());
+                }
+
                 return true;
             }
             else

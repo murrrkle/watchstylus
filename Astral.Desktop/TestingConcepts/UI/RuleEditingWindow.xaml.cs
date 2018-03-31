@@ -29,7 +29,9 @@ namespace TestingConcepts
         private ModuleType currentModule = ModuleType.Display;
 
         private MappingCaptureWindow mouseCapture;
-       
+
+        private bool isMedley = false;
+
         private RuleManager manager;
         private DispatcherTimer timer = new DispatcherTimer();
       
@@ -59,6 +61,18 @@ namespace TestingConcepts
         private void RaiseRuleAdded(EventArgs e)
         {
             RuleAdded?.Invoke(this, e);
+        }
+
+        public bool IsMedley
+        {
+            get
+            {
+                return this.isMedley;
+            }
+            set
+            {
+                this.isMedley = value;
+            }
         }
 
         public DeviceModel DeviceModel
@@ -93,8 +107,15 @@ namespace TestingConcepts
         private void UpdateRule()
         {
             this.rule.EventType = this.eventType;
+
+            double x = this.destination.Left;
+            double y = this.destination.Top;
+            double w = this.destination.Width;
+            double h = this.destination.Height;
+            Rect dstClone = new Rect(x, y, w, h);
+
             this.rule.SourceRect = this.source;
-            this.rule.DestinationRect = this.destination;
+            this.rule.DestinationRect = dstClone;
             if(this.rule is ContinuousRule)
             {
                 (this.rule as ContinuousRule).Invert = this.invert;
@@ -107,6 +128,8 @@ namespace TestingConcepts
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+
+            Rule rule = new ContinuousRule(MobileEventType.TouchMove);
             this.activeRuleSetName = this.manager.GetKey(this.manager.ActiveRules);
             this.manager.AddRuleSet("temp");
             this.manager.SetActiveRuleSet("temp");
@@ -126,6 +149,7 @@ namespace TestingConcepts
             this.OrientationVisualizer.Plotter.SelectionChanged += OnSelectionChanged;
             this.MicPlotter.SelectionChanged += OnSelectionChanged;
             this.AccelerometerPlotter.Plotter.SelectionChanged += OnSelectionChanged;
+            this.LightPlotter.Plotter.SelectionChanged += OnSelectionChanged;
 
             this.DoButton.Click += OnSelectMouseCoordinates;
 
@@ -326,7 +350,12 @@ namespace TestingConcepts
             if (e.Reason == Astral.UI.ClosingReason.OK)
             {
                 Console.WriteLine(this.deviceModel.InputRegion);
-                this.destination = this.deviceModel.InputRegion;
+                double x = this.deviceModel.InputRegion.Left;
+                double y = this.deviceModel.InputRegion.Top;
+                double w = this.deviceModel.InputRegion.Width;
+                double h = this.deviceModel.InputRegion.Height;
+                Rect rect = new Rect(x, y, w, h);
+                this.destination = rect;
                 UpdateRule();
             }
         }
@@ -438,7 +467,15 @@ namespace TestingConcepts
             this.manager.SetActiveRuleSet(this.activeRuleSetName);
             if (parentRule == null)
             {
-                this.manager.AddRule(this.rule);
+                if(isMedley)
+                {
+                    this.rule.Name = "MedleyRule";
+                    this.manager.AddMedley(this.rule);
+                }
+                else
+                {
+                    this.manager.AddRule(this.rule);
+                }
             }
             else
             {
@@ -460,7 +497,8 @@ namespace TestingConcepts
             Console.WriteLine("RAISE");
             UnhookAllEvents();
             RaiseRuleAdded(new EventArgs());
-            
+            this.deviceModel.Session.InputSelectionWindowClosed -= OnInputSelectionWindowClosed;
+
         }
 
         #region Easings
@@ -541,7 +579,7 @@ namespace TestingConcepts
                     case ModuleType.Gyroscope:
                         break;
                     case ModuleType.Compass:
-                     //   this.deviceModel.Compass.HeadingChanged -= OnCompassChanged;
+                        this.deviceModel.Compass.HeadingChanged -= OnCompassUpdated;
                         break;
                     case ModuleType.Magnetometer:
                         break;
@@ -549,6 +587,7 @@ namespace TestingConcepts
                      //   this.deviceModel.Orientation.OrientationChanged -= OnOrientationChanged;
                         break;
                     case ModuleType.AmbientLight:
+                        this.deviceModel.AmbientLight.AmbientLightChanged -= OnAmbientLightUpdated;
                         break;
                     case ModuleType.Microphone:
                         this.deviceModel.Microphone.MicrophoneUpdated -= OnMicrophoneUpdated;
@@ -594,6 +633,7 @@ namespace TestingConcepts
                         this.deviceModel.Compass.HeadingChanged += OnCompassUpdated;
                         this.CompassCanvas.Visibility = Visibility.Visible;
                         this.eventType = MobileEventType.CompassChanged;
+                        this.activePlotter = Plotter;
 
                         break;
                     case ModuleType.Magnetometer:
@@ -610,6 +650,7 @@ namespace TestingConcepts
                         this.LightCanvas.Visibility = Visibility.Visible;
                         this.LightPlotter.Plotter.Stroke = AstralColors.Orange;
                         this.LightPlotter.Plotter.StartAtZero = true;
+                        this.activePlotter = this.LightPlotter.Plotter;
                         break;
                     case ModuleType.Microphone:
                         this.eventType = MobileEventType.AmplitudeChanged;
@@ -685,6 +726,8 @@ namespace TestingConcepts
                 this.LightPlotter.Plotter.PushPoint(light);
                 LightBar.Width = Utils.Map(light, 0, this.LightPlotter.Plotter.MaxRange, 0, 305);
                 this.LightValueLabel.Text = Math.Round(light).ToString();
+
+                this.DebugText.Text = this.rule.ToString();
             }));
         }
 

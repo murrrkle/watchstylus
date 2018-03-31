@@ -75,7 +75,7 @@ namespace TestingConcepts
         }
 
 
-        private void SetVisualFromCheckState()
+        public void SetVisualFromCheckState()
         {
 
             if(this.isChecked)

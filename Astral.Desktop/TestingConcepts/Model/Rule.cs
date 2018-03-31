@@ -58,12 +58,21 @@ namespace TestingConcepts
 
         protected PCInputAction inputAction;
 
+        public bool IsMedleyRule { get; set; }
+
         public virtual PCInputAction InputAction { get; }
         
         public virtual RuleArgument ArgumentInfo { get; set; }
 
         public event EventHandler<SelectionCrossedEventArgs> SelectionEntered;
         public event EventHandler<SelectionCrossedEventArgs> SelectionExited;
+
+        public event EventHandler<EventArgs> MedleyRuleExecuted;
+
+        protected void RaiseMedleyRule(EventArgs e)
+        {
+            MedleyRuleExecuted?.Invoke(this, e);
+        }
 
         public override string ToString()
         {
@@ -176,11 +185,13 @@ namespace TestingConcepts
 
         public Rule(MobileEventType eventType)
         {
+            this.IsMedleyRule = false;
             this.eventType = eventType;
         }
 
         public Rule(MobileEventType eventType, Rule ruleToCopy)
         {
+            this.IsMedleyRule = false;
             this.eventType = eventType;
             this.sourceRect = ruleToCopy.sourceRect;
             this.destinationRect = ruleToCopy.destinationRect;

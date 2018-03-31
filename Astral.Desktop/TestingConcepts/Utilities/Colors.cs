@@ -19,7 +19,7 @@ namespace TestingConcepts
         public static SolidColorBrush White = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFFFFF"));
         public static SolidColorBrush LightGray = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#f1f2f2"));
         public static SolidColorBrush Black = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#333333"));
-
+        public static SolidColorBrush Green = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#aacd45"));
         #endregion
 
         #region Static Constructor
@@ -34,6 +34,8 @@ namespace TestingConcepts
             Orange.Freeze();
             White.Freeze();
             LightGray.Freeze();
+            Green.Freeze();
+            Black.Freeze();
         }
 
         #endregion
