@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TestingConcepts"
         mc:Ignorable="d"
-        Title="AstralWindow" Height="863.158" Width="405">
+        Title="AstralWindow" Height="863.158" Width="405" WindowStyle="None">
     <Window.Resources>
         <Storyboard x:Key="AddRuleSetCanvasAppear">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="AddRuleSetCanvas">
@@ -27,6 +27,61 @@
                 </EasingDoubleKeyFrame>
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
+        <Style x:Key="FontAwesomeButtonBlue" TargetType="{x:Type Button}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualStateGroup.Transitions>
+                                        <VisualTransition From="MouseOver" GeneratedDuration="0:0:0.1" To="Pressed">
+                                            <VisualTransition.GeneratedEasingFunction>
+                                                <CubicEase EasingMode="EaseOut"/>
+                                            </VisualTransition.GeneratedEasingFunction>
+                                        </VisualTransition>
+                                        <VisualTransition From="Normal" GeneratedDuration="0:0:0.3" To="MouseOver">
+                                            <VisualTransition.GeneratedEasingFunction>
+                                                <CircleEase EasingMode="EaseInOut"/>
+                                            </VisualTransition.GeneratedEasingFunction>
+                                        </VisualTransition>
+                                    </VisualStateGroup.Transitions>
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="MouseOver">
+                                        <Storyboard>
+                                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="rectangle">
+                                                <EasingColorKeyFrame KeyTime="0" Value="{StaticResource AstralYellow}"/>
+                                            </ColorAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="rectangle">
+                                                <EasingColorKeyFrame KeyTime="0" Value="#FF498183"/>
+                                            </ColorAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled"/>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Rectangle x:Name="rectangle" Cursor="Hand" RadiusX="6" RadiusY="5">
+                                <Rectangle.Fill>
+                                    <SolidColorBrush Color="{DynamicResource AstralBlue}"/>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <ContentPresenter TextBlock.FontFamily="{DynamicResource FontAwesome}" TextBlock.FontSize="18" TextBlock.Foreground="{DynamicResource ResourceKey=AstralWhiteBrush}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True"/>
+                            <Trigger Property="IsDefaulted" Value="True"/>
+                            <Trigger Property="IsMouseOver" Value="True"/>
+                            <Trigger Property="IsPressed" Value="True"/>
+                            <Trigger Property="IsEnabled" Value="False"/>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
     <Window.Triggers>
         <EventTrigger RoutedEvent="FrameworkElement.Loaded">
@@ -48,7 +103,7 @@
             <Rectangle Width="29.813" Height="29.813" Canvas.Left="42.174" Stretch="Fill" Fill="#FFF1C02B"/>
             <Path Width="29.813" Height="42.174" Canvas.Left="42.174" Canvas.Top="29.813" Stretch="Fill" Fill="#FFE64D3C" Data="F1 M 276.191,1206.37L 471.428,1206.37L 471.428,930.182L 276.191,1044.56L 276.191,1206.37 Z "/>
         </Canvas>
-        <Canvas x:Name="ConnectionDetailsCanvas" Height="50.699" Canvas.Left="18.683" Canvas.Top="138.825" Width="361.653">
+        <Canvas x:Name="ConnectionDetailsCanvas" Height="50.699" Canvas.Left="18.683" Canvas.Top="143.825" Width="361.653">
             <Rectangle Fill="#FFF1F2F2" Height="50.699" Width="360.653" RadiusX="5" RadiusY="5"/>
             <Canvas x:Name="DeviceIcons" Height="93.434" Canvas.Top="-20.767" Width="66.585" RenderTransformOrigin="0.5,0.5" Canvas.Left="-12.001">
                 <Canvas.RenderTransform>
@@ -81,11 +136,13 @@
             </Canvas>
             <TextBlock x:Name="DeviceInfoText" Height="26.857" Canvas.Left="44.194" TextWrapping="Wrap" Text="No Device Connected" Canvas.Top="10.842" Width="267.291" FontFamily="{DynamicResource ResourceKey=RobotoBold}" FontSize="20" Foreground="{DynamicResource AstralBlackBrush}"/>
         </Canvas>
-        <Canvas x:Name="MainButtonsPanel" Height="38" Canvas.Left="13.347" Canvas.Top="94.167" Width="376.653">
+        <Canvas x:Name="MainButtonsPanel" Height="38" Canvas.Left="13.347" Canvas.Top="96.167" Width="376.653">
             <Button x:Name="CaptureButton" Content="Button" Height="37.98" Canvas.Left="5.653" Canvas.Top="0.02" Width="40.5" Style="{DynamicResource AstralCaptureButtonStyle}"/>
-            <Button x:Name="CaptureButton_Copy" Content="" Height="37.98" Canvas.Left="58.653" Canvas.Top="0.02" Width="40.5" Style="{DynamicResource FontAwesomeButton}"/>
-            <Button x:Name="CaptureButton_Copy1" Content="V" Height="37.98" Canvas.Left="111.653" Canvas.Top="0.02" Width="40.5" Style="{DynamicResource AstralButtonBlue}"/>
-            <Button x:Name="CaptureButton_Copy2" Content="L" Height="37.98" Canvas.Left="164.653" Canvas.Top="0.02" Width="40.5" Style="{DynamicResource AstralButtonBlue}"/>
+            <Button x:Name="CaptureButton_Copy" Content="" Height="37.98" Canvas.Left="58.653" Canvas.Top="0.02" Width="40.5" Style="{DynamicResource FontAwesomeButtonBlue}"/>
+            <Button x:Name="CaptureButton_Copy1" Content="" Height="37.98" Canvas.Left="111.653" Canvas.Top="0.02" Width="40.5" Style="{DynamicResource FontAwesomeButtonBlue}"/>
+            <Button x:Name="CaptureButton_Copy2" Content="" Height="37.98" Canvas.Left="164.653" Canvas.Top="0.02" Width="40.5" Style="{DynamicResource FontAwesomeButtonBlue}"/>
+            <Button x:Name="CaptureButton_Copy4" Content="&#xF080;" Height="37.98" Canvas.Left="218.653" Canvas.Top="0.02" Width="40.5" Style="{DynamicResource FontAwesomeButtonBlue}"/>
+
         </Canvas>
         <TextBlock Height="44.331" Canvas.Left="60.876" TextWrapping="Wrap" Canvas.Top="197.524" Width="235.833" FontFamily="{DynamicResource RobotoBold}" FontSize="36">
             <TextBlock.Foreground>
@@ -105,7 +162,7 @@
         <StackPanel x:Name="ActiveRuleContainer" Height="527.196" Canvas.Left="57.876" Canvas.Top="297.5" Width="319.46"/>
         <TextBlock x:Name="DebugText" Height="129.708" Canvas.Left="46.135" TextWrapping="Wrap" Text="DEBUG" Canvas.Top="599.442" Width="311.274" FontFamily="{DynamicResource RobotoBold}" FontSize="12"/>
         <Button x:Name="MedleyButton" Content="Medley Rule" Height="30" Canvas.Left="53" Canvas.Top="252.855" Width="324.336" Style="{DynamicResource AstralButtonGreen}"/>
-        <Canvas x:Name="AddRuleSetCanvas" Height="792.5" Width="400" Background="#5F000000" d:IsHidden="True">
+        <Canvas x:Name="AddRuleSetCanvas" Height="835.658" Width="400" Background="#5F000000" d:IsHidden="True">
             <Rectangle Fill="#FFD9D9D9" Height="132" Canvas.Left="37" RadiusY="5" RadiusX="6" Canvas.Top="366" Width="329"/>
             <TextBlock Height="42" Canvas.Left="49" TextWrapping="Wrap" Text="Add new Rule Set" Canvas.Top="382" Width="302" FontFamily="{DynamicResource RobotoBold}" FontSize="25">
                 <TextBlock.Foreground>
@@ -116,5 +173,7 @@
             <Button x:Name="NewRuleSetOkay" Content="Button" Height="25.25" Canvas.Left="327" Style="{DynamicResource OkayButtonStyle}" Canvas.Top="451.5" Width="24"/>
             <Button x:Name="NewRuleSetCancel" Content="Button" Height="25.25" Canvas.Left="298" Style="{DynamicResource CancelButtonStyle}" Canvas.Top="451.5" Width="24"/>
         </Canvas>
+        <Canvas x:Name="DragCanvas" Height="91.167" Width="400" Background="#00000000"/>
+        <Button x:Name="ExitButton" Content="X" Height="42.205" Canvas.Left="342.663" Canvas.Top="10" Width="47.337" Style="{DynamicResource ExitButtonStyle}"/>
     </Canvas>
 </Window>

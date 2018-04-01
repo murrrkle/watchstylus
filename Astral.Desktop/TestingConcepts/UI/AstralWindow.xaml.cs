@@ -54,6 +54,9 @@ namespace TestingConcepts
             this.ruleManager.AddRuleSet("Default");
             this.ruleManager.SetActiveRuleSet("Default");
 
+            this.DragCanvas.MouseLeftButtonDown += (s, e) => { this.DragMove(); };
+            this.ExitButton.Click += (s, e) => { Application.Current.Shutdown(); };
+
             this.AddRuleButton.Click += OnAddNewRule;
             this.Closed += OnClosed;
 

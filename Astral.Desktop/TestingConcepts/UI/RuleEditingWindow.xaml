@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:TestingConcepts"
         
         mc:Ignorable="d"
-        Title="RuleEditingWindow" Height="725.25" Width="933.087" ResizeMode="NoResize" WindowStyle="None" BorderBrush="#FFE7E7E7">
+        Title="RuleEditingWindow" Height="725.25" Width="901.587" WindowStyle="None" BorderBrush="#FFE7E7E7">
     <Window.Resources>
     </Window.Resources>
 
@@ -16,32 +16,39 @@
                 <SolidColorBrush Color="{DynamicResource AstralBlack}"/>
             </TextBlock.Foreground></TextBlock>
 
-        <Canvas x:Name="TouchCanvas" Height="579.5" Canvas.Left="104.22" Canvas.Top="95.5" Width="243" d:IsHidden="True">
-            <Rectangle Fill="#FFF4F4F5" Height="414.5" Width="243"/>
-            <local:MultiTouchPlotter x:Name="TouchPlotter" Height="414.5" Width="243" d:LayoutOverrides="HorizontalAlignment"/>
-            <TextBlock Height="18.5" TextWrapping="Wrap" Text="Selection Top" Canvas.Top="494.5" Width="101" FontSize="16" FontFamily="{DynamicResource RobotoBold}" >
+        <Canvas x:Name="TouchCanvas" Height="653.045" Canvas.Left="106.5" Canvas.Top="57.205" Width="269.22">
+            <!--<Rectangle Fill="#FFF4F4F5" Height="414.5" Width="243" Canvas.Top="139.5"/>-->
+            <local:TouchPlotterWrapper x:Name="TouchPlotter" Canvas.Left="1.517" Canvas.Top="131.048"/>
+            <!--local:MultiTouchPlotter x:Name="TouchPlotter" Height="414.5" Width="243" Canvas.Top="139.5"/-->
+            <TextBlock Height="18.5" TextWrapping="Wrap" Text="Selection Top" Canvas.Top="565" Width="101" FontSize="16" FontFamily="{DynamicResource RobotoBold}" >
                 <TextBlock.Foreground>
                     <SolidColorBrush Color="{DynamicResource AstralBlack}"/>
                 </TextBlock.Foreground>
             </TextBlock>
-            <TextBlock x:Name="SelectionTopLabel" Height="18.5" TextWrapping="Wrap" Text="Selection Top" Canvas.Top="515.5" Width="101"  FontFamily="{DynamicResource RobotoCondensed}" >
+            <TextBlock x:Name="SelectionTopLabel" Height="18.5" TextWrapping="Wrap" Text="Selection Top" Canvas.Top="586" Width="101"  FontFamily="{DynamicResource RobotoCondensed}" >
                 <TextBlock.Foreground>
                     <SolidColorBrush Color="{DynamicResource AstralBlack}"/>
                 </TextBlock.Foreground>
             </TextBlock>
-            <TextBlock Height="18.5" TextWrapping="Wrap" Text="Selection Size" Canvas.Top="535" Width="101"  FontFamily="{DynamicResource RobotoBold}" FontSize="16" >
+            <TextBlock Height="18.5" TextWrapping="Wrap" Text="Selection Size" Canvas.Top="605.5" Width="101"  FontFamily="{DynamicResource RobotoBold}" FontSize="16" >
                 <TextBlock.Foreground>
                     <SolidColorBrush Color="{DynamicResource AstralBlack}"/>
                 </TextBlock.Foreground>
             </TextBlock>
-            <TextBlock x:Name="SelectionSizeLabel" Height="18.5" TextWrapping="Wrap" Text="Selection Size" Canvas.Top="555" Width="101"  FontFamily="{DynamicResource RobotoCondensed}" >
+            <TextBlock x:Name="SelectionSizeLabel" Height="18.5" TextWrapping="Wrap" Text="Selection Size" Canvas.Top="625.5" Width="101"  FontFamily="{DynamicResource RobotoCondensed}" >
                 <TextBlock.Foreground>
                     <SolidColorBrush Color="{DynamicResource AstralBlack}"/>
                 </TextBlock.Foreground>
             </TextBlock>
-            <ToggleButton x:Name="ToggleTouchDown" Content="DOWN" Height="37.5" Canvas.Left="-0.72" Style="{DynamicResource AstralToggleButtonStyle}" Canvas.Top="428" Width="67.5"/>
-            <ToggleButton x:Name="ToggleTouchMove" Content="MOVE" Height="37.5" Canvas.Left="86.78" Style="{DynamicResource AstralToggleButtonStyle}" Canvas.Top="428" Width="67.5"/>
-            <ToggleButton x:Name="ToggleTouchUp" Content="UP" Height="37.5" Canvas.Left="174.5" Style="{DynamicResource AstralToggleButtonStyle}" Canvas.Top="428" Width="67.5"/>
+            <ToggleButton x:Name="ToggleTouchDown" Content="DOWN" Height="37.5" Canvas.Left="-0.72" Style="{DynamicResource AstralToggleButtonStyle}" Canvas.Top="38" Width="82"/>
+            <ToggleButton x:Name="ToggleTouchMove" Content="MOVE" Height="37.5" Canvas.Left="93.444" Style="{DynamicResource AstralToggleButtonStyle}" Canvas.Top="38" Width="82"/>
+            <ToggleButton x:Name="ToggleTouchUp" Content="UP" Height="37.5" Canvas.Left="187.117" Style="{DynamicResource AstralToggleButtonStyle}" Canvas.Top="38" Width="82"/>
+            <TextBlock Height="21" Canvas.Left="0.72" TextWrapping="Wrap" Text="TOUCHSCREEN" Canvas.Top="-1.159" Width="305.78" FontFamily="{DynamicResource RobotoBold}" FontSize="18">
+                <TextBlock.Foreground>
+                    <SolidColorBrush Color="{DynamicResource AstralBlack}"/>
+                </TextBlock.Foreground>
+            </TextBlock>
+            <ToggleButton x:Name="ToggleGesture" Content="GESTURE" Height="37.5" Canvas.Left="-0.72" Style="{DynamicResource AstralToggleButtonStyle}" Canvas.Top="84" Width="269.94"/>
         </Canvas>
 
         <Canvas Name="CompassCanvas" Height="579.5" Width="282.78" Canvas.Left="104.22" Canvas.Top="95.5" d:IsHidden="True">
@@ -74,7 +81,7 @@
 
         </StackPanel>
         <Grid x:Name="DragGrid" Height="50.205" Canvas.Left="-1.5" Canvas.Top="-1" Width="934.587" Background="#00000000"/>
-        <Button x:Name="ExitButton" Content="X" Height="42.205" Canvas.Left="877.75" Canvas.Top="7" Width="47.337" Style="{DynamicResource ExitButtonStyle}"/>
+        <Button x:Name="ExitButton" Content="X" Height="42.205" Canvas.Left="832.75" Canvas.Top="7" Width="47.337" Style="{DynamicResource ExitButtonStyle}"/>
         <Canvas x:Name="AllMouseCommands" Height="1014" Canvas.Left="-325.281" Canvas.Top="-212.5" Width="1620">
             <Button x:Name="EasingButton" Content="EASING FUNCTIONS" Height="48.25" Canvas.Left="812.442" Canvas.Top="605.5" Width="285.339" Style="{DynamicResource AstralButtonStyle}"/>
             <TextBlock Height="33" Canvas.Left="765.781" TextWrapping="Wrap" Text="Mouse Event" FontFamily="{DynamicResource RobotoBold}" Canvas.Top="325" Width="204.5" OpacityMask="Black" FontSize="18">
@@ -187,7 +194,7 @@
             <ToggleButton x:Name="ShiftButton" Content="Shift" Height="51" Canvas.Left="287.951" Style="{DynamicResource AstralToggleButtonStyle}" Canvas.Top="351.435" Width="93"/>
 
         </Canvas>
-        <TextBlock x:Name="DebugText" Height="130" Canvas.Left="14.935" TextWrapping="Wrap" Text="DEBUG" Canvas.Top="585.25" Width="405.065" FontFamily="{DynamicResource RobotoBold}" FontSize="10"/>
+        <TextBlock x:Name="DebugText" Height="130" Canvas.Left="14.935" TextWrapping="Wrap" Text="DEBUG" Canvas.Top="585.25" Width="405.065" FontFamily="{DynamicResource RobotoBold}" FontSize="10" Visibility="Hidden"/>
         <Canvas x:Name="MicCanvas" Height="613.341" Canvas.Left="78" Canvas.Top="56.659" Width="342" d:IsHidden="True">
             <Rectangle Fill="#FFF4F4F5" Height="310.5" Canvas.Left="27" Canvas.Top="43.091" Width="292.5"/>
             <local:LinearPlotter x:Name="MicPlotter" Height="310.5" Canvas.Left="27" Canvas.Top="43.091" Width="292.5"/>
@@ -233,7 +240,7 @@
                 </TextBlock.Foreground>
             </TextBlock>
         </Canvas>
-        <Canvas x:Name="LightCanvas" Height="613.341" Canvas.Left="78" Canvas.Top="56.659" Width="342">
+        <Canvas x:Name="LightCanvas" Height="613.341" Canvas.Left="78" Canvas.Top="56.659" Width="342" d:IsHidden="True">
             <local:LinearPlotterWrapper x:Name="LightPlotter" Height="307" Canvas.Left="27" Canvas.Top="84.591" Width="305"/>
             <TextBlock Height="21" Canvas.Left="26.22" TextWrapping="Wrap" Text="AMBIENT LIGHT" Canvas.Top="-1.159" Width="305.78" FontFamily="{DynamicResource RobotoBold}" FontSize="18">
                 <TextBlock.Foreground>
