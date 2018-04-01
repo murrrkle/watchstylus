@@ -41,11 +41,17 @@ namespace TestingConcepts
                 RaiseSelectionEntered(new SelectionCrossedEventArgs(current, previous, this.sourceRect, this.destinationRect));
             }
 
-            if (previous.IsInsideRect(this.sourceRect) && !current.IsInsideRect(this.sourceRect))
+            //Console.WriteLine("current {0:00} \t top {1:00} \t bottom {2:00} \t previous {3:00} \t {4} {5}", current.Y, sourceRect.Top, sourceRect.Bottom, previous.Y, 
+                //current.IsInsideRect(sourceRect), previous.IsInsideRect(sourceRect));
+
+            else if (previous.IsInsideRect(this.sourceRect) && !current.IsInsideRect(this.sourceRect))
             {
                 Console.WriteLine("LEFT");
                 RaiseSelectionExited(new SelectionCrossedEventArgs(current, previous, this.sourceRect, this.destinationRect));
             }
+
+
+            this.previousPoint = new Point(current.X, current.Y);
         }
 
         public override bool ExecuteRule(Point point)
@@ -62,15 +68,16 @@ namespace TestingConcepts
                 previousPoint = point;
             }
 
+            if (this.checksBounds)
+            {
+                CheckEntered(point, this.previousPoint);
+            }
+
+
             if (point.IsInsideRect(sourceRect))
             {
 
-                if (this.checksBounds)
-                {
-                    CheckEntered(point, this.previousPoint);
-                }
 
-                this.previousPoint = new Point(point.X, point.Y);
 
                 this.executedOnce = true;
 

@@ -144,7 +144,7 @@ namespace TestingConcepts
             InitializeAcceleration();
 
             // Selection events
-            this.TouchPlotter.SelectionChanged += OnSelectionChanged;
+            this.TouchPlotter.TouchPlotter.SelectionChanged += OnSelectionChanged;
             this.Plotter.SelectionChanged += OnSelectionChanged;
             this.OrientationVisualizer.Plotter.SelectionChanged += OnSelectionChanged;
             this.MicPlotter.SelectionChanged += OnSelectionChanged;
@@ -613,8 +613,8 @@ namespace TestingConcepts
                         this.deviceModel.Display.TouchDown += OnTouchDown;
                         this.deviceModel.Display.TouchMove += OnTouchMoved;
                         this.deviceModel.Display.TouchUp += OnTouchUp;
-                        this.TouchPlotter.DeviceResolution = new Size(this.deviceModel.Display.Width, this.deviceModel.Display.Height);
-                        this.activePlotter = this.TouchPlotter;
+                        this.TouchPlotter.TouchPlotter.DeviceResolution = new Size(this.deviceModel.Display.Width, this.deviceModel.Display.Height);
+                        this.activePlotter = this.TouchPlotter.TouchPlotter;
                         this.TouchCanvas.Visibility = Visibility.Visible;
                         // change later
                         
@@ -709,6 +709,7 @@ namespace TestingConcepts
             //this.MicPlotter.DrawPoints();
             this.AccelerometerPlotter.Update();
             this.LightPlotter.Update();
+            this.TouchPlotter.Update();
             //this.AccelPlot3D.DrawPoints();
             if (this.activePlotter != null)
             {
@@ -776,7 +777,7 @@ namespace TestingConcepts
         {
             Dispatcher.Invoke(new Action(delegate
             {
-                this.TouchPlotter.AddTouchPoint(e.TouchPoint.Id, new Point(e.TouchPoint.X, e.TouchPoint.Y));
+                this.TouchPlotter.TouchPlotter.AddTouchPoint(e.TouchPoint.Id, new Point(e.TouchPoint.X, e.TouchPoint.Y));
                 
             }));
         }
@@ -803,7 +804,7 @@ namespace TestingConcepts
         {
             Dispatcher.Invoke(new Action(delegate
             {
-                this.TouchPlotter.UpdatePoint(e.TouchPoint.Id, new Point(e.TouchPoint.X, e.TouchPoint.Y));
+                this.TouchPlotter.TouchPlotter.UpdatePoint(e.TouchPoint.Id, new Point(e.TouchPoint.X, e.TouchPoint.Y));
 
             }));
         }
@@ -812,7 +813,7 @@ namespace TestingConcepts
         {
             Dispatcher.Invoke(new Action(delegate
             {
-                this.TouchPlotter.RemovePoint(e.TouchPoint.Id, new Point(e.TouchPoint.X, e.TouchPoint.Y));
+                this.TouchPlotter.TouchPlotter.RemovePoint(e.TouchPoint.Id, new Point(e.TouchPoint.X, e.TouchPoint.Y));
             }));
         }
 

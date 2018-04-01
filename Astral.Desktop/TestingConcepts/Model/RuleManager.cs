@@ -14,6 +14,18 @@ namespace TestingConcepts
 {    
     public class RuleManager
     {
+        internal class WorkerArugment
+        {
+            public Point Point { get; set; }
+            public MobileEventType EventType { get; set; }
+
+            public WorkerArugment(Point p, MobileEventType m)
+            {
+                this.Point = p;
+                this.EventType = m;
+            }
+        }
+
         private static RuleManager instance = null;
         
         public static RuleManager Instance
@@ -118,10 +130,19 @@ namespace TestingConcepts
             this.medleyRule.MedleyRuleExecuted += (s, e) => { NextRuleSet(); RaiseMedley(new EventArgs()); };
         }
 
+        Dictionary<MobileEventType, BackgroundWorker> workers = new Dictionary<MobileEventType, BackgroundWorker>();
+
         private RuleManager()
         {
             this.inputHandler.EscapeCaptured += OnGlobalEscapePressed;
-         //   this.worker.DoWork += OnWorkerDoWork;
+            this.worker.DoWork += OnWorkerDoWork;
+
+            foreach(MobileEventType eventType in Enum.GetValues(typeof(MobileEventType)))
+            {
+                BackgroundWorker w = new BackgroundWorker();
+                this.workers.Add(eventType, w);
+                w.DoWork += OnWorkerDoWork;
+            }
         }
 
         public string GetKey(List<Rule> rules)
@@ -139,17 +160,16 @@ namespace TestingConcepts
 
         private void OnWorkerDoWork(object sender, DoWorkEventArgs e)
         {
-            // LAND OF ALL ERRORS
-            if (e.Argument != null && e.Argument is TouchPoint)
+            List<Rule> activeRulesClone = activeRules.ToList<Rule>();
+            MobileEventType currentEventType = (e.Argument as WorkerArugment).EventType;
+            Point p = (e.Argument as WorkerArugment).Point;
+            
+            foreach (Rule rule in this.activeRules.ToList().Where(r => r.EventType == currentEventType))
             {
-                lock (this.activeRules)
+                bool inRange = rule.ExecuteRule(p);
+                if (inRange)
                 {
-                    TouchPoint point = e.Argument as TouchPoint;
-                    foreach (Rule rule in this.activeRules.Where(r => r.EventType == MobileEventType.TouchMove))
-                    {
-                        rule.ExecuteRule(new Point(point.X, point.Y));
-                        this.inputHandler.ExecuteInputAction(rule.InputAction);
-                    }
+                    this.inputHandler.ExecuteInputAction(rule.InputAction);
                 }
             }
         }
@@ -329,7 +349,6 @@ namespace TestingConcepts
             
         }
 
-
         private void DisableHandlers(DeviceModel device)
         {
             device.Display.TouchDown -= TouchDown;
@@ -347,18 +366,20 @@ namespace TestingConcepts
 
         #endregion
 
+        private void RunWorkerFromDictionary(Point value, MobileEventType eventType)
+        {
+            if (!this.workers[eventType].IsBusy)
+            {
+                this.workers[eventType].RunWorkerAsync(new WorkerArugment(value, eventType));
+            }
+        }
 
         private void OnMicrophoneUpdated(object sender, AstralMicrophoneEventArgs e)
         {
-            foreach (Rule rule in this.activeRules.Where(r => r.EventType == MobileEventType.AmplitudeChanged))
-            {
-                if (this.isActive)
-                {
-                    bool inRange = rule.ExecuteRule(new Point(e.MicrophoneData.Amplitude, e.MicrophoneData.Amplitude));
-                    if (inRange)
-                        this.inputHandler.ExecuteInputAction(rule.InputAction);
-                }
-            }
+            MobileEventType eventType = MobileEventType.AmplitudeChanged;
+            double amplitude = (e.MicrophoneData.Amplitude > 1000 ? 1000 : e.MicrophoneData.Amplitude);
+            Point value = new Point(amplitude, amplitude);
+            RunWorkerFromDictionary(value, eventType);
         }
 
         private void OrientationChanged(object sender, AstralOrientationEventArgs e)
@@ -387,24 +408,17 @@ namespace TestingConcepts
 
         private void AmbientLightChanged(object sender, AstralAmbientLightEventArgs e)
         {
-            foreach (Rule rule in this.activeRules.Where(r => r.EventType == MobileEventType.AmbientLightChanged))
-            {
-                if (this.isActive)
-                {
-                    double light = (e.AmbientLightData.AmbientLight > 1000 ? 1000 : e.AmbientLightData.AmbientLight);
-                    bool inRange = rule.ExecuteRule(new Point(light, light));
-                    if (inRange)
-                        this.inputHandler.ExecuteInputAction(rule.InputAction);
-                }
-            }
+            MobileEventType eventType = MobileEventType.AmbientLightChanged;
+            double light = (e.AmbientLightData.AmbientLight > 1000 ? 1000 : e.AmbientLightData.AmbientLight);
+            Point value = new Point(light, light);
+            RunWorkerFromDictionary(value, eventType);
+            
         }
 
         private void AccelerationChanged(object sender, AccelerationDeviceModelEventArgs e)
         {
-            foreach (Rule rule in this.activeRules.Where(r => r.EventType == MobileEventType.AccelerationChanged))
-            {
-                try
-                {
+            foreach (Rule rule in this.activeRules.ToList().Where(r => r.EventType == MobileEventType.AccelerationChanged))
+            {               
                     if (this.isActive)
                     {
                         double x, y, z, mag;
@@ -430,75 +444,36 @@ namespace TestingConcepts
                         if (inRange)
                             this.inputHandler.ExecuteInputAction(rule.InputAction);
                     }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                    Console.WriteLine(ex.StackTrace);
-                    Console.WriteLine("LOL NOOB");
-                }
+                
             }
-
         }
 
         private void CompassUpdated(object sender, AstralCompassEventArgs e)
         {
-            foreach (Rule rule in this.activeRules.Where(r => r.EventType == MobileEventType.CompassChanged))
-            {
-                if (this.isActive)
-                {
-                    bool inRange = rule.ExecuteRule(new Point(e.CompassData.Heading, e.CompassData.Heading));
-                    if(inRange)
-                    this.inputHandler.ExecuteInputAction(rule.InputAction);
-                }
-            }
+            MobileEventType eventType = MobileEventType.CompassChanged;
+            Point value = new Point(e.CompassData.Heading, e.CompassData.Heading);
+            RunWorkerFromDictionary(value, eventType);
         }
 
         private void TouchUp(object sender, AstralTouchEventArgs e)
         {
-            foreach (Rule rule in this.activeRules.Where(r => r.EventType == MobileEventType.TouchUp))
-            {
-                bool inRange = rule.ExecuteRule(new Point(e.TouchPoint.X, e.TouchPoint.Y));
-                if (inRange)
-                {
-                    this.inputHandler.ExecuteInputAction(rule.InputAction);
-                }
-            }
+            MobileEventType eventType = MobileEventType.TouchUp;
+            Point value = new Point(e.TouchPoint.X, e.TouchPoint.Y);
+            RunWorkerFromDictionary(value, eventType);
         }
 
         private void TouchMove(object sender, AstralTouchEventArgs e)
         {
-
-            foreach (Rule rule in this.activeRules.Where(r => r.EventType == MobileEventType.TouchMove))
-            {
-                
-                bool inRange = rule.ExecuteRule(new Point(e.TouchPoint.X, e.TouchPoint.Y));
-                if(inRange)
-                {
-                    this.inputHandler.ExecuteInputAction(rule.InputAction);
-                }
-            }
+            MobileEventType eventType = MobileEventType.TouchMove;
+            Point value = new Point(e.TouchPoint.X, e.TouchPoint.Y);
+            RunWorkerFromDictionary(value, eventType);
         }
 
         private void TouchDown(object sender, AstralTouchEventArgs e)
         {
-            try
-            {
-                foreach (Rule rule in this.activeRules.Where(r => r.EventType == MobileEventType.TouchDown))
-                {
-                    bool inRange = rule.ExecuteRule(new Point(e.TouchPoint.X, e.TouchPoint.Y));
-                    if (inRange)
-                    {
-                        this.inputHandler.ExecuteInputAction(rule.InputAction);
-                    }
-                }
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                Console.WriteLine(ex.StackTrace);
-                Console.WriteLine("LOL");
-            }
+            MobileEventType eventType = MobileEventType.TouchDown;
+            Point value = new Point(e.TouchPoint.X, e.TouchPoint.Y);
+            RunWorkerFromDictionary(value, eventType);
         }
 
 

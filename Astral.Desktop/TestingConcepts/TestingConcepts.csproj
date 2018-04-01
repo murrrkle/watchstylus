@@ -107,6 +107,9 @@
     <Compile Include="RuleDisplayControl.xaml.cs">
       <DependentUpon>RuleDisplayControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="TouchPlotterWrapper.xaml.cs">
+      <DependentUpon>TouchPlotterWrapper.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\UI Elements\RangeSlider.xaml.cs">
       <DependentUpon>RangeSlider.xaml</DependentUpon>
     </Compile>
@@ -169,6 +172,10 @@
     <Page Include="Simple Styles.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="TouchPlotterWrapper.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\UI Elements\RangeSlider.xaml">
       <SubType>Designer</SubType>

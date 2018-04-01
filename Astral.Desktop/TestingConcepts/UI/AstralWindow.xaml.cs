@@ -65,7 +65,7 @@ namespace TestingConcepts
             this.DebugText.Visibility = Visibility.Hidden;
             this.MouseRightButtonDown += (s, e) => {
                 this.DebugText.Visibility = (this.DebugText.Visibility == Visibility.Hidden ? Visibility.Visible : Visibility.Hidden);
-                this.ruleManager.SwapWithClone();
+                //this.ruleManager.SwapWithClone();
                 UpdateDebug();
             };
         }

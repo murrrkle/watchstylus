@@ -102,7 +102,7 @@ namespace TestingConcepts
         {
             if (this.isMouseDown)
             {
-                this.mousePosition = e.GetPosition(this.Parent as Panel);
+                this.mousePosition = e.GetPosition(this);
                 this.selection = new Rect(this.boundingBoxStart, this.mousePosition);
                 //OnSelectionChanged(new SelectionEventArgs(this.selection));
             }
@@ -110,7 +110,7 @@ namespace TestingConcepts
 
         protected virtual void OnMouseLeftUp(object sender, MouseButtonEventArgs e)
         {
-            this.mousePosition = e.GetPosition(this.Parent as Panel);
+            this.mousePosition = e.GetPosition(this);
             this.isMouseDown = false;
             this.selection = new Rect(this.boundingBoxStart, this.mousePosition);
             OnSelectionChanged(new SelectionEventArgs(this.selection));
@@ -119,8 +119,8 @@ namespace TestingConcepts
         protected virtual void OnMouseLeftDown(object sender, MouseButtonEventArgs e)
         {
             this.isMouseDown = true;
-            this.mousePosition = e.GetPosition(this.Parent as Panel);
-            this.boundingBoxStart = e.GetPosition(this.Parent as Panel);
+            this.mousePosition = e.GetPosition(this);
+            this.boundingBoxStart = e.GetPosition(this);
         }
 
         public virtual void DrawPoints()

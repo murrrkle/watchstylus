@@ -21,7 +21,7 @@ namespace TestingConcepts
         {
             get
             {
-                return this.DeviceResolution;
+                return this.deviceResolution;
             }
             set
             {
@@ -75,8 +75,8 @@ namespace TestingConcepts
 
         protected new void OnMouseMove(object sender, MouseEventArgs e)
         {
-            double x = e.GetPosition(this.Parent as Panel).X;
-            double y = e.GetPosition(this.Parent as Panel).Y;
+            double x = e.GetPosition(this).X;
+            double y = e.GetPosition(this).Y;
             this.mousePosition.X = x;
             this.mousePosition.Y = y;
         }
