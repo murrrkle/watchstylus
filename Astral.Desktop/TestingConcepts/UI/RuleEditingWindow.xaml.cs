@@ -603,6 +603,11 @@ namespace TestingConcepts
         {
             if(deviceModel != null)
             {
+                if (this.SplashCanvas.Visibility == Visibility.Visible)
+                {
+                    this.SplashCanvas.Visibility = Visibility.Hidden;
+                }
+
                 UnhookAllEvents();
                 HideSensorCanvases();
 
