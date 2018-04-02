@@ -139,7 +139,7 @@
         <Canvas x:Name="MainButtonsPanel" Height="38" Canvas.Left="13.347" Canvas.Top="96.167" Width="376.653">
             <Button x:Name="CaptureButton" Content="Button" Height="37.98" Canvas.Left="5.653" Canvas.Top="0.02" Width="40.5" Style="{DynamicResource AstralCaptureButtonStyle}"/>
             <Button x:Name="CaptureButton_Copy" Content="" Height="37.98" Canvas.Left="58.653" Canvas.Top="0.02" Width="40.5" Style="{DynamicResource FontAwesomeButtonBlue}"/>
-            <Button x:Name="CaptureButton_Copy1" Content="" Height="37.98" Canvas.Left="111.653" Canvas.Top="0.02" Width="40.5" Style="{DynamicResource FontAwesomeButtonBlue}"/>
+            <Button x:Name="RefreshButton" Content="" Height="37.98" Canvas.Left="111.653" Canvas.Top="0.02" Width="40.5" Style="{DynamicResource FontAwesomeButtonBlue}"/>
             <Button x:Name="CaptureButton_Copy2" Content="" Height="37.98" Canvas.Left="164.653" Canvas.Top="0.02" Width="40.5" Style="{DynamicResource FontAwesomeButtonBlue}"/>
             <Button x:Name="CaptureButton_Copy4" Content="&#xF080;" Height="37.98" Canvas.Left="218.653" Canvas.Top="0.02" Width="40.5" Style="{DynamicResource FontAwesomeButtonBlue}"/>
 

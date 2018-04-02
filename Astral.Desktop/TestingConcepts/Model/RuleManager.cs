@@ -232,6 +232,21 @@ namespace TestingConcepts
             return this.allRuleSets.ContainsKey(name);
         }
 
+        public void RefreshRules()
+        {
+            foreach(List<Rule> ruleSet in this.allRuleSets.Values)
+            {
+                List<Rule> rulesWithChildren = ruleSet.Where(r => r.Child != null).ToList();
+                foreach(Rule rule in rulesWithChildren)
+                {
+                    if(rule.ExecutedOnce)
+                    {
+                        rule.ExecutedOnce = false;
+                    }
+                }
+            }
+        }
+
         public void AddRule(Rule newRule)
         {
             this.activeRules.Add(newRule);

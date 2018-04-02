@@ -36,6 +36,8 @@ namespace TestingConcepts
             this.networkManager.Start();
             this.networkManager.DeviceAdded += OnDeviceConnected;
 
+            this.RefreshButton.Click += (s, e) => { this.ruleManager.RefreshRules(); this.DrawActiveRulesUI(); };
+
             //Dispatcher.Invoke(new Action(delegate
             //{
              this.ruleEditingWindow = new RuleEditingWindow(this.ruleManager);

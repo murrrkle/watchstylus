@@ -42,6 +42,19 @@ namespace TestingConcepts
 
             this.MouseEnter += OnMouseEnter;
             this.MouseLeave += OnMouseLeave;
+            this.ActiveSign.Visibility = Visibility.Hidden;
+        }
+
+        private void CheckActive()
+        {
+            if (this.rule.Parent == null && this.rule.Child == null)
+            {
+                this.ActiveSign.Visibility = Visibility.Visible;
+            }
+            if(this.rule.Child != null && !this.rule.ExecutedOnce)
+            {
+                this.ActiveSign.Visibility = Visibility.Visible;
+            }
         }
 
         private void OnMouseEnter(object sender, MouseEventArgs e)
@@ -65,6 +78,8 @@ namespace TestingConcepts
             this.rule = rule;
             this.RuleNameText.Text = rule.Name;
             this.ActiveSensor.SensorType = Utils.EventToModule(rule.EventType);
+
+            CheckActive();
         }
     }
 }
