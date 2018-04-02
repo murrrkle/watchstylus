@@ -550,7 +550,7 @@
                                         <SolidColorBrush Color="{DynamicResource AstralGreen}"/>
                                     </Rectangle.Fill>
                                 </Rectangle>
-                                <ContentPresenter TextBlock.FontFamily="{DynamicResource FontAwesome}" TextBlock.FontSize="18" TextBlock.Foreground="{DynamicResource ResourceKey=AstralWhiteBrush}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                <ContentPresenter TextBlock.FontFamily="{StaticResource FontAwesome}" TextBlock.FontSize="18" TextBlock.Foreground="{DynamicResource ResourceKey=AstralWhiteBrush}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                             </Grid>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsFocused" Value="True"/>

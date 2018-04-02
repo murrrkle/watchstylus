@@ -5,6 +5,122 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TestingConcepts"
              mc:Ignorable="d" d:DesignWidth="319.46" Height="66" Width="250">
+    <UserControl.Resources>
+        <Style x:Key="DeleteRuleButton" TargetType="{x:Type Button}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="MouseOver">
+                                        <Storyboard>
+                                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="ellipse">
+                                                <EasingColorKeyFrame KeyTime="0" Value="#FF949494"/>
+                                            </ColorAnimationUsingKeyFrames>
+                                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="path">
+                                                <EasingColorKeyFrame KeyTime="0" Value="#FFF1EAEA"/>
+                                            </ColorAnimationUsingKeyFrames>
+                                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="path1">
+                                                <EasingColorKeyFrame KeyTime="0" Value="#FFF1EAEA"/>
+                                            </ColorAnimationUsingKeyFrames>
+                                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)" Storyboard.TargetName="path">
+                                                <EasingColorKeyFrame KeyTime="0" Value="#FFD4D4D4"/>
+                                            </ColorAnimationUsingKeyFrames>
+                                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)" Storyboard.TargetName="path1">
+                                                <EasingColorKeyFrame KeyTime="0" Value="#FFD4D4D4"/>
+                                            </ColorAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed"/>
+                                    <VisualState x:Name="Disabled"/>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Ellipse x:Name="ellipse" Fill="#FF757575" Cursor="Hand"/>
+                            <Path x:Name="path" Data="M4.7379139,3.5532898 L8.8832982,7.698674" Fill="#FFE5E5E5" HorizontalAlignment="Left" Height="8.598" Margin="1.848,1.742,0,0" Stretch="Fill" VerticalAlignment="Top" Width="8.598" StrokeThickness="2" Stroke="#FFA5A5A5" Cursor="Hand"/>
+                            <Path x:Name="path1" Data="M4.7379139,3.5532898 L8.8832982,7.698674" Fill="#FFE5E5E5" HorizontalAlignment="Left" Height="8.598" Margin="1.848,1.742,0,0" Stretch="Fill" VerticalAlignment="Top" Width="8.598" StrokeThickness="2" Stroke="#FFA5A5A5" RenderTransformOrigin="0.5,0.5" Cursor="Hand">
+                                <Path.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform/>
+                                        <SkewTransform/>
+                                        <RotateTransform Angle="90"/>
+                                        <TranslateTransform/>
+                                    </TransformGroup>
+                                </Path.RenderTransform>
+                            </Path>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True"/>
+                            <Trigger Property="IsDefaulted" Value="True"/>
+                            <Trigger Property="IsMouseOver" Value="True"/>
+                            <Trigger Property="IsPressed" Value="True"/>
+                            <Trigger Property="IsEnabled" Value="False"/>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="AddButton" TargetType="{x:Type Button}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="MouseOver">
+                                        <Storyboard>
+                                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="ellipse">
+                                                <EasingColorKeyFrame KeyTime="0" Value="{StaticResource AstralYellow}"/>
+                                            </ColorAnimationUsingKeyFrames>
+                                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="path">
+                                                <EasingColorKeyFrame KeyTime="0" Value="#FFF1EAEA"/>
+                                            </ColorAnimationUsingKeyFrames>
+                                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="path1">
+                                                <EasingColorKeyFrame KeyTime="0" Value="#FFF1EAEA"/>
+                                            </ColorAnimationUsingKeyFrames>
+                                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)" Storyboard.TargetName="path">
+                                                <EasingColorKeyFrame KeyTime="0" Value="{StaticResource AstralWhite}"/>
+                                            </ColorAnimationUsingKeyFrames>
+                                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)" Storyboard.TargetName="path1">
+                                                <EasingColorKeyFrame KeyTime="0" Value="{StaticResource AstralWhite}"/>
+                                            </ColorAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed"/>
+                                    <VisualState x:Name="Disabled"/>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Ellipse x:Name="ellipse" Cursor="Hand">
+                                <Ellipse.Fill>
+                                    <SolidColorBrush Color="{DynamicResource AstralGreen}"/>
+                                </Ellipse.Fill>
+                            </Ellipse>
+                            <Path x:Name="path" Data="M4.7379139,3.5532898 L8.8832982,7.698674" Fill="#FFE5E5E5" HorizontalAlignment="Left" Height="8.598" Margin="1.848,1.742,0,0" Stretch="Fill" VerticalAlignment="Top" Width="8.598" StrokeThickness="2" Stroke="#FFF1F1F1" Cursor="Hand"/>
+                            <Path x:Name="path1" Data="M4.7379139,3.5532898 L8.8832982,7.698674" Fill="#FFE5E5E5" HorizontalAlignment="Left" Height="8.598" Margin="1.848,1.742,0,0" Stretch="Fill" VerticalAlignment="Top" Width="8.598" StrokeThickness="2" Stroke="#FFF1F1F1" RenderTransformOrigin="0.5,0.5" Cursor="Hand">
+                                <Path.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform/>
+                                        <SkewTransform/>
+                                        <RotateTransform Angle="90"/>
+                                        <TranslateTransform/>
+                                    </TransformGroup>
+                                </Path.RenderTransform>
+                            </Path>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True"/>
+                            <Trigger Property="IsDefaulted" Value="True"/>
+                            <Trigger Property="IsMouseOver" Value="True"/>
+                            <Trigger Property="IsPressed" Value="True"/>
+                            <Trigger Property="IsEnabled" Value="False"/>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
     <Canvas Width="250" >
         <Rectangle x:Name="BGRect" RadiusY="5" RadiusX="6" Width="250" Height="58.42">
             <Rectangle.Fill>
@@ -26,6 +142,17 @@
                 <SolidColorBrush Color="{DynamicResource AstralBlack}"/>
             </TextBlock.Foreground>
         </TextBlock>
+        <Button x:Name="DeleteButton" Content="Button" Height="12.151" Canvas.Left="234.208" Style="{DynamicResource DeleteRuleButton}" Canvas.Top="3.849" Width="12.151"/>
+        <Button x:Name="AddChildButton" Content="Button" Height="12.151" Canvas.Left="234.208" Style="{DynamicResource AddButton}" Canvas.Top="37.849" Width="12.151" RenderTransformOrigin="0.5,0.5" Background="#7FDDDDDD" BorderBrush="#7F707070">
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="45"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Button.RenderTransform>
+        </Button>
 
     </Canvas>
 </UserControl>

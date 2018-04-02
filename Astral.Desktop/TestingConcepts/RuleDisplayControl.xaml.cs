@@ -36,6 +36,27 @@ namespace TestingConcepts
 
             this.ActiveSensor.BackgroundBox.Visibility = Visibility.Hidden;
             this.ActiveSensor.ApplyDarkTheme();
+
+            this.DeleteButton.Visibility = Visibility.Hidden;
+            this.AddChildButton.Visibility = Visibility.Hidden;
+
+            this.MouseEnter += OnMouseEnter;
+            this.MouseLeave += OnMouseLeave;
+        }
+
+        private void OnMouseEnter(object sender, MouseEventArgs e)
+        {
+            this.DeleteButton.Visibility = Visibility.Visible;
+            if(this.rule is DiscreteRule && !this.rule.IsMedleyRule)
+            {
+                this.AddChildButton.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void OnMouseLeave(object sender, MouseEventArgs e)
+        {
+            this.DeleteButton.Visibility = Visibility.Hidden;
+            this.AddChildButton.Visibility = Visibility.Hidden;
         }
 
         public RuleDisplayControl(Rule rule)

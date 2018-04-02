@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2026
+VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Astral", "Astral\Astral.csproj", "{ABCDB281-0299-4485-8480-C13ED1F1F7BB}"
 EndProject
@@ -16,6 +16,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Astral.Core", "Astral.Core\Astral.Core.csproj", "{00DEB4F6-E688-49F9-98D9-077F65D4BC64}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestingConcepts", "TestingConcepts\TestingConcepts.csproj", "{F484BB14-C67B-4EF9-909C-7F4190AE1A5B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioTest", "AudioTest\AudioTest.csproj", "{8F9B2DBC-7388-4C98-A34A-C4250FFC36B6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +59,14 @@ Global
 		{F484BB14-C67B-4EF9-909C-7F4190AE1A5B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F484BB14-C67B-4EF9-909C-7F4190AE1A5B}.Release|x64.ActiveCfg = Release|x64
 		{F484BB14-C67B-4EF9-909C-7F4190AE1A5B}.Release|x64.Build.0 = Release|x64
+		{8F9B2DBC-7388-4C98-A34A-C4250FFC36B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F9B2DBC-7388-4C98-A34A-C4250FFC36B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F9B2DBC-7388-4C98-A34A-C4250FFC36B6}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8F9B2DBC-7388-4C98-A34A-C4250FFC36B6}.Debug|x64.Build.0 = Debug|Any CPU
+		{8F9B2DBC-7388-4C98-A34A-C4250FFC36B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F9B2DBC-7388-4C98-A34A-C4250FFC36B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F9B2DBC-7388-4C98-A34A-C4250FFC36B6}.Release|x64.ActiveCfg = Release|Any CPU
+		{8F9B2DBC-7388-4C98-A34A-C4250FFC36B6}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

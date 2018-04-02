@@ -67,6 +67,16 @@ namespace TestingConcepts
             this.mouseSimulator.LeftClick();
         }
 
+        public void KeyDown(Key key)
+        {
+            this.keyboardSimulator.KeyDown(key);
+        }
+
+        public void KeyUp(Key key)
+        {
+            this.keyboardSimulator.KeyUp(key);
+        }
+
         public void ExecuteInputAction(PCInputAction action)
         {
             switch (action.InputEvent)
@@ -120,7 +130,7 @@ namespace TestingConcepts
                     if (action.Argument != null)
                     {
                         Key argumentKey = (Key)Enum.Parse(typeof(Key), action.Argument.ToString());
-                        this.keyboardSimulator.PressKey(argumentKey);
+                  //      this.keyboardSimulator.PressKey(argumentKey);
                     }
                     break;
                 default:

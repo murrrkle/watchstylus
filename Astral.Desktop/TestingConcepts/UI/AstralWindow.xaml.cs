@@ -135,15 +135,24 @@ namespace TestingConcepts
                         }
                         ruleDisplay.RenderTransform = new TranslateTransform(offset, 0);
                     }
-                    ruleDisplay.MouseLeftButtonDown += (s, ev) =>
+                    ruleDisplay.DeleteButton.Click += DeleteButton_Click;
+
+                    ruleDisplay.AddChildButton.Click += (s, ev) =>
                     {
-                        this.ruleEditingWindow = new RuleEditingWindow(this.ruleManager, (s as RuleDisplayControl).RuleItem);
+                        Rule innerRule = (((s as Button).Parent as Panel).Parent as RuleDisplayControl).RuleItem;
+                        this.ruleEditingWindow = new RuleEditingWindow(this.ruleManager, innerRule);
                         this.ruleEditingWindow.RuleAdded += OnRuleAdded;
                         this.ruleEditingWindow.DeviceModel = ruleManager.DeviceModel;
                         ruleEditingWindow.Show();
                     };
                 }
             }
+        }
+
+        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.ruleManager.RemoveRule((((sender as Button).Parent as Panel).Parent as RuleDisplayControl).RuleItem);
+            DrawActiveRulesUI();
         }
 
         private void OnRuleAdded(object sender, EventArgs e)

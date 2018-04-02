@@ -158,6 +158,22 @@ namespace TestingConcepts
             return ruleSetName;
         }
 
+        public void RemoveRule(Rule rule)
+        {
+            if(rule.IsMedleyRule)
+            {
+                ClearMedleyRule();
+            }
+            foreach(Rule r in this.activeRules)
+            {
+                if(r.Name == rule.Name)
+                {
+                    this.activeRules.Remove(r);
+                    break;
+                }
+            }
+        }
+
         private void OnWorkerDoWork(object sender, DoWorkEventArgs e)
         {
             List<Rule> activeRulesClone = activeRules.ToList<Rule>();
@@ -219,22 +235,56 @@ namespace TestingConcepts
         public void AddRule(Rule newRule)
         {
             this.activeRules.Add(newRule);
+            Console.WriteLine(newRule.Name + " :: " + newRule.InputAction.InputEvent + " :: " + newRule.ChecksBounds);
             if(newRule.ChecksBounds)
             {
-                newRule.SelectionEntered += OnRuleSelectionEntered;
-                newRule.SelectionExited += OnRuleSelectionExited;
-                if(newRule is ContinuousRule && newRule.ChecksBounds)
+                if(newRule.ChecksBounds)
                 {
-                    DiscreteRule downRule = new DiscreteRule(MobileEventType.TouchDown, newRule);
-                    downRule.InputAction.InputEvent = PCInputEventType.MouseDown;
-                    DiscreteRule upRule = new DiscreteRule(MobileEventType.TouchUp, newRule);
-                    upRule.InputAction.InputEvent = PCInputEventType.MouseDown;
-                    AddRule(downRule);
-                    AddRule(upRule);
+                    newRule.SelectionEntered += OnRuleSelectionEntered;
+                    newRule.SelectionExited += OnRuleSelectionExited;
+
+                    //DiscreteRule downRule = new DiscreteRule(MobileEventType.TouchDown, newRule);
+                    //downRule.InputAction.InputEvent = PCInputEventType.MouseDown;
+                    //DiscreteRule upRule = new DiscreteRule(MobileEventType.TouchUp, newRule);
+                    //upRule.InputAction.InputEvent = PCInputEventType.MouseUp;
+                    //AddRule(downRule);
+                    //AddRule(upRule);
                 }
             }
             // check if DestinationMapping is MoveAndMouseDown, create event for selection entered
             // do the same for thresholds?
+        }
+
+        private void OnRuleSelectionExited(object sender, SelectionCrossedEventArgs e)
+        {
+            if (sender as Rule is ContinuousRule)
+            {
+                this.inputHandler.MouseLeftUp();
+            }
+            else if(sender as Rule is DiscreteRule)
+            {
+                Rule rule = sender as DiscreteRule;
+                if(rule.InputAction.InputEvent == PCInputEventType.KeyPress)
+                {
+                    this.inputHandler.KeyUp((rule.InputAction.Argument as System.Windows.Input.Key?).GetValueOrDefault());
+                }
+            }
+        }
+
+        private void OnRuleSelectionEntered(object sender, SelectionCrossedEventArgs e)
+        {
+            if (sender as Rule is ContinuousRule)
+            {
+                this.inputHandler.MouseLeftDown();
+            }
+            else if (sender as Rule is DiscreteRule)
+            {
+                Rule rule = sender as DiscreteRule;
+                if (rule.InputAction.InputEvent == PCInputEventType.KeyPress)
+                {
+                    this.inputHandler.KeyDown((rule.InputAction.Argument as System.Windows.Input.Key?).GetValueOrDefault());
+                }
+            }
         }
 
         public void NextRuleSet()
@@ -290,21 +340,7 @@ namespace TestingConcepts
             }
         }
 
-        private void OnRuleSelectionExited(object sender, SelectionCrossedEventArgs e)
-        {
-            if(sender as Rule is ContinuousRule)
-            {
-                this.inputHandler.MouseLeftUp();
-            }
-        }
 
-        private void OnRuleSelectionEntered(object sender, SelectionCrossedEventArgs e)
-        {
-            if (sender as Rule is ContinuousRule)
-            {
-                this.inputHandler.MouseLeftDown();
-            }
-        }
 
         #region Handling Subscription to Device
 
@@ -474,9 +510,7 @@ namespace TestingConcepts
             MobileEventType eventType = MobileEventType.TouchDown;
             Point value = new Point(e.TouchPoint.X, e.TouchPoint.Y);
             RunWorkerFromDictionary(value, eventType);
-        }
-
-
+        }       
 
     }
 }
