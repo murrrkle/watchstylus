@@ -44,8 +44,8 @@ namespace TestingConcepts
         private Rectangle selection = null;
         private double rangeClickOffset;
 
-        private double minimum = -1000;
-        private double maximum = 1000;
+        private double minimum = -250;
+        private double maximum = 250;
         private double currentMin;
         private double currentMax;
 
