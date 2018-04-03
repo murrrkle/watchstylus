@@ -1,0 +1,63 @@
+﻿<UserControl x:Class="TestingConcepts.TouchPlotterWrapper"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TestingConcepts"
+             mc:Ignorable="d" Height="439.952" Width="267.703">
+    <Canvas>
+        <Rectangle Fill="#FFF4F4F5" Height="414.5" Width="243" Canvas.Top="23.172" Canvas.Left="26.108" Visibility="Hidden"/>
+        <local:MultiTouchPlotter x:Name="TouchPlotter" Height="414.5" Width="243" Canvas.Left="26.108" Canvas.Top="23.172"/>
+        <Canvas x:Name="MarkerCanvasY" Margin="0" HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Top="-0.189">
+            <Rectangle x:Name="MarkerRectY" HorizontalAlignment="Left" Height="22.966" VerticalAlignment="Top" Width="26" Canvas.Top="23.368">
+                <Rectangle.Fill>
+                    <SolidColorBrush Color="{DynamicResource AstralYellow}"/>
+                </Rectangle.Fill>
+            </Rectangle>
+            <TextBlock x:Name="MarkerActualY" HorizontalAlignment="Left" Height="15.119" TextWrapping="Wrap" VerticalAlignment="Bottom" Width="24.225" FontSize="8" FontFamily="{DynamicResource ResourceKey=RobotoBold}" TextAlignment="Center" Canvas.Top="31.215">
+                <TextBlock.Foreground>
+                    <SolidColorBrush Color="{DynamicResource AstralBlack}"/>
+                </TextBlock.Foreground><Run Text="-100"/><Run Text="0"/></TextBlock>
+            <Path Data="M22.225,132.01 L300.86491,132.01" HorizontalAlignment="Left" Height="8" Stretch="Fill" VerticalAlignment="Top" Width="243.14" StrokeDashArray="1 1" StrokeThickness="2" RenderTransformOrigin="0.5,0.5" Stroke="#B6333333" Canvas.Left="26.225" Canvas.Top="34.551">
+                <Path.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleY="-1"/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Path.RenderTransform>
+                <Path.Fill>
+                    <SolidColorBrush Color="{DynamicResource AstralYellow}"/>
+                </Path.Fill>
+            </Path>
+
+        </Canvas>
+        <Canvas x:Name="MarkerCanvasX" Margin="0" HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Left="-0.127">
+            <Rectangle x:Name="MarkerRectX" HorizontalAlignment="Left" Height="22.966" VerticalAlignment="Top" Width="26" Canvas.Top="0.118" Canvas.Left="26.25">
+                <Rectangle.Fill>
+                    <SolidColorBrush Color="{DynamicResource AstralYellow}"/>
+                </Rectangle.Fill>
+            </Rectangle>
+            <TextBlock x:Name="MarkerActualX" HorizontalAlignment="Left" Height="15.119" TextWrapping="Wrap" VerticalAlignment="Bottom" Width="24.225" FontSize="8" FontFamily="{DynamicResource ResourceKey=RobotoBold}" TextAlignment="Center" Canvas.Top="7.965" Canvas.Left="26.25">
+                <TextBlock.Foreground>
+                    <SolidColorBrush Color="{DynamicResource AstralBlack}"/>
+                </TextBlock.Foreground><Run Text="-100"/><Run Text="0"/></TextBlock>
+            <Path Data="M22.225,132.01 L300.86491,132.01" HorizontalAlignment="Left" Height="12.194" Stretch="Fill" VerticalAlignment="Top" Width="415.636" StrokeDashArray="1 1" StrokeThickness="2" RenderTransformOrigin="0.5,0.5" Stroke="#B6333333" Canvas.Left="-167.202" Canvas.Top="229.043">
+                <Path.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleY="-1"/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="90"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Path.RenderTransform>
+                <Path.Fill>
+                    <SolidColorBrush Color="{DynamicResource AstralYellow}"/>
+                </Path.Fill>
+            </Path>
+
+        </Canvas>
+
+    </Canvas>
+</UserControl>
