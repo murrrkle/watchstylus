@@ -260,7 +260,7 @@
                 </TransformGroup>
             </local:EasingSelector.RenderTransform>
         </local:EasingSelector>
-        <Grid x:Name="SplashCanvas" Canvas.Left="86.22" Canvas.Top="52.705" Height="639.295" Width="742">
+        <Grid x:Name="SplashCanvas" Canvas.Left="86.22" Canvas.Top="52.705" Height="639.295" Width="742" d:IsHidden="True">
             <Rectangle Fill="#FFE5E5E5" RadiusY="12" RadiusX="11" StrokeThickness="2" Margin="17.5,0,2.5,54"/>
             <Canvas xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Name="Layer_1" Width="465.333" Height="204" Canvas.Left="0" Canvas.Top="0" Margin="138.333,219.147,138.333,216.147">
                 <Path Width="227.779" Height="101.765" Canvas.Left="119.697" Canvas.Top="0.619186" Stretch="Fill" Fill="#FF58595B" Data="F1 M 207.814,27.0058L 207.814,0.619186L 119.697,51.5018L 207.814,102.384L 207.814,75.9978L 347.476,75.9978L 347.476,68.5085L 347.476,34.4952L 347.476,27.0058L 207.814,27.0058 Z "/>

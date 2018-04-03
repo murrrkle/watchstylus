@@ -143,6 +143,8 @@ namespace TestingConcepts
             InitializeTouchCanvas();
             InitializeAcceleration();
 
+            InitializeKeyButtons();
+
             // Selection events
             this.TouchPlotter.TouchPlotter.SelectionChanged += OnSelectionChanged;
             this.Plotter.SelectionChanged += OnSelectionChanged;
@@ -152,6 +154,7 @@ namespace TestingConcepts
             this.LightPlotter.Plotter.SelectionChanged += OnSelectionChanged;
 
             this.DoButton.Click += OnSelectMouseCoordinates;
+            this.MoveMouseButton.Click += OnSelectMouseCoordinates;
 
             this.deviceModel.Session.InputSelectionWindowClosed += OnInputSelectionWindowClosed;
 
@@ -288,6 +291,35 @@ namespace TestingConcepts
         {
             this.AllKeyboardCanvas.Visibility = Visibility.Visible;
             this.AllMouseCommands.Visibility = Visibility.Hidden;
+        }
+
+        private void InitializeKeyButtons()
+        {
+            this.PlayPauseButton.Click += OnKeyButtonPressed;
+            this.PreviousSongButton.Click += OnKeyButtonPressed;
+            this.NextSongButton.Click += OnKeyButtonPressed;
+            this.MailButton.Click += OnKeyButtonPressed;
+            this.PrintScrButton.Click += OnKeyButtonPressed;
+            this.VolumeDownButton.Click += OnKeyButtonPressed;
+            this.VolumeUpButton.Click += OnKeyButtonPressed;
+            this.MuteButton.Click += OnKeyButtonPressed;
+        }
+
+        private void OnKeyButtonPressed(object sender, RoutedEventArgs e)
+        {
+            Key argument = Key.Space;
+            if (sender == this.PlayPauseButton) argument = Key.MediaPlayPause;
+            if (sender == this.PreviousSongButton) argument = Key.MediaPreviousTrack;
+            if (sender == this.NextSongButton) argument = Key.MediaNextTrack;
+            if (sender == this.PrintScrButton) argument = Key.PrintScreen;
+            if (sender == this.MailButton) argument = Key.LaunchMail;
+            if (sender == this.VolumeDownButton) argument = Key.VolumeDown;
+            if (sender == this.VolumeUpButton) argument = Key.VolumeUp;
+            if (sender == this.MuteButton) argument = Key.VolumeMute;
+
+            this.EnterKeyTextBox.Text = argument.ToString();
+            this.rule.InputAction.Argument = argument;
+            UpdateRule();
         }
 
         private void OnEnterKeyTextBoxKeyUp(object sender, KeyEventArgs e)
