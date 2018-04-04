@@ -46,7 +46,9 @@ namespace Astral.iOS.Sensors
                             double y = data.Acceleration.Y;
                             double z = data.Acceleration.Z;
 
-                            AccelerationData accData = new AccelerationData(x, y, z);
+                            double gForce = 9.81;
+
+                            AccelerationData accData = new AccelerationData(x * gForce, y * gForce, z * gForce);
                             UpdateAccelerationData(accData);
                         });
                     });

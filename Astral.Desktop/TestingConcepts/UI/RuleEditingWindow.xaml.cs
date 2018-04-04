@@ -616,12 +616,14 @@ namespace TestingConcepts
                         this.deviceModel.Display.TouchUp -= OnTouchUp;
                         break;
                     case ModuleType.Accelerometer:
-                        this.deviceModel.AccelerationChanged -= OnAccelerationUpdated;
+                        if (this.deviceModel.Device.HasAccelerometer)
+                            this.deviceModel.AccelerationChanged -= OnAccelerationUpdated;
                         break;
                     case ModuleType.Gyroscope:
                         break;
                     case ModuleType.Compass:
-                        this.deviceModel.Compass.HeadingChanged -= OnCompassUpdated;
+                        if (this.deviceModel.Device.HasCompass)
+                            this.deviceModel.Compass.HeadingChanged -= OnCompassUpdated;
                         break;
                     case ModuleType.Magnetometer:
                         break;
@@ -629,10 +631,12 @@ namespace TestingConcepts
                      //   this.deviceModel.Orientation.OrientationChanged -= OnOrientationChanged;
                         break;
                     case ModuleType.AmbientLight:
-                        this.deviceModel.AmbientLight.AmbientLightChanged -= OnAmbientLightUpdated;
+                        if (this.deviceModel.Device.HasAmbientLight)
+                            this.deviceModel.AmbientLight.AmbientLightChanged -= OnAmbientLightUpdated;
                         break;
                     case ModuleType.Microphone:
-                        this.deviceModel.Microphone.MicrophoneUpdated -= OnMicrophoneUpdated;
+                        if (this.deviceModel.Device.HasMicrophone)
+                            this.deviceModel.Microphone.MicrophoneUpdated -= OnMicrophoneUpdated;
                         break;
                     default:
                         break;
@@ -721,6 +725,9 @@ namespace TestingConcepts
         {
             InitializeComponent();
             InitializeSensorButtons();
+
+            // temp
+            this.AccelerometerPlotter.Plotter.MaxRange = 10;
         }
 
         public RuleEditingWindow(RuleManager ruleManager)

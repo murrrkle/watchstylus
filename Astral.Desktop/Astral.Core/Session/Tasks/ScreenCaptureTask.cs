@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -391,22 +392,22 @@ namespace Astral.Session.Tasks
                         bool hasLocalData = (tmp != 0);
                         hasData |= hasLocalData;
 
-                        if (hasLocalData)
+                        /* if (hasLocalData)
                         {
                             minX = Math.Min(minX, x);
                             maxX = Math.Max(maxX, x);
 
                             minY = Math.Min(minY, y);
                             maxY = Math.Max(maxY, y);
-                        }
+                        } */
                     }
                 }
             }
 
-            if (hasData)
+            /* if (hasData)
             {
                 updateRect = new Rectangle(minX, minY, maxX - minX + 1, maxY - minY + 1);
-            }
+            } */
         }
 
         private unsafe byte[] ClipData(Rectangle updateRect, Rectangle fullRect)
@@ -434,14 +435,60 @@ namespace Astral.Session.Tasks
             return clippedBuffer;
         }
 
+        private ImageCodecInfo GetEncoder(ImageFormat format)
+        {
+            ImageCodecInfo[] codecs = ImageCodecInfo.GetImageDecoders();
+            foreach (ImageCodecInfo codec in codecs)
+            {
+                if (codec.FormatID == format.Guid)
+                {
+                    return codec;
+                }
+            }
+            return null;
+        }
+
+
         private bool CaptureAndSendScreenshot(Rect captureRegion)
         {
+            bool useJpg = true;
+
             bool didSend = false;
-            int currStride = 0;
+            // int currStride = 0;
 
             CaptureScreen(captureRegion);
 
-            int width = (int)captureRegion.Width;
+            // swap buffers
+            /* Bitmap tmp = m_currScreenshot;
+            m_currScreenshot = m_prevScreenshot;
+            m_prevScreenshot = tmp; */
+
+            MemoryStream strm = new MemoryStream();
+
+            if (useJpg)
+            {
+                ImageCodecInfo jpgEncoder = GetEncoder(ImageFormat.Jpeg);
+                System.Drawing.Imaging.Encoder myEncoder = System.Drawing.Imaging.Encoder.Quality;
+
+                EncoderParameters myEncoderParameters = new EncoderParameters(1);
+
+                EncoderParameter myEncoderParameter = new EncoderParameter(myEncoder, 50L);
+                myEncoderParameters.Param[0] = myEncoderParameter;
+                m_currScreenshot.Save(strm, jpgEncoder, myEncoderParameters);
+            }
+            else
+            {
+                m_currScreenshot.Save(strm, ImageFormat.Png);
+            }
+
+            Screenshot screenshot = new Screenshot(strm.GetBuffer());
+            ProcessedScreenshotCaptured?.Invoke(this, screenshot);
+
+            strm.Dispose();
+
+            didSend = true;
+
+            /* int width = (int)captureRegion.Width;
             int height = (int)captureRegion.Height;
 
             BitmapData prevData = m_prevScreenshot.LockBits(
@@ -463,6 +510,10 @@ namespace Astral.Session.Tasks
                 Bitmap tmp = m_currScreenshot;
                 m_currScreenshot = m_prevScreenshot;
                 m_prevScreenshot = tmp;
+
+                System.IO.MemoryStream strm = new System.IO.MemoryStream();
+                m_currScreenshot.Save(strm, ImageFormat.Png);
+                Debug.WriteLine(strm.GetBuffer().Length);
             }
             finally
             {
@@ -473,15 +524,15 @@ namespace Astral.Session.Tasks
             if (hasData)
             {
                 // now we need to clip the update
-                byte[] clipped = ClipData(updateRect, new Rectangle(0, 0, width, height));
+                // byte[] clipped = ClipData(updateRect, new Rectangle(0, 0, width, height));
 
-                // Screenshot screenshot = new Screenshot(m_buffer, updateRect,
-                Screenshot screenshot = new Screenshot(clipped, updateRect,
+                Screenshot screenshot = new Screenshot(m_buffer, updateRect,
+                // Screenshot screenshot = new Screenshot(clipped, updateRect,
                     new System.Drawing.Size(width, height), currStride, m_firstRun);
                 ProcessedScreenshotCaptured?.Invoke(this, screenshot);
 
                 didSend = true;
-            }
+            } */
 
             ScreenshotCaptured?.Invoke(this, (Bitmap)m_prevScreenshot.Clone());
 
@@ -518,7 +569,7 @@ namespace Astral.Session.Tasks
 
             while (IsRunning)
             {
-                Thread.Sleep(1);
+                Thread.Sleep(2);
 
                 if (!(shouldStream))
                 {

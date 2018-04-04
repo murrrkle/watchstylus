@@ -232,44 +232,52 @@ namespace Astral.Droid.UI
 
         private void UpdateContent(AstralContentEventArgs e)
         {
-            int width = e.Size.Width;
-            int height = e.Size.Height;
-
-            int bytesPerPixel = 4;
-            int bytesPerRow = bytesPerPixel * width;
-            int numBytes = bytesPerRow * height;
-
-            if (m_currImg == null
-                || m_currImg.Width != e.Size.Width
-                || m_currImg.Height != e.Size.Height)
+            if (e.IsFullFrame)
             {
-                m_currImg = Bitmap.CreateBitmap(width, height,
-                    Bitmap.Config.Argb8888);
+                m_currImg = BitmapFactory.DecodeByteArray(e.BitmapData, 0, e.BitmapData.Length);
             }
-            
-            // we need to adjust the bytes here (flip R and B)
-            unsafe
+            else
             {
-                fixed (byte* bytes = e.BitmapData)
-                {
-                    uint* pixels = (uint*)bytes;
-                    int length = e.BitmapData.Length / bytesPerPixel;
+                int width = e.Size.Width;
+                int height = e.Size.Height;
 
-                    for (int i = 0; i < length; i++)
+                int bytesPerPixel = 4;
+                int bytesPerRow = bytesPerPixel * width;
+                int numBytes = bytesPerRow * height;
+
+                if (m_currImg == null
+                    || m_currImg.Width != e.Size.Width
+                    || m_currImg.Height != e.Size.Height)
+                {
+                    m_currImg = Bitmap.CreateBitmap(width, height,
+                        Bitmap.Config.Argb8888);
+                }
+
+                // we need to adjust the bytes here (flip R and B)
+                unsafe
+                {
+                    fixed (byte* bytes = e.BitmapData)
                     {
-                        *pixels = ABGRtoARGB(*pixels);
-                        pixels++;
+                        uint* pixels = (uint*)bytes;
+                        int length = e.BitmapData.Length / bytesPerPixel;
+
+                        for (int i = 0; i < length; i++)
+                        {
+                            *pixels = ABGRtoARGB(*pixels);
+                            pixels++;
+                        }
                     }
                 }
+
+                ByteBuffer buffer = ByteBuffer.Wrap(e.BitmapData);
+                buffer.Order(ByteOrder.BigEndian);
+                m_currImg.CopyPixelsFromBuffer(buffer);
             }
-
-            ByteBuffer buffer = ByteBuffer.Wrap(e.BitmapData);
-            buffer.Order(ByteOrder.BigEndian);
-            m_currImg.CopyPixelsFromBuffer(buffer);
-
+             
             ((Activity)Context).RunOnUiThread(() =>
             {
-                SetImageBitmap(RotateBitmap(m_currImg));
+                // SetImageBitmap(RotateBitmap(m_currImg));
+                SetImageBitmap(m_currImg);
             });
         }
 

@@ -49,6 +49,8 @@ namespace Astral.Device
         private Size m_size;
 
         private int m_stride;
+
+        private bool m_fullFrame;
         #endregion
 
         #region Constructors
@@ -57,6 +59,13 @@ namespace Astral.Device
             m_bitmapData = bitmapData;
             m_size = size;
             m_stride = stride;
+            m_fullFrame = false;
+        }
+
+        internal AstralContentEventArgs(byte[] bitmapData)
+        {
+            m_fullFrame = true;
+            m_bitmapData = bitmapData;
         }
         #endregion
 
@@ -74,6 +83,11 @@ namespace Astral.Device
         public int Stride
         {
             get { return m_stride; }
+        }
+
+        public bool IsFullFrame
+        {
+            get { return m_fullFrame; }
         }
         #endregion
     }
@@ -363,8 +377,16 @@ namespace Astral.Device
                     SendMessage(recvMsg);
                 }
 
-                AstralContentEventArgs rawData = ProcessScreenshot(screenshot);
-                ContentUpdated?.Invoke(this, rawData);
+                if (screenshot.IsFullFrame)
+                {
+                    AstralContentEventArgs rawData = new AstralContentEventArgs(screenshot.Data);
+                    ContentUpdated?.Invoke(this, rawData);
+                }
+                else
+                {
+                    AstralContentEventArgs rawData = ProcessScreenshot(screenshot);
+                    ContentUpdated?.Invoke(this, rawData);
+                }
             }
             else if (DeviceOrientationMessage.IsKindOf(msg))
             {

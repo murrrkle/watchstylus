@@ -134,61 +134,69 @@ namespace Astral.iOS
         
         private void UpdateContent(AstralContentEventArgs e)
         {
-            // setup image data
-            int width = e.Size.Width;
-            int height = e.Size.Height;
-
-            int bytesPerPixel = 4;
-            int bytesPerRow = bytesPerPixel * width;
-            int numBytes = bytesPerRow * height;
-
-            CGImage image = null;
-            IntPtr pixels = IntPtr.Zero;
-
-            try
+            if (e.IsFullFrame)
             {
-                pixels = Marshal.AllocHGlobal(numBytes);
+                m_currImg = RotateImage(new UIImage(NSData.FromArray(e.BitmapData)));
+                Image = m_currImg;
+            }
+            else
+            {
+                // setup image data
+                int width = e.Size.Width;
+                int height = e.Size.Height;
 
-                using (CGColorSpace colorSpace = CGColorSpace.CreateDeviceRGB())
+                int bytesPerPixel = 4;
+                int bytesPerRow = bytesPerPixel * width;
+                int numBytes = bytesPerRow * height;
+
+                CGImage image = null;
+                IntPtr pixels = IntPtr.Zero;
+
+                try
                 {
-                    using (CGBitmapContext context = new CGBitmapContext(
-                        pixels, width, height, 8, bytesPerRow,
-                        colorSpace, CGBitmapFlags.PremultipliedFirst | CGBitmapFlags.ByteOrder32Little))
-                    {
-                        unsafe
-                        {
-                            byte* currentPixel = (byte*)pixels.ToPointer();
-                            fixed (byte* newPixels = e.BitmapData)
-                            {
-                                byte* screenshotPixels = newPixels;
-                                for (int i = 0; i < height; i++)
-                                {
-                                    for (int j = 0; j < width; j++)
-                                    {
-                                        *currentPixel = *screenshotPixels;
-                                        *(currentPixel + 1) = *(screenshotPixels + 1);
-                                        *(currentPixel + 2) = *(screenshotPixels + 2);
-                                        *(currentPixel + 3) = *(screenshotPixels + 3);
+                    pixels = Marshal.AllocHGlobal(numBytes);
 
-                                        screenshotPixels += bytesPerPixel;
-                                        currentPixel += bytesPerPixel;
+                    using (CGColorSpace colorSpace = CGColorSpace.CreateDeviceRGB())
+                    {
+                        using (CGBitmapContext context = new CGBitmapContext(
+                            pixels, width, height, 8, bytesPerRow,
+                            colorSpace, CGBitmapFlags.PremultipliedFirst | CGBitmapFlags.ByteOrder32Little))
+                        {
+                            unsafe
+                            {
+                                byte* currentPixel = (byte*)pixels.ToPointer();
+                                fixed (byte* newPixels = e.BitmapData)
+                                {
+                                    byte* screenshotPixels = newPixels;
+                                    for (int i = 0; i < height; i++)
+                                    {
+                                        for (int j = 0; j < width; j++)
+                                        {
+                                            *currentPixel = *screenshotPixels;
+                                            *(currentPixel + 1) = *(screenshotPixels + 1);
+                                            *(currentPixel + 2) = *(screenshotPixels + 2);
+                                            *(currentPixel + 3) = *(screenshotPixels + 3);
+
+                                            screenshotPixels += bytesPerPixel;
+                                            currentPixel += bytesPerPixel;
+                                        }
                                     }
                                 }
                             }
+
+                            image = context.ToImage();
                         }
 
-                        image = context.ToImage();
+                        m_currImg = RotateImage(new UIImage(image));
+                        Image = m_currImg;
                     }
-
-                    m_currImg = RotateImage(new UIImage(image));
-                    Image = m_currImg;
                 }
-            }
-            finally
-            {
-                if (pixels != IntPtr.Zero)
+                finally
                 {
-                    Marshal.FreeHGlobal(pixels);
+                    if (pixels != IntPtr.Zero)
+                    {
+                        Marshal.FreeHGlobal(pixels);
+                    }
                 }
             }
         }
