@@ -276,8 +276,8 @@ namespace Astral.Droid.UI
              
             ((Activity)Context).RunOnUiThread(() =>
             {
-                // SetImageBitmap(RotateBitmap(m_currImg));
-                SetImageBitmap(m_currImg);
+                SetImageBitmap(RotateBitmap(m_currImg));
+                // SetImageBitmap(m_currImg);
             });
         }
 
