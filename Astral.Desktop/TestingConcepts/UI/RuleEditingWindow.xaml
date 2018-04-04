@@ -113,7 +113,7 @@
 
             </Grid>
             <Grid x:Name="MouseUpCanvas" Height="98.643" Canvas.Left="812.442" Canvas.Top="424.357" Width="285.339" d:IsHidden="True">
-                <Button x:Name="MoveMouseButton" Content="MOVE MOUSE TO ( X, Y )" Style="{DynamicResource AstralButtonGreen}" Margin="0,0,0,41.393"/>
+                <Button x:Name="MoveMouseButton" Content="MOVE MOUSE T X, Y )" Style="{DynamicResource AstralButtonGreen}" Margin="0,0,0,41.393"/>
                 <CheckBox x:Name="MouseClickCheckBox" Content="Perform Mouse Click" Height="23.5" Style="{DynamicResource AstralCheckBoxStyle}" RenderTransformOrigin="0.5,0.5" Margin="47.084,0,48.584,0" VerticalAlignment="Bottom">
                     <CheckBox.RenderTransform>
                         <TransformGroup>

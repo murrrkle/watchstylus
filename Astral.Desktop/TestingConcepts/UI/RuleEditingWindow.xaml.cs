@@ -139,6 +139,8 @@ namespace TestingConcepts
             this.timer.Tick += OnTimerTick;
             this.timer.Start();
 
+            this.AccelerometerPlotter.Plotter.MaxRange = 10;
+
             // Initialize Canvases for Sensors
             InitializeTouchCanvas();
             InitializeAcceleration();
