@@ -303,6 +303,16 @@ namespace TestingConcepts
             this.VolumeDownButton.Click += OnKeyButtonPressed;
             this.VolumeUpButton.Click += OnKeyButtonPressed;
             this.MuteButton.Click += OnKeyButtonPressed;
+            this.AltButton.Click += (s, e) =>
+            {
+                if (AltButton.IsChecked.Value)
+                {
+                    this.EnterKeyTextBox.Text = Key.LeftAlt.ToString();
+                    this.rule.InputAction.Argument = Key.LeftAlt;
+                    UpdateRule();
+                }
+            };
+
         }
 
         private void OnKeyButtonPressed(object sender, RoutedEventArgs e)
