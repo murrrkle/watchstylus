@@ -86,6 +86,11 @@ namespace TestingConcepts
                     RaiseMedleyRule(new EventArgs());
                 }
 
+                if(this.destinationRect != null && inputAction != null && inputAction.InputEvent == PCInputEventType.MouseDown)
+                {
+                    this.inputAction.Argument = new Point(this.destinationRect.X, this.destinationRect.Y);
+                }
+
                 return true;
             }
             else

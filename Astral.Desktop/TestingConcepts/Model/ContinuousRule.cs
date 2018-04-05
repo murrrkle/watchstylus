@@ -105,13 +105,10 @@ namespace TestingConcepts
                 if ((this.dimension & MappingDimension.X) == MappingDimension.X)
                 {
                     // map x coordinates
-                    x = Utils.Map(x, sourceRect.TopLeft.X, sourceRect.TopRight.X, destinationRect.TopLeft.X, destinationRect.TopRight.X);
-
-                    // apply easing on X
-                  //  if (this.easing != EasingType.Linear)
-                    {
-                        // turn into value from 0 to 1 to apply easing
-                        double xAsPercent = Utils.Map(x, destinationRect.TopLeft.X, destinationRect.TopRight.X, 0, 1);
+                    if (!this.name.Contains("Slide")) x = Utils.Map(x, sourceRect.TopLeft.X, sourceRect.TopRight.X, destinationRect.TopLeft.X, destinationRect.TopRight.X);
+                    if (this.name.Contains("Slide")) x = Utils.Map(x, sourceRect.TopLeft.X, sourceRect.TopRight.X, destinationRect.TopLeft.Y, destinationRect.TopRight.Y);
+                    // turn into value from 0 to 1 to apply easing
+                    double xAsPercent = Utils.Map(x, destinationRect.TopLeft.X, destinationRect.TopRight.X, 0, 1);
                         // apply easing
                         xAsPercent = AstralEasings.Interpolate(xAsPercent, this.easing);
 
@@ -122,14 +119,20 @@ namespace TestingConcepts
 
                         // convert back
                         x = Utils.Map(xAsPercent, 0, 1, destinationRect.TopLeft.X, destinationRect.TopRight.X);
-                    }
+                    
                 }
 
                 if((this.dimension & MappingDimension.Y) == MappingDimension.Y)
                 {
                     // map y coordinates
-                    y = Utils.Map(y, sourceRect.TopLeft.Y, sourceRect.BottomLeft.Y, destinationRect.TopLeft.Y, destinationRect.BottomLeft.Y);
-
+                    if (!this.name.Contains("Slide"))
+                        y = Utils.Map(y, sourceRect.TopLeft.Y, sourceRect.BottomLeft.Y, destinationRect.TopLeft.Y, destinationRect.BottomLeft.Y);
+                    // HAX
+                    if (this.name.Contains("Slide"))
+                    {
+                        y = Utils.Map(y, sourceRect.TopLeft.Y, sourceRect.BottomLeft.Y, destinationRect.TopLeft.X, destinationRect.TopRight.X);
+                        Console.WriteLine(destinationRect.Width + " :: " + y);
+                    }
                     // apply easing on y
                //     if (this.easing != EasingType.Linear)
                     {
@@ -151,6 +154,7 @@ namespace TestingConcepts
                 if (this.Dimension == MappingDimension.XY)
                 {
                     this.InputAction.Argument = new Point(x, y);
+                    if((this.name.Contains("Slide"))) this.InputAction.Argument = new Point(y, x);
                 }
                 else
                 {

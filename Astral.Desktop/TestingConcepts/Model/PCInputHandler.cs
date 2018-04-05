@@ -82,7 +82,24 @@ namespace TestingConcepts
             switch (action.InputEvent)
             {
                 case PCInputEventType.MouseDown:
-                    this.mouseSimulator.LeftDown();
+                    if (action.Argument == null)
+                    {
+                        this.mouseSimulator.LeftDown();
+                    }
+                    else
+                    {
+                        int x = (int)((action.Argument as Point?).GetValueOrDefault().X);
+                        int y = (int)((action.Argument as Point?).GetValueOrDefault().Y);
+
+                        Console.WriteLine("CLICKING " + x + " :: " + y);
+                        Point current = this.mouseSimulator.GetMousePosition();
+                        Console.WriteLine("MOUSE " + current.X + " :: " + current.Y);
+                        this.mouseSimulator.Move(x, y);
+                        this.mouseSimulator.LeftDown();
+                        System.Threading.Thread.Sleep(200);
+                        this.mouseSimulator.LeftUp();
+                        this.mouseSimulator.Move((int)current.X, (int)current.Y);
+                    }
                     break;
                 case PCInputEventType.MouseUp:
                     this.mouseSimulator.LeftUp();

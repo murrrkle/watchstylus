@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
+using System.Windows;
 
 namespace TestingConcepts
 {
@@ -17,6 +18,23 @@ namespace TestingConcepts
             (MouseEventType dwFlags, int dx, int dy, int cButtons, int dwExtraInfo);
         [DllImport("user32")]
         private static extern int SetCursorPos(int x, int y);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool GetCursorPos(ref Win32Point pt);
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct Win32Point
+        {
+            public Int32 X;
+            public Int32 Y;
+        };
+        public Point GetMousePosition()
+        {
+            Win32Point w32Mouse = new Win32Point();
+            GetCursorPos(ref w32Mouse);
+            return new Point(w32Mouse.X, w32Mouse.Y);
+        }
 
         private enum MouseEventType : int
         {
@@ -57,6 +75,11 @@ namespace TestingConcepts
         public void LeftDown()
         {
             mouse_event(MouseEventType.LeftDown, this.x, this.y, 0, 0);
+        }
+
+        public void LeftDown(int x, int y)
+        {
+            mouse_event(MouseEventType.LeftDown, x, y, 0, 0);
         }
 
         public void LeftUp()

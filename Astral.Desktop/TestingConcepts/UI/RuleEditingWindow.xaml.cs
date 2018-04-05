@@ -391,6 +391,7 @@ namespace TestingConcepts
 
         private void OnInputSelectionWindowClosed(object sender, Astral.UI.SelectionWindowEventArgs e)
         {
+            this.Show();
             if (e.Reason == Astral.UI.ClosingReason.OK)
             {
                 Console.WriteLine(this.deviceModel.InputRegion);
@@ -406,6 +407,7 @@ namespace TestingConcepts
 
         private void OnSelectMouseCoordinates(object sender, RoutedEventArgs e)
         {
+            this.Hide();
             this.deviceModel.ShowInputWindow();
         }
 
