@@ -82,7 +82,7 @@ namespace TestingConcepts
             switch (action.InputEvent)
             {
                 case PCInputEventType.MouseDown:
-                    if (action.Argument == null)
+                    if (action.Argument == null || (int)((action.Argument as Point?).GetValueOrDefault().X) == -100)
                     {
                         this.mouseSimulator.LeftDown();
                     }

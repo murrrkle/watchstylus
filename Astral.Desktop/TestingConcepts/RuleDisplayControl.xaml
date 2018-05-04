@@ -153,6 +153,7 @@
                 </TransformGroup>
             </Button.RenderTransform>
         </Button>
-        <Path x:Name="ActiveSign" Width="10.843" Height="12.52" Canvas.Left="-15.74" Canvas.Top="25.5" Stretch="Fill" Fill="#FFAACD45" Data="F1 M 130.876,-134.135L 62.8755,-173.395L 62.8755,-94.875L 130.876,-134.135 Z "/>
+        <Path x:Name="ActiveSign" Width="10.843" Height="12.52" Canvas.Left="-15.74" Canvas.Top="25.5" Stretch="Fill" Fill="#FFAACD45" Data="F1 M 130.876,-134.135L 62.8755,-173.395L 62.8755,-94.875L 130.876,-134.135 Z "/>
+
     </Canvas>
 </UserControl>

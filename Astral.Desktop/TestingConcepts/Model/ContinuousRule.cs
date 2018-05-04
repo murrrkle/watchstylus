@@ -105,8 +105,8 @@ namespace TestingConcepts
                 if ((this.dimension & MappingDimension.X) == MappingDimension.X)
                 {
                     // map x coordinates
-                    if (!this.name.Contains("Slide")) x = Utils.Map(x, sourceRect.TopLeft.X, sourceRect.TopRight.X, destinationRect.TopLeft.X, destinationRect.TopRight.X);
-                    if (this.name.Contains("Slide")) x = Utils.Map(x, sourceRect.TopLeft.X, sourceRect.TopRight.X, destinationRect.TopLeft.Y, destinationRect.TopRight.Y);
+                    x = Utils.Map(x, sourceRect.TopLeft.X, sourceRect.TopRight.X, destinationRect.TopLeft.X, destinationRect.TopRight.X);
+                    //if (this.name.Contains("Slide")) x = Utils.Map(x, sourceRect.TopLeft.X, sourceRect.TopRight.X, destinationRect.TopLeft.Y, destinationRect.TopRight.Y);
                     // turn into value from 0 to 1 to apply easing
                     double xAsPercent = Utils.Map(x, destinationRect.TopLeft.X, destinationRect.TopRight.X, 0, 1);
                         // apply easing
@@ -125,14 +125,14 @@ namespace TestingConcepts
                 if((this.dimension & MappingDimension.Y) == MappingDimension.Y)
                 {
                     // map y coordinates
-                    if (!this.name.Contains("Slide"))
+                    //if (!this.name.Contains("Slide"))
                         y = Utils.Map(y, sourceRect.TopLeft.Y, sourceRect.BottomLeft.Y, destinationRect.TopLeft.Y, destinationRect.BottomLeft.Y);
                     // HAX
-                    if (this.name.Contains("Slide"))
-                    {
-                        y = Utils.Map(y, sourceRect.TopLeft.Y, sourceRect.BottomLeft.Y, destinationRect.TopLeft.X, destinationRect.TopRight.X);
-                        Console.WriteLine(destinationRect.Width + " :: " + y);
-                    }
+                    //if (this.name.Contains("Slide"))
+                    //{
+                    //    y = Utils.Map(y, sourceRect.TopLeft.Y, sourceRect.BottomLeft.Y, destinationRect.TopLeft.X, destinationRect.TopRight.X);
+                    //    Console.WriteLine(destinationRect.Width + " :: " + y);
+                    //}
                     // apply easing on y
                //     if (this.easing != EasingType.Linear)
                     {

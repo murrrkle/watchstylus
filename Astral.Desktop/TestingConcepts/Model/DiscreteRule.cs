@@ -37,7 +37,7 @@ namespace TestingConcepts
         {
             if (current.IsInsideRect(this.sourceRect) && !previous.IsInsideRect(this.sourceRect))
             {
-                Console.WriteLine("ENTERED");
+                Console.WriteLine("ENTERED " + this.inputAction.InputEvent + " :: " + this.inputAction.Argument);
                 RaiseSelectionEntered(new SelectionCrossedEventArgs(current, previous, this.sourceRect, this.destinationRect));
             }
 
@@ -53,6 +53,8 @@ namespace TestingConcepts
 
             this.previousPoint = new Point(current.X, current.Y);
         }
+
+        bool firstTime = true;
 
         public override bool ExecuteRule(Point point)
         {
@@ -80,6 +82,10 @@ namespace TestingConcepts
 
 
                 this.executedOnce = true;
+                if(this.child != null)
+                {
+                    RaiseParentExecuted(new EventArgs());
+                }
 
                 if(IsMedleyRule)
                 {

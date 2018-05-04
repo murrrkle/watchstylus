@@ -44,7 +44,7 @@ namespace TestingConcepts
 
     public abstract class Rule
     {
-        protected string name;
+        protected string name = "x";
         protected MappingDimension dimension;
         protected MobileEventType eventType;
         protected bool checksBounds = false;
@@ -53,10 +53,24 @@ namespace TestingConcepts
         protected Point previousPoint = new Point(Double.NaN, Double.NaN);
         protected bool executedOnce = false;
 
+        protected Rect captureRegion;
+
         protected Rule parent;
         protected Rule child;
 
         protected PCInputAction inputAction;
+
+        public Rect CaptureRegion
+        {
+            get
+            {
+                return this.captureRegion;
+            }
+            set
+            {
+                this.captureRegion = value;
+            }
+        }
 
         public bool IsMedleyRule { get; set; }
 
@@ -68,10 +82,16 @@ namespace TestingConcepts
         public event EventHandler<SelectionCrossedEventArgs> SelectionExited;
 
         public event EventHandler<EventArgs> MedleyRuleExecuted;
+        public event EventHandler<EventArgs> ParentExecuted;
 
         protected void RaiseMedleyRule(EventArgs e)
         {
             MedleyRuleExecuted?.Invoke(this, e);
+        }
+
+        protected void RaiseParentExecuted(EventArgs e)
+        {
+            ParentExecuted?.Invoke(this, e);
         }
 
         public override string ToString()
