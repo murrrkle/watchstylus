@@ -86,8 +86,10 @@ namespace TestingConcepts
             this.endAngle = angle;
         }
 
+        bool mouseLifted = false;
         protected override void OnMouseLeftUp(object sender, MouseButtonEventArgs e)
         {
+            mouseLifted = true;
             this.isMouseDown = false;
             this.mousePosition = e.GetPosition(this);
 
@@ -249,7 +251,11 @@ namespace TestingConcepts
 
                 // draw the ellipse
                 context.DrawEllipse(AstralColors.LightGray, null, this.Center, Radius, Radius);
-
+                if(mouseLifted)
+                {
+                    // draw the ellipse
+                    context.DrawEllipse(AstralColors.Yellow, null, this.Center, Radius, Radius);
+                }
                 // draw the selection
                 context.DrawDrawing(DrawArc(Utils.DegreesToRadians(this.startAngle), 
                     Utils.DegreesToRadians(this.endAngle)));

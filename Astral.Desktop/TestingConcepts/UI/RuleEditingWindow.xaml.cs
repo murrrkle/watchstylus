@@ -114,6 +114,11 @@ namespace TestingConcepts
             double h = this.destination.Height;
             Rect dstClone = new Rect(x, y, w, h);
 
+            if(this.activePlotter == Plotter)
+            {
+                this.source = new Rect(0, 0, 359.9, 359.9);
+            }
+
             this.rule.SourceRect = this.source;
             this.rule.DestinationRect = dstClone;
             if(this.rule is ContinuousRule)
@@ -139,7 +144,7 @@ namespace TestingConcepts
             this.timer.Tick += OnTimerTick;
             this.timer.Start();
 
-            this.AccelerometerPlotter.Plotter.MaxRange = 10;
+           // this.AccelerometerPlotter.Plotter.MaxRange = 10;
 
             // Initialize Canvases for Sensors
             InitializeTouchCanvas();
@@ -151,7 +156,7 @@ namespace TestingConcepts
             this.TouchPlotter.TouchPlotter.SelectionChanged += OnSelectionChanged;
             this.Plotter.SelectionChanged += OnSelectionChanged;
             this.OrientationVisualizer.Plotter.SelectionChanged += OnSelectionChanged;
-            this.MicPlotter.SelectionChanged += OnSelectionChanged;
+            this.MicPlotter.Plotter.SelectionChanged += OnSelectionChanged;
             this.AccelerometerPlotter.Plotter.SelectionChanged += OnSelectionChanged;
             this.LightPlotter.Plotter.SelectionChanged += OnSelectionChanged;
 
@@ -711,8 +716,9 @@ namespace TestingConcepts
                         this.eventType = MobileEventType.AmplitudeChanged;
                         this.deviceModel.Microphone.MicrophoneUpdated += OnMicrophoneUpdated;
                         this.MicCanvas.Visibility = Visibility.Visible;
-                        this.MicPlotter.MaxRange = 1000;
-                        this.MicPlotter.StartAtZero = true;
+                        this.MicPlotter.Plotter.MaxRange = 600;
+                        this.MicPlotter.Plotter.StartAtZero = true;
+                        this.activePlotter = this.MicPlotter.Plotter;
                         break;
                     default:
                         break;
@@ -731,7 +737,7 @@ namespace TestingConcepts
             InitializeSensorButtons();
 
             // temp
-            this.AccelerometerPlotter.Plotter.MaxRange = 10;
+            //this.AccelerometerPlotter.Plotter.MaxRange = 10;
         }
 
         public RuleEditingWindow(RuleManager ruleManager)
@@ -749,6 +755,31 @@ namespace TestingConcepts
 
             this.Loaded += OnLoaded;
             this.parentRule = parentRule;
+            this.NewCapScreenButton.Visibility = Visibility.Visible;
+            this.NewCapScreenButton.Click += OnNewCapScreen;
+        }
+
+        Rect originalCapScreen;
+        Rect newCapScreen;
+        private void OnNewCapScreen(object sender, RoutedEventArgs e)
+        {
+            //this.deviceModel.ShowCaptureWindow();
+            //this.Hide();
+            //this.originalCapScreen = new Rect(deviceModel.CaptureRegion.X, deviceModel.CaptureRegion.Y, deviceModel.CaptureRegion.Width, deviceModel.CaptureRegion.Height);
+            //this.deviceModel.Session.CaptureSelectionWindowClosed += CaptureWindowClosed;
+        }
+
+        private void CaptureWindowClosed(object sender, Astral.UI.SelectionWindowEventArgs e)
+        {
+            this.Show();
+            Console.WriteLine("CAPS");
+            Console.WriteLine(originalCapScreen);
+            newCapScreen = new Rect(deviceModel.CaptureRegion.X, deviceModel.CaptureRegion.Y, deviceModel.CaptureRegion.Width, deviceModel.CaptureRegion.Height);
+            Console.WriteLine(newCapScreen);
+            this.deviceModel.CaptureRegion = this.originalCapScreen;
+            this.deviceModel.Session.CaptureSelectionWindowClosed -= CaptureWindowClosed;
+            this.rule.CaptureRegion = newCapScreen;
+            Console.WriteLine(this.deviceModel.CaptureRegion);
         }
 
         #endregion
@@ -768,6 +799,7 @@ namespace TestingConcepts
             this.AccelerometerPlotter.Update();
             this.LightPlotter.Update();
             this.TouchPlotter.Update();
+            this.MicPlotter.Update();
             //this.AccelPlot3D.DrawPoints();
             if (this.activePlotter != null)
             {
@@ -826,8 +858,8 @@ namespace TestingConcepts
             {
                 this.microphoneClean.ComputeAverage(e.MicrophoneData.Amplitude);
                 double micValue = (microphoneClean.Average > 1000 ? 1000 : microphoneClean.Average);
-                this.MicPlotter.PushPoint(micValue);
-                this.MicReading.Text = micValue + " :: " + MicPlotter.SelectionInRuleCoordinates.Left + " :: " + this.MicPlotter.SelectionInRuleCoordinates.Right;
+                this.MicPlotter.Plotter.PushPoint(micValue);
+             //   this.MicReading.Text = micValue + " :: " + MicPlotter.SelectionInRuleCoordinates.Left + " :: " + this.MicPlotter.SelectionInRuleCoordinates.Right;
             }));
         }
 

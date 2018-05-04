@@ -51,7 +51,7 @@
             <ToggleButton x:Name="ToggleGesture" Content="GESTURE" Height="37.5" Canvas.Left="-0.72" Style="{DynamicResource AstralToggleButtonStyle}" Canvas.Top="84" Width="269.94"/>
         </Canvas>
 
-        <Canvas Name="CompassCanvas" Height="579.5" Width="282.78" Canvas.Left="104.22" Canvas.Top="95.5" d:IsHidden="True">
+        <Canvas Name="CompassCanvas" Height="579.5" Width="282.78" Canvas.Left="104.22" Canvas.Top="95.5">
             <Rectangle Fill="#FFF4F4F5" Height="222" Canvas.Left="33.28" Canvas.Top="26.5" Width="222"/>
             <local:RadialPlotter x:Name="Plotter" Width="222" Height="222" Canvas.Left="33.28" Canvas.Top="26.5" />
             <Ellipse Fill="White" StrokeThickness="4" Height="57" Canvas.Left="115.78" Canvas.Top="109" Width="57">
@@ -60,6 +60,11 @@
                 </Ellipse.Stroke>
             </Ellipse>
             <TextBlock x:Name="CompassTextBlock" FontFamily="{DynamicResource RobotoBold}" TextWrapping="Wrap" Text="360" TextAlignment="Center" FontSize="18" Height="25.5" Canvas.Left="125.78" Canvas.Top="125.833" Width="38"/>
+            <TextBlock Height="21" TextWrapping="Wrap" Text="COMPASS" Width="305.78" FontFamily="{DynamicResource RobotoBold}" FontSize="18" Canvas.Top="-36">
+                <TextBlock.Foreground>
+                    <SolidColorBrush Color="{DynamicResource AstralBlack}"/>
+                </TextBlock.Foreground>
+            </TextBlock>
 
         </Canvas>
         <Canvas x:Name="OrientationCanvas" Height="579.5" Width="282.78" Canvas.Left="104.22" Canvas.Top="95.5" d:IsHidden="True">
@@ -82,6 +87,7 @@
         </StackPanel>
         <Grid x:Name="DragGrid" Height="50.205" Canvas.Left="-1.5" Canvas.Top="-1" Width="934.587" Background="#00000000"/>
         <Button x:Name="ExitButton" Content="X" Height="42.205" Canvas.Left="832.75" Canvas.Top="7" Width="47.337" Style="{DynamicResource ExitButtonStyle}"/>
+        <Button Visibility="Hidden" x:Name="NewCapScreenButton" Content="NEW CAPTURE SCREEN" Height="33" Canvas.Left="446.881" Canvas.Top="650.732" Width="381.339" Style="{DynamicResource AstralButtonRed}"/>
         <Canvas x:Name="AllMouseCommands" Height="1014" Canvas.Left="-325.281" Canvas.Top="-212.5" Width="1620">
             <Button x:Name="EasingButton" Content="EASING FUNCTIONS" Height="48.25" Canvas.Left="812.442" Canvas.Top="605.5" Width="285.339" Style="{DynamicResource AstralButtonStyle}"/>
             <TextBlock Height="33" Canvas.Left="765.781" TextWrapping="Wrap" Text="Mouse Event" FontFamily="{DynamicResource RobotoBold}" Canvas.Top="325" Width="204.5" OpacityMask="Black" FontSize="18">
@@ -185,10 +191,16 @@
 
         </Canvas>
         <TextBlock x:Name="DebugText" Height="130" Canvas.Left="14.935" TextWrapping="Wrap" Text="DEBUG" Canvas.Top="585.25" Width="405.065" FontFamily="{DynamicResource RobotoBold}" FontSize="10" Visibility="Hidden"/>
-        <Canvas x:Name="MicCanvas" Height="613.341" Canvas.Left="78" Canvas.Top="56.659" Width="342" d:IsHidden="True">
-            <Rectangle Fill="#FFF4F4F5" Height="310.5" Canvas.Left="27" Canvas.Top="43.091" Width="292.5"/>
-            <local:LinearPlotter x:Name="MicPlotter" Height="310.5" Canvas.Left="27" Canvas.Top="43.091" Width="292.5"/>
-            <TextBlock x:Name="MicReading" Height="31.5" Canvas.Left="27" TextWrapping="Wrap" Text="Mic" Canvas.Top="358.591" Width="292.5"/>
+        <Canvas x:Name="MicCanvas" Height="613.341" Canvas.Left="78" Canvas.Top="56.659" Width="342">
+            <TextBlock x:Name="MicReading" Height="31.5" Canvas.Left="27" TextWrapping="Wrap" Text="Mic" Canvas.Top="418.591" Width="292.5"/>
+            <TextBlock Height="21" Canvas.Left="27" TextWrapping="Wrap" Text="MICROPHONE" Width="305.78" FontFamily="{DynamicResource RobotoBold}" FontSize="18">
+                <TextBlock.Foreground>
+                    <SolidColorBrush Color="{DynamicResource AstralBlack}"/>
+                </TextBlock.Foreground>
+            </TextBlock>
+            <local:LinearPlotterWrapper x:Name="MicPlotter" Canvas.Left="27" Canvas.Top="89.591"/>
+            <ToggleButton Content="Amplitude" Height="37.25" Canvas.Left="27" Style="{DynamicResource AstralToggleButtonStyle}" Canvas.Top="38.341" Width="143" IsChecked="True"/>
+            <ToggleButton Content="Speech" Height="37.25" Canvas.Left="182.5" Style="{DynamicResource AstralToggleButtonStyle}" Canvas.Top="38.341" Width="143"/>
         </Canvas>
         <Canvas x:Name="AccelerometerCanvas" Height="613.341" Canvas.Left="78" Canvas.Top="56.659" Width="342" d:IsHidden="True">
             <local:LinearPlotterWrapper x:Name="AccelerometerPlotter" Height="307" Canvas.Left="27" Canvas.Top="204.591" Width="305"/>

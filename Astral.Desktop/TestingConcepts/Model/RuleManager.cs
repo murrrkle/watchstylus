@@ -180,12 +180,15 @@ namespace TestingConcepts
             MobileEventType currentEventType = (e.Argument as WorkerArugment).EventType;
             Point p = (e.Argument as WorkerArugment).Point;
             
-            foreach (Rule rule in this.activeRules.ToList().Where(r => r.EventType == currentEventType))
+            if(this.isActive)
             {
-                bool inRange = rule.ExecuteRule(p);
-                if (inRange)
+                foreach (Rule rule in this.activeRules.ToList().Where(r => r.EventType == currentEventType))
                 {
-                    this.inputHandler.ExecuteInputAction(rule.InputAction);
+                    bool inRange = rule.ExecuteRule(p);
+                    if (inRange)
+                    {
+                        this.inputHandler.ExecuteInputAction(rule.InputAction);
+                    }
                 }
             }
         }
@@ -193,7 +196,6 @@ namespace TestingConcepts
         private void OnGlobalEscapePressed(object sender, EventArgs e)
         {
             this.isActive = !this.isActive;
-          //  StopRules();
         }
 
         public void StartRules()
@@ -206,8 +208,26 @@ namespace TestingConcepts
             this.isActive = false;
         }
 
+        public void LogRuleSets()
+        {
+            Console.WriteLine("======================= RULESETS");
+            for (int i = 0; i < this.allRuleSets.Count; i++)
+            {
+                Console.WriteLine(this.allRuleSets.Keys.ElementAt(i));
+                if(this.allRuleSets.Values.ElementAt(i) == this.activeRules)
+                {
+                    Console.WriteLine("<<<" + this.allRuleSets.Keys.ElementAt(i) + ">>> is active");
+                }
+                foreach (Rule r in this.allRuleSets.Values.ElementAt(i))
+                {
+                    Console.WriteLine("- " + r.Name);
+                }
+            }
+        }
+
         public void SetActiveRuleSet(string ruleSetName)
         {
+            LogRuleSets();
             if(this.allRuleSets.ContainsKey(ruleSetName))
             {
                 this.activeRules = this.allRuleSets[ruleSetName];
@@ -253,21 +273,38 @@ namespace TestingConcepts
             Console.WriteLine(newRule.Name + " :: " + newRule.InputAction.InputEvent + " :: " + newRule.ChecksBounds);
             if(newRule.ChecksBounds)
             {
-                if(newRule.ChecksBounds)
-                {
                     newRule.SelectionEntered += OnRuleSelectionEntered;
                     newRule.SelectionExited += OnRuleSelectionExited;
 
-                    //DiscreteRule downRule = new DiscreteRule(MobileEventType.TouchDown, newRule);
-                    //downRule.InputAction.InputEvent = PCInputEventType.MouseDown;
-                    //DiscreteRule upRule = new DiscreteRule(MobileEventType.TouchUp, newRule);
-                    //upRule.InputAction.InputEvent = PCInputEventType.MouseUp;
-                    //AddRule(downRule);
-                    //AddRule(upRule);
+                if (newRule is ContinuousRule && newRule.InputAction.InputEvent == PCInputEventType.MouseMove)
+                {
+                    DiscreteRule downRule = new DiscreteRule(MobileEventType.TouchDown, newRule);
+                    downRule.InputAction.InputEvent = PCInputEventType.MouseDown;
+                    DiscreteRule upRule = new DiscreteRule(MobileEventType.TouchUp, newRule);
+                    upRule.InputAction.InputEvent = PCInputEventType.MouseUp;
+                    AddRule(downRule);
+                    AddRule(upRule);
                 }
             }
+
+            if(newRule.Parent != null)
+            {
+                //newRule.Parent.ParentExecuted += OnParentExecuted;
+            }
+
+            //LogRuleSets();
             // check if DestinationMapping is MoveAndMouseDown, create event for selection entered
             // do the same for thresholds?
+        }
+
+        private void OnParentExecuted(object sender, EventArgs e)
+        {
+            DiscreteRule senderRule = sender as DiscreteRule;
+            Console.WriteLine(senderRule.Name + ":: " + senderRule.CaptureRegion + " :: " + senderRule.Child.CaptureRegion);
+            if (this.deviceModel.CaptureRegion != senderRule.Child.CaptureRegion)
+            {
+                this.deviceModel.CaptureRegion = senderRule.Child.CaptureRegion;
+            }
         }
 
         private void OnRuleSelectionExited(object sender, SelectionCrossedEventArgs e)
@@ -281,6 +318,7 @@ namespace TestingConcepts
                 Rule rule = sender as DiscreteRule;
                 if(rule.InputAction.InputEvent == PCInputEventType.KeyPress)
                 {
+                    Console.WriteLine("up");
                     this.inputHandler.KeyUp((rule.InputAction.Argument as System.Windows.Input.Key?).GetValueOrDefault());
                 }
             }
@@ -297,6 +335,7 @@ namespace TestingConcepts
                 Rule rule = sender as DiscreteRule;
                 if (rule.InputAction.InputEvent == PCInputEventType.KeyPress)
                 {
+                    Console.WriteLine("down");
                     this.inputHandler.KeyDown((rule.InputAction.Argument as System.Windows.Input.Key?).GetValueOrDefault());
                 }
             }
@@ -367,13 +406,13 @@ namespace TestingConcepts
 
             if (device.Device.HasCompass)
             {
-                device.Compass.Accuracy = 10.0;
+                device.Compass.Accuracy = 0.25;
                 device.Compass.HeadingChanged += CompassUpdated;
             }
 
             if (device.Device.HasAccelerometer)
             {
-                device.Accelerometer.Accuracy = 0.25;
+                device.Accelerometer.Accuracy = 0.3;
                 device.AccelerationChanged += AccelerationChanged;
             }
 
@@ -385,7 +424,7 @@ namespace TestingConcepts
 
             if (device.Device.HasGyroscope)
             {
-                device.Gyroscope.Accuracy = 0.5;
+                device.Gyroscope.Accuracy = 010;
                 device.Gyroscope.RotationChanged += RotationChanged;
             }
 
@@ -468,8 +507,10 @@ namespace TestingConcepts
 
         private void AccelerationChanged(object sender, AccelerationDeviceModelEventArgs e)
         {
-            foreach (Rule rule in this.activeRules.ToList().Where(r => r.EventType == MobileEventType.AccelerationChanged))
-            {               
+            try
+            {
+                foreach (Rule rule in this.activeRules.ToList().Where(r => r.EventType == MobileEventType.AccelerationChanged))
+                {
                     if (this.isActive)
                     {
                         double x, y, z, mag;
@@ -495,7 +536,14 @@ namespace TestingConcepts
                         if (inRange)
                             this.inputHandler.ExecuteInputAction(rule.InputAction);
                     }
-                
+
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+                Console.WriteLine("LOL");
             }
         }
 
