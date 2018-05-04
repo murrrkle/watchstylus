@@ -17,7 +17,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Astral.Core", "Astral.Core\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestingConcepts", "TestingConcepts\TestingConcepts.csproj", "{F484BB14-C67B-4EF9-909C-7F4190AE1A5B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioTest", "AudioTest\AudioTest.csproj", "{8F9B2DBC-7388-4C98-A34A-C4250FFC36B6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AstralBlankSample", "AstralBlankSample\AstralBlankSample.csproj", "{CAEBB836-1105-4491-AEB0-3F46CE4CE47B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,14 +59,14 @@ Global
 		{F484BB14-C67B-4EF9-909C-7F4190AE1A5B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F484BB14-C67B-4EF9-909C-7F4190AE1A5B}.Release|x64.ActiveCfg = Release|x64
 		{F484BB14-C67B-4EF9-909C-7F4190AE1A5B}.Release|x64.Build.0 = Release|x64
-		{8F9B2DBC-7388-4C98-A34A-C4250FFC36B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8F9B2DBC-7388-4C98-A34A-C4250FFC36B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8F9B2DBC-7388-4C98-A34A-C4250FFC36B6}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{8F9B2DBC-7388-4C98-A34A-C4250FFC36B6}.Debug|x64.Build.0 = Debug|Any CPU
-		{8F9B2DBC-7388-4C98-A34A-C4250FFC36B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8F9B2DBC-7388-4C98-A34A-C4250FFC36B6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8F9B2DBC-7388-4C98-A34A-C4250FFC36B6}.Release|x64.ActiveCfg = Release|Any CPU
-		{8F9B2DBC-7388-4C98-A34A-C4250FFC36B6}.Release|x64.Build.0 = Release|Any CPU
+		{CAEBB836-1105-4491-AEB0-3F46CE4CE47B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAEBB836-1105-4491-AEB0-3F46CE4CE47B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAEBB836-1105-4491-AEB0-3F46CE4CE47B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CAEBB836-1105-4491-AEB0-3F46CE4CE47B}.Debug|x64.Build.0 = Debug|Any CPU
+		{CAEBB836-1105-4491-AEB0-3F46CE4CE47B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAEBB836-1105-4491-AEB0-3F46CE4CE47B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CAEBB836-1105-4491-AEB0-3F46CE4CE47B}.Release|x64.ActiveCfg = Release|Any CPU
+		{CAEBB836-1105-4491-AEB0-3F46CE4CE47B}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
