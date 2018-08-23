@@ -370,6 +370,8 @@ namespace Astral.Device
             {
                 Screenshot screenshot = ScreenshotMessage.ToScreenshot(msg);
 
+                Console.WriteLine(ConnectivityType);
+
                 if (ConnectivityType == ConnectivityType.RequestResponse)
                 {
                     // send response

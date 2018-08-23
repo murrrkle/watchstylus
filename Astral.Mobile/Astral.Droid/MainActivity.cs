@@ -13,7 +13,7 @@ using Android.Bluetooth;
 using Astral.Droid.Media;
 using Astral.Droid.Sensors;
 using Astral.Droid.UI;
-
+using Android.Views;
 
 namespace Astral.Droid
 {
@@ -23,6 +23,8 @@ namespace Astral.Droid
     {
         #region Class Members
         private AstralDevice m_device;
+        Vibrator vibrator;
+        private Android.Views.GestureDetector gestureDetector;
         #endregion
 
         #region Android Starup
@@ -43,6 +45,7 @@ namespace Astral.Droid
 
             InitializeAstral();
             m_device.Start();
+            vibrator = (Vibrator)this.ApplicationContext.GetSystemService(Context.VibratorService);
         }
         #endregion
 
@@ -55,12 +58,13 @@ namespace Astral.Droid
             m_device = new AstralDevice(deviceClass, deviceName);
 
             // display
-            Display display = new Display(new Size(
+            Astral.Device.Display display = new Astral.Device.Display(new Size(
                 Resources.DisplayMetrics.WidthPixels,
                 Resources.DisplayMetrics.HeightPixels),
                 DeviceOrientation.Portrait, TouchCapabilities.Multi,
                 ConnectivityType.RequestResponse);
             m_device.AddModule(display);
+
 
             //microhpone
             AndroidMicrophone microphone = new AndroidMicrophone();
@@ -78,14 +82,14 @@ namespace Astral.Droid
             ScreenshotView screenshotView = FindViewById<ScreenshotView>(Resource.Id.ScreenshotView);
 
             // add the corresponding handlers to the views
-            screenshotView.Screen = m_device[ModuleType.Display] as Display;
+            screenshotView.Screen = m_device[ModuleType.Display] as Astral.Device.Display;
 
             // TODO: THIS IS HARDCODED
             //string ipAddress = "10.101.34.110";
             //string ipAddress = "192.168.0.10";
 
             // David's IP
-            string ipAddress = "192.168.0.15";
+            string ipAddress = "192.168.1.151";
 
             //string ipAddress = "192.168.0.23";
             // iLab one
@@ -98,18 +102,25 @@ namespace Astral.Droid
 
             m_device.Connect(IPAddress.Parse(ipAddress), port);
             m_device.MessageReceived += AstralMessageReceived;
+
+            
         }
         #endregion
 
         #region Event Handler
         private void AstralMessageReceived(object sender, Net.Message msg)
         {
+            Console.WriteLine("RECEIVED MESSAGE: " + msg.Name);
             if (msg != null)
             {
                 // get the message name
                 string msgName = msg.Name;
                 switch (msgName)
                 {
+                    case "Vibrate":
+                        //vibrator.Vibrate(VibrationEffect.CreateOneShot(msg.GetLongField("Milliseconds"), msg.GetIntField("Amplitude")));
+                        vibrator.Vibrate(msg.GetLongField("Milliseconds"));
+                        break;
                     default:
                         break;
                 }
