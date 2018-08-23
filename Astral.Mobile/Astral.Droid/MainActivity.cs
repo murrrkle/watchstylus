@@ -110,7 +110,7 @@ namespace Astral.Droid
         #region Event Handler
         private void AstralMessageReceived(object sender, Net.Message msg)
         {
-            Console.WriteLine("RECEIVED MESSAGE: " + msg.Name);
+            
             if (msg != null)
             {
                 // get the message name
