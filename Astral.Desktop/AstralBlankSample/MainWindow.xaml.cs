@@ -19,6 +19,9 @@ using System.Drawing;
 using System.IO;
 using System.Drawing.Imaging;
 using Astral.Messaging;
+using AstralBlankSample.Utilities;
+using AForgeFFT;
+using System.Threading;
 
 namespace AstralBlankSample
 {
@@ -43,7 +46,9 @@ namespace AstralBlankSample
         Utilities.Brush ActiveBrush;
         private Bitmap CurrentStamp;
         bool StampLoaded;
-        
+
+        long lastChange;
+        double lastFreq;
 
         bool isTouchHeld;
 
@@ -67,6 +72,9 @@ namespace AstralBlankSample
             lastKnownCursorPosition = new System.Windows.Point(0, 0);
             isTouchHeld = false;
             StampLoaded = false;
+
+            lastChange = 0;
+            lastFreq = 0;
             
 
             this.Loaded += OnLoaded;
@@ -86,6 +94,7 @@ namespace AstralBlankSample
             }
             CurrentStamp = new Bitmap(
                 320, 320, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            
         }
 
         private void Canvas_MouseDown(object sender, MouseEventArgs e)
@@ -102,6 +111,7 @@ namespace AstralBlankSample
 
                     Console.WriteLine("Take a screenshot");
 
+                    /*
                     MemoryStream strm = new MemoryStream();
 
                     ImageCodecInfo jpgEncoder = GetEncoder(ImageFormat.Jpeg);
@@ -119,7 +129,7 @@ namespace AstralBlankSample
                     device.Device.SendMessage(screenshotMsg);
                     
                     strm.Dispose();
-                    
+                    */
                     StampLoaded = true;
 
                 }
@@ -285,16 +295,92 @@ namespace AstralBlankSample
 
         #endregion
 
-        //private void AccelerometerUpdated(object sender, AstralAccelerometerEventArgs e)
-        //{
-            //Console.WriteLine(e.AccelerationData.X + " :: " + e.AccelerationData.Y + " :: " + e.AccelerationData.Z);
-        //}
-
         private void OnMicrophoneUpdated(object sender, AstralMicrophoneEventArgs e)
         {
+            if (ActiveBrush.BrushType == BrushTypes.BRUSH)
+            {
+                new Thread(() =>
+                {
+                    short[] audioBuffer = e.MicrophoneData.Data;
+                    double amplitude = Math.Max(audioBuffer.Max(), Math.Abs((int)audioBuffer.Min()));
+                    double logLength = Math.Ceiling(Math.Log((double)audioBuffer.Length, 2.0));
+                    int paddedLength = (int)Math.Pow(2.0, Math.Min(Math.Max(1.0, logLength), 14.0));
+                    Complex[] audioBufferComplex = new Complex[paddedLength];
+                    double[] magnitudes = new double[audioBuffer.Length / 2];
+
+                        // Make Complex array for FFT
+                        for (int i = 0; i < audioBuffer.Length; i++)
+                    {
+                        double hammingResult = (double)((0.53836 - (0.46164 * Math.Cos(Math.PI * 2 * (double)i / (double)(audioBuffer.Length - 1)))) * audioBuffer[i]);
+                        audioBufferComplex[i] = new Complex(hammingResult, 0);
+                    }
+
+                    for (int i = audioBuffer.Length; i < paddedLength; i++)
+                    {
+                        audioBufferComplex[i] = new Complex(0, 0);
+                    }
+                    FourierTransform.FFT(audioBufferComplex, FourierTransform.Direction.Forward);
+                        // calculate power spectrum
+                        for (int i = 0; i < magnitudes.Length; i++)
+                    {
+                        magnitudes[i] = Math.Sqrt(audioBufferComplex[i].Re * audioBufferComplex[i].Re + audioBufferComplex[i].Im * audioBufferComplex[i].Im);
+                    }
+                        // Find largest peak
+                        double max_magnitude = Double.NegativeInfinity;
+                    int max_index = -1;
+                    for (int i = 0; i < magnitudes.Length; i++)
+                    {
+                        if (magnitudes[i] > max_magnitude)
+                        {
+                            max_magnitude = magnitudes[i];
+                            max_index = i;
+                        }
+                    }
+                        // convert largest peak to frequency
+                        lastFreq = max_index * 22050 / audioBuffer.Length;
+
+                    double hue = 0;
+                    if (lastFreq < 1000)
+                        hue = Map(2 * (lastFreq % 180), 100, 360, 0, 360);
+                    else
+                        hue = Map(lastFreq, 1000, 3000, 0, 360);
+
+                    double amp;
+
+                    if (amplitude < 1000)
+                    {
+                        amp = 1000;
+                    }
+                    else if (amplitude > 5000)
+                    {
+                        amp = 5000;
+                    }
+                    else
+                    {
+                        amp = amplitude;
+                    }
+
+                    amp = Map(amp, 1000, 5000, 3, 50);
+
+                    int r, g, b = 0;
+                    HlsToRgb(hue, 0.5, 0.8, out r, out g, out b);
+                    ActiveBrush.Color = System.Windows.Media.Color.FromRgb((byte) r, (byte) g, (byte) b);
+                    ActiveBrush.Radius = (int) amp;
+
+                    Message msg = new Message("BrushMic");
+                    msg.AddField("Hue", hue);
+                    msg.AddField("Size", amp);
+                    device.Device.SendMessage(msg);
+
+
+                        //Console.WriteLine(string.Format("Freq = {0:f}, Amplitude = {1:f}", lastFreq, amplitude));
+                    }).Start();
+            }
+
             //Console.WriteLine(e.MicrophoneData.Amplitude);
             // full array of values
             //Console.WriteLine(e.MicrophoneData.Data);
+
         }
 
         private void OnTouchDown(object sender, AstralTouchEventArgs e)
@@ -320,42 +406,142 @@ namespace AstralBlankSample
 
         private void OnAccelerationChanged(object sender, AccelerationDeviceModelEventArgs e)
         {
-            if(isTouchHeld)
+
+            if (DateTimeOffset.Now.ToUnixTimeMilliseconds() - lastChange > 1000)
             {
-                if ((int) e.LinearX == 0 && ActiveBrush.BrushType != Utilities.BrushTypes.BRUSH)
+
+                if (AccelIsBrush(e) && ActiveBrush.BrushType != Utilities.BrushTypes.BRUSH)
                 {
-                    ActiveBrush.BrushType = Utilities.BrushTypes.BRUSH; 
-                    SendVibrate(50, 100);
-                } 
-                else if ((int)e.LinearX == 4 && ActiveBrush.BrushType != Utilities.BrushTypes.ERASER)
+                    ActiveBrush.BrushType = Utilities.BrushTypes.BRUSH;
+                    SendChangeTool(Utilities.BrushTypes.BRUSH);
+                    lastChange = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                }
+                else if (AccelIsEraser(e) && ActiveBrush.BrushType != Utilities.BrushTypes.ERASER)
                 {
                     ActiveBrush.BrushType = Utilities.BrushTypes.ERASER;
-                    SendVibrate(50, 100);
-                    SendVibrate(50, 100);
+                    SendChangeTool(Utilities.BrushTypes.ERASER);
+                    lastChange = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                 }
-                else if ((int)e.LinearX == -4 && ActiveBrush.BrushType != Utilities.BrushTypes.STAMP)
+                else if (AccelIsStamp(e) && ActiveBrush.BrushType != Utilities.BrushTypes.STAMP)
                 {
                     ActiveBrush.BrushType = Utilities.BrushTypes.STAMP;
-                    
-                    SendVibrate(50, 100);
-                    SendVibrate(50, 100);
+                    SendChangeTool(Utilities.BrushTypes.STAMP);
+                    lastChange = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                 }
+                else if (AccelIsAirbrush(e) && ActiveBrush.BrushType != Utilities.BrushTypes.AIRBRUSH)
+                {
+                    ActiveBrush.BrushType = Utilities.BrushTypes.AIRBRUSH;
+                    SendChangeTool(Utilities.BrushTypes.AIRBRUSH);
+                    lastChange = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+
+                }
+
+
             }
-
-            //if ((int) e.LinearY < 0)
-
 
             // this event can get linear acceleration, acceleration and gravity values
             //Console.WriteLine( (int) e.LinearX + " :: " + (int) e.LinearY + " :: " + (int) e.LinearZ);
             //Console.WriteLine(e.LinearMagnitude);
         }
 
-        private void SendVibrate(long ms, int amp)
+        private bool AccelIsStamp(AccelerationDeviceModelEventArgs e)
         {
-            Message msg = new Message("Vibrate");
-            msg.AddField("Milliseconds", ms);
-            msg.AddField("Amplitude", amp);
+            if ((int) e.LinearZ == 0 && e.LinearY > 7)
+            {
+                return true;
+            }
+            
+            return false;
+        }
+
+        private bool AccelIsBrush(AccelerationDeviceModelEventArgs e)
+        {
+            if (e.LinearY > 0 && e.LinearY < 9.81)
+            {
+                if (e.LinearZ > 3 && e.LinearZ < 9.81)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool AccelIsEraser(AccelerationDeviceModelEventArgs e)
+        {
+            if (e.LinearY > 0 && e.LinearY < 9.81)
+            {
+                if (e.LinearZ < -3 && e.LinearZ > -9.81)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool AccelIsAirbrush(AccelerationDeviceModelEventArgs e) {
+            if (e.LinearY < 0 && e.LinearY > -9.81)
+            {
+                if (e.LinearZ > 3 && e.LinearZ < 9.81)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+
+        private void SendChangeTool(BrushTypes bt)
+        {
+            Message msg = new Message("ChangeTool");
+            msg.AddField("Type", (int)bt);
             device.Device.SendMessage(msg);
+
+            Console.WriteLine("Sent CHANGETOOL " + bt);
+        }
+
+        public double Map(double value, double from1, double to1, double from2, double to2)
+        {
+            return (value - from1) / (to1 - from1) * (to2 - from2) + from2;
+        }
+
+
+        public static void HlsToRgb(double h, double l, double s, out int r, out int g, out int b)
+        {
+            double p2;
+            if (l <= 0.5) p2 = l * (1 + s);
+            else p2 = l + s - l * s;
+
+            double p1 = 2 * l - p2;
+            double double_r, double_g, double_b;
+            if (s == 0)
+            {
+                double_r = l;
+                double_g = l;
+                double_b = l;
+            }
+            else
+            {
+                double_r = QqhToRgb(p1, p2, h + 120);
+                double_g = QqhToRgb(p1, p2, h);
+                double_b = QqhToRgb(p1, p2, h - 120);
+            }
+
+            // Convert RGB to the 0 to 255 range.
+            r = (int)(double_r * 255.0);
+            g = (int)(double_g * 255.0);
+            b = (int)(double_b * 255.0);
+        }
+
+        private static double QqhToRgb(double q1, double q2, double hue)
+        {
+            if (hue > 360) hue -= 360;
+            else if (hue < 0) hue += 360;
+
+            if (hue < 60) return q1 + (q2 - q1) * hue / 60;
+            if (hue < 180) return q2;
+            if (hue < 240) return q1 + (q2 - q1) * (240 - hue) / 60;
+            return q1;
         }
     }
+
 }

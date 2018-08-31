@@ -14,6 +14,8 @@ using Astral.Droid.Media;
 using Astral.Droid.Sensors;
 using Astral.Droid.UI;
 using Android.Views;
+using Android.Util;
+using Android.Graphics;
 
 namespace Astral.Droid
 {
@@ -21,10 +23,23 @@ namespace Astral.Droid
     [Activity(Label = "Astral.Droid", MainLauncher = true, Icon = "@mipmap/icon", Theme = "@android:style/Theme.Black.NoTitleBar.Fullscreen", ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait)]
     public class MainActivity : LiveSensorActivity
     {
+
+
         #region Class Members
+        public enum BrushTypes
+        {
+            BRUSH = 0,
+            ERASER = 1,
+            STAMP = 2,
+            AIRBRUSH = 3
+        }
+
         private AstralDevice m_device;
         Vibrator vibrator;
         private Android.Views.GestureDetector gestureDetector;
+        private BrushTypes currentTool;
+
+        private string debugTag;
         #endregion
 
         #region Android Starup
@@ -46,6 +61,8 @@ namespace Astral.Droid
             InitializeAstral();
             m_device.Start();
             vibrator = (Vibrator)this.ApplicationContext.GetSystemService(Context.VibratorService);
+            currentTool = BrushTypes.BRUSH;
+            debugTag = "VS DEBUG";
         }
         #endregion
 
@@ -58,7 +75,7 @@ namespace Astral.Droid
             m_device = new AstralDevice(deviceClass, deviceName);
 
             // display
-            Astral.Device.Display display = new Astral.Device.Display(new Size(
+            Astral.Device.Display display = new Astral.Device.Display(new System.Drawing.Size(
                 Resources.DisplayMetrics.WidthPixels,
                 Resources.DisplayMetrics.HeightPixels),
                 DeviceOrientation.Portrait, TouchCapabilities.Multi,
@@ -89,9 +106,9 @@ namespace Astral.Droid
             //string ipAddress = "192.168.0.10";
 
             // David's IP
-            string ipAddress = "192.168.1.151";
+            string ipAddress = "192.168.0.27";
 
-            //string ipAddress = "192.168.0.23";
+            //string ipAddress = "192.168.0.27";
             // iLab one
             //string ipAddress = "192.168.1.102";
             //string ipAddress = "192.168.137.1";
@@ -110,20 +127,70 @@ namespace Astral.Droid
         #region Event Handler
         private void AstralMessageReceived(object sender, Net.Message msg)
         {
-            
+            Log.Info(debugTag, "RECEIVED ASTRAL MESSAGE" );
             if (msg != null)
             {
                 // get the message name
                 string msgName = msg.Name;
                 switch (msgName)
                 {
-                    case "Vibrate":
-                        //vibrator.Vibrate(VibrationEffect.CreateOneShot(msg.GetLongField("Milliseconds"), msg.GetIntField("Amplitude")));
-                        vibrator.Vibrate(msg.GetLongField("Milliseconds"));
+
+                    case "ChangeTool":
+                        switch (msg.GetIntField("Type"))
+                        {
+                            case (int) BrushTypes.BRUSH:
+                                vibrator.Vibrate(50);
+                                currentTool = BrushTypes.BRUSH;
+                                //SetContentView(Resource.Layout.BrushUI);
+                                // load brush UI 
+                                Intent intent = new Intent(this, typeof(BrushActivity));
+                                this.StartActivity(intent);
+                                Log.Info(debugTag, "Loading BRUSH tool");
+                                break;
+
+                            case (int)BrushTypes.ERASER:
+                                vibrator.Vibrate(50);
+                                currentTool = BrushTypes.ERASER;
+                                // load brush UI 
+                                Log.Info(debugTag, "Loading ERASER tool");
+                                break;
+
+                            case (int)BrushTypes.AIRBRUSH:
+                                vibrator.Vibrate(50);
+                                currentTool = BrushTypes.AIRBRUSH;
+                                // load brush UI 
+                                Log.Info(debugTag, "Loading AIRBRUSH tool");
+                                break;
+
+                            case (int)BrushTypes.STAMP:
+                                vibrator.Vibrate(50);
+                                //SetContentView(Resource.Layout.Main);
+                                currentTool = BrushTypes.STAMP;
+                                // load brush UI 
+                                Log.Info(debugTag, "Loading STAMP tool");
+                                break;
+                        }
+
+                        break;
+
+                    case "BrushMic":
+                        ImageView biv = FindViewById<ImageView>(Resource.Id.BrushImageView);
+                        if (biv != null)
+                        {
+                            double hue = msg.GetDoubleField("Hue");
+                            double size = msg.GetDoubleField("Size");
+                            Bitmap bm = Bitmap.CreateBitmap(biv.Width, biv.Height, Bitmap.Config.Rgb565);
+                            Canvas c = new Canvas(bm);
+                            Paint p = new Paint { Color = Android.Graphics.Color.HSVToColor(new float[]{(float)hue, 0.6f, 0.6f }),
+                                                StrokeWidth = (float) size};
+                            c.DrawOval(new RectF(), new Paint());
+                            Log.Info("BRUSHMIC", "BITMAP FOUND, MAY PROCEED *********************");
+                        }
                         break;
                     default:
                         break;
                 }
+
             }
         }
         #endregion

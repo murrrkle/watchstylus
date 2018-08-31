@@ -60,7 +60,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Utilities\Brush.cs" />
+    <Compile Include="Utilities\Complex.cs" />
+    <Compile Include="Utilities\FourierTransform.cs" />
     <Compile Include="Utilities\MovingAverageFilter.cs" />
+    <Compile Include="Utilities\Tools.cs" />
     <Compile Include="Utilities\Utils.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

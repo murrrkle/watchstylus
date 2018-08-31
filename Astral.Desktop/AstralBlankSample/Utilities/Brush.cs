@@ -26,9 +26,9 @@ namespace AstralBlankSample.Utilities
     public enum BrushTypes
     {
         BRUSH = 0,
-        PENCIL = 1,
-        ERASER = 2,
-        STAMP = 3
+        ERASER = 1,
+        STAMP = 2,
+        AIRBRUSH = 3
     }
 
     class Brush
