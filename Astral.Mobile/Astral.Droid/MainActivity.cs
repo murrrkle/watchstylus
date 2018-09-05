@@ -36,7 +36,6 @@ namespace Astral.Droid
 
         private AstralDevice m_device;
         Vibrator vibrator;
-        private Android.Views.GestureDetector gestureDetector;
         private BrushTypes currentTool;
 
         private string debugTag;
