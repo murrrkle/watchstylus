@@ -140,7 +140,7 @@ namespace Astral.Droid
 
         private void AstralMessageReceived(object sender, Net.Message msg)
         {
-            // TODO:
+            
         }
 
         private void AddHandlers(IDeviceModule module)

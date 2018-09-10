@@ -23,8 +23,6 @@ namespace Astral.Droid
     [Activity(Label = "Astral.Droid", MainLauncher = true, Icon = "@mipmap/icon", Theme = "@android:style/Theme.Black.NoTitleBar.Fullscreen", ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait)]
     public class MainActivity : LiveSensorActivity
     {
-
-
         #region Class Members
         public enum BrushTypes
         {
@@ -34,21 +32,23 @@ namespace Astral.Droid
             AIRBRUSH = 3
         }
 
-        private AstralDevice m_device;
+        AstralDevice m_device;
+        BrushTypes currentTool;
+        Android.Graphics.Color CurrentColor; 
         Vibrator vibrator;
-        private BrushTypes currentTool;
+        LinearLayout activityContent;
+        BrushImageView biv;
+        AirbrushImageView aiv;
 
-        private string debugTag;
+        string debugTag;
         #endregion
 
-        #region Android Starup
+        #region Android Startup
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
-
             // initialize Device
             InitializeDevice();
         }
@@ -56,15 +56,33 @@ namespace Astral.Droid
         protected override void OnStart()
         {
             base.OnStart();
-
+            debugTag = "VS DEBUG";
+            vibrator = (Vibrator)this.ApplicationContext.GetSystemService(Context.VibratorService);
+            activityContent = FindViewById<LinearLayout>(Resource.Id.ActivityContent);
+            biv = new BrushImageView(this);
+            aiv = new AirbrushImageView(this);
             InitializeAstral();
             m_device.Start();
-            vibrator = (Vibrator)this.ApplicationContext.GetSystemService(Context.VibratorService);
-            currentTool = BrushTypes.BRUSH;
-            debugTag = "VS DEBUG";
-        }
-        #endregion
 
+            aiv.AirflowChanged += Aiv_AirflowChanged;
+
+            currentTool = BrushTypes.BRUSH;
+
+            //RunOnUiThread(() =>
+            //{
+                activityContent.AddView(biv);
+            //});
+        }
+
+        private void Aiv_AirflowChanged(object sender, float airflow)
+        {
+            Net.Message msg = new Net.Message("AirflowChanged");
+            msg.AddField("Amount", airflow);
+            m_device.SendMessage(msg);
+
+        }
+
+        #endregion
         #region Initialization
         private void InitializeDevice()
         {
@@ -81,6 +99,8 @@ namespace Astral.Droid
                 ConnectivityType.RequestResponse);
             m_device.AddModule(display);
 
+            
+
 
             //microhpone
             AndroidMicrophone microphone = new AndroidMicrophone();
@@ -95,25 +115,12 @@ namespace Astral.Droid
 
         private void InitializeAstral()
         {
-            ScreenshotView screenshotView = FindViewById<ScreenshotView>(Resource.Id.ScreenshotView);
+
+            //ScreenshotView screenshotView = FindViewById<ScreenshotView>(Resource.Id.ScreenshotView);
 
             // add the corresponding handlers to the views
-            screenshotView.Screen = m_device[ModuleType.Display] as Astral.Device.Display;
-
-            // TODO: THIS IS HARDCODED
-            //string ipAddress = "10.101.34.110";
-            //string ipAddress = "192.168.0.10";
-
-            // David's IP
+            //screenshotView.Screen = m_device[ModuleType.Display] as Astral.Device.Display;
             string ipAddress = "192.168.0.27";
-
-            //string ipAddress = "192.168.0.27";
-            // iLab one
-            //string ipAddress = "192.168.1.102";
-            //string ipAddress = "192.168.137.1";
-            //string ipAddress = "10.11.106.246";
-            // emulator link to host = 10.0.2.2; see <https://developer.android.com/studio/run/emulator-networking.html>
-            //string ipAddress = "10.0.2.2";
             int port = 10001;
 
             m_device.Connect(IPAddress.Parse(ipAddress), port);
@@ -126,37 +133,36 @@ namespace Astral.Droid
         #region Event Handler
         private void AstralMessageReceived(object sender, Net.Message msg)
         {
-            Log.Info(debugTag, "RECEIVED ASTRAL MESSAGE" );
+            //Log.Info(debugTag, "RECEIVED ASTRAL MESSAGE" );
+            
             if (msg != null)
             {
                 // get the message name
                 string msgName = msg.Name;
                 switch (msgName)
                 {
-
                     case "ChangeTool":
+                        Log.Info(debugTag, "REMOVING ALL VIEWS");
+                        RunOnUiThread(() =>
+                        {
+                            activityContent.RemoveAllViews();
+                        });
+                        Log.Info(debugTag, "REMOVED ALL VIEWS");
                         switch (msg.GetIntField("Type"))
                         {
                             case (int) BrushTypes.BRUSH:
-                                vibrator.Vibrate(50);
-                                currentTool = BrushTypes.BRUSH;
-                                //SetContentView(Resource.Layout.BrushUI);
-                                // load brush UI 
-                                Intent intent = new Intent(this, typeof(BrushActivity));
-                                this.StartActivity(intent);
                                 Log.Info(debugTag, "Loading BRUSH tool");
+                                StartBrushTool();
                                 break;
 
                             case (int)BrushTypes.ERASER:
-                                vibrator.Vibrate(50);
-                                currentTool = BrushTypes.ERASER;
+                                StartEraserTool();
                                 // load brush UI 
                                 Log.Info(debugTag, "Loading ERASER tool");
                                 break;
 
                             case (int)BrushTypes.AIRBRUSH:
-                                vibrator.Vibrate(50);
-                                currentTool = BrushTypes.AIRBRUSH;
+                                StartAirbrushTool();
                                 // load brush UI 
                                 Log.Info(debugTag, "Loading AIRBRUSH tool");
                                 break;
@@ -173,24 +179,47 @@ namespace Astral.Droid
                         break;
 
                     case "BrushMic":
-                        ImageView biv = FindViewById<ImageView>(Resource.Id.BrushImageView);
-                        if (biv != null)
-                        {
-                            double hue = msg.GetDoubleField("Hue");
-                            double size = msg.GetDoubleField("Size");
-                            Bitmap bm = Bitmap.CreateBitmap(biv.Width, biv.Height, Bitmap.Config.Rgb565);
-                            Canvas c = new Canvas(bm);
-                            Paint p = new Paint { Color = Android.Graphics.Color.HSVToColor(new float[]{(float)hue, 0.6f, 0.6f }),
-                                                StrokeWidth = (float) size};
-                            c.DrawOval(new RectF(), new Paint());
-                            Log.Info("BRUSHMIC", "BITMAP FOUND, MAY PROCEED *********************");
-                        }
-                        break;
+                            float hue = (float) msg.GetDoubleField("Hue");
+                            CurrentColor = Android.Graphics.Color.HSVToColor(new float[] { hue, 0.8f, 0.8f});
+                            float size = (float) msg.GetDoubleField("Size");
+                            biv.SetBrush(CurrentColor, size);
+                            biv.PostInvalidate();
+                            break;
                     default:
                         break;
                 }
 
             }
+        }
+
+        private void StartAirbrushTool()
+        {
+            RunOnUiThread(() =>
+            {
+                activityContent.AddView(aiv);
+            });
+            vibrator.Vibrate(50);
+            currentTool = BrushTypes.AIRBRUSH;
+
+        }
+
+        private void StartEraserTool()
+        {
+            vibrator.Vibrate(50);
+            currentTool = BrushTypes.ERASER;
+        }
+
+        private void StartBrushTool()
+        {
+            
+            RunOnUiThread(() =>
+            {
+                activityContent.AddView(biv);
+            });
+            
+            vibrator.Vibrate(50);
+            currentTool = BrushTypes.BRUSH;
+            
         }
         #endregion
     }

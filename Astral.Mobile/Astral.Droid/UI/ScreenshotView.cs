@@ -27,8 +27,10 @@ namespace Astral.Droid.UI
     public class ScreenshotView : ImageView
     {
         #region Class Members
+
         #region Core Class Members
         private Device.Display m_display;
+        
         #endregion
 
         #region Imaging Class Members

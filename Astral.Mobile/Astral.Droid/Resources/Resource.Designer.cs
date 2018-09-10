@@ -44,11 +44,17 @@ namespace Astral.Droid
 		public partial class Id
 		{
 			
+			// aapt resource value: 0x7f050002
+			public const int ActivityContent = 2131034114;
+			
 			// aapt resource value: 0x7f050000
-			public const int BrushImageView = 2131034112;
+			public const int AirbrushImageView = 2131034112;
 			
 			// aapt resource value: 0x7f050001
-			public const int ScreenshotView = 2131034113;
+			public const int BrushImageView = 2131034113;
+			
+			// aapt resource value: 0x7f050003
+			public const int ScreenshotView = 2131034115;
 			
 			static Id()
 			{
@@ -64,10 +70,16 @@ namespace Astral.Droid
 		{
 			
 			// aapt resource value: 0x7f030000
-			public const int BrushUI = 2130903040;
+			public const int AirbrushUI = 2130903040;
 			
 			// aapt resource value: 0x7f030001
-			public const int Main = 2130903041;
+			public const int BrushUI = 2130903041;
+			
+			// aapt resource value: 0x7f030002
+			public const int Main = 2130903042;
+			
+			// aapt resource value: 0x7f030003
+			public const int Mainbkp = 2130903043;
 			
 			static Layout()
 			{

@@ -63,7 +63,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AstralRunnable.cs" />
-    <Compile Include="BrushActivity.cs" />
+    <Compile Include="UI\AirbrushImageView.cs" />
+    <Compile Include="UI\BrushImageView.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -88,7 +89,7 @@
     <None Include="Assets\AboutAssets.txt" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\Main.axml">
+    <AndroidResource Include="Resources\layout\Mainbkp.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\values\Strings.xml" />
@@ -109,6 +110,16 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\BrushUI.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\Main.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\AirbrushUI.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

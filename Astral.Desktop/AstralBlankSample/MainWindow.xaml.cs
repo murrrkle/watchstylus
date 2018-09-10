@@ -40,17 +40,23 @@ namespace AstralBlankSample
 
         private NetworkManager networkManager = NetworkManager.Instance;
         private DeviceModel device;
+        private Bitmap CurrentStamp;
+
         WriteableBitmap writeableBmp;
         System.Windows.Point lastKnownCursorPosition;
         List<Utilities.Brush> Brushes;
         Utilities.Brush ActiveBrush;
-        private Bitmap CurrentStamp;
-        bool StampLoaded;
 
+        Random rnd;
+
+        bool StampLoaded;
         long lastChange;
+        bool isTouchHeld;
+
         double lastFreq;
 
-        bool isTouchHeld;
+        double airbrushVolume;
+
 
         #endregion
 
@@ -64,6 +70,7 @@ namespace AstralBlankSample
             this.networkManager.Start();
             this.networkManager.DeviceAdded += OnDeviceConnected;
 
+            rnd = new Random();
 
             writeableBmp = null;
             Brushes = new List<Utilities.Brush>();
@@ -75,13 +82,15 @@ namespace AstralBlankSample
 
             lastChange = 0;
             lastFreq = 0;
+            airbrushVolume = 0;
+
             
 
             this.Loaded += OnLoaded;
             Canvas.TouchMove += Canvas_TouchMove;
             Canvas.MouseDown += Canvas_MouseDown;
             Canvas.MouseMove += Canvas_MouseMove;
-            
+
         }
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
@@ -94,7 +103,7 @@ namespace AstralBlankSample
             }
             CurrentStamp = new Bitmap(
                 320, 320, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            
+
         }
 
         private void Canvas_MouseDown(object sender, MouseEventArgs e)
@@ -108,32 +117,12 @@ namespace AstralBlankSample
                     LoadStamp(ref xPos, ref yPos);
 
                     Bitmap ss = CurrentStamp.Clone() as Bitmap;
-
-                    Console.WriteLine("Take a screenshot");
-
-                    /*
-                    MemoryStream strm = new MemoryStream();
-
-                    ImageCodecInfo jpgEncoder = GetEncoder(ImageFormat.Jpeg);
-                    System.Drawing.Imaging.Encoder myEncoder = System.Drawing.Imaging.Encoder.Quality;
-
-                    EncoderParameters myEncoderParameters = new EncoderParameters(1);
-
-                    EncoderParameter myEncoderParameter = new EncoderParameter(myEncoder, 50L);
-                    myEncoderParameters.Param[0] = myEncoderParameter;
-
-                    ss.Save(strm, jpgEncoder, myEncoderParameters);
                     
-                    Astral.Content.Screenshot screenshot = new Astral.Content.Screenshot(strm.GetBuffer());
-                    Message screenshotMsg = ScreenshotMessage.CreateInstance(screenshot);
-                    device.Device.SendMessage(screenshotMsg);
-                    
-                    strm.Dispose();
-                    */
                     StampLoaded = true;
 
                 }
-                else {
+                else
+                {
                     Action DoStamp = () =>
                     {
                         for (int i = 0; i < 320; i++)
@@ -156,7 +145,7 @@ namespace AstralBlankSample
                                     catch (Exception)
                                     {
                                         Console.WriteLine("Tried to set pixel at " + (xPos - 160 + i) + " " + (yPos - 160 + j));
-                                        
+
                                     }
                             }
                         }
@@ -194,6 +183,23 @@ namespace AstralBlankSample
             return null;
         }
 
+        private System.Windows.Point RandomPointInCircle(double r, double x, double y)
+        {
+
+            double a = rnd.NextDouble();
+            double b = rnd.NextDouble();
+            if (b < a)
+            {
+                double temp = b;
+                b = a;
+                a = temp;
+            }
+            double xOffset = r * (b * Math.Cos(2 * Math.PI * a / b));
+            double yOffset = r * (b * Math.Sin(2 * Math.PI * a / b));
+
+            return new System.Windows.Point(x + xOffset, y + yOffset);
+        }
+
         private void Canvas_MouseMove(object sender, MouseEventArgs e)
         {
             using (writeableBmp.GetBitmapContext())
@@ -212,7 +218,7 @@ namespace AstralBlankSample
 
                             else if (ActiveBrush.BrushShape == Utilities.BrushShapes.SQUARE)
                                 writeableBmp.FillRectangle(xPos - ActiveBrush.Radius, yPos - ActiveBrush.Radius, xPos + ActiveBrush.Radius, yPos + ActiveBrush.Radius, ActiveBrush.Color);
-                            
+
                             break;
 
                         case Utilities.BrushTypes.ERASER:
@@ -220,8 +226,20 @@ namespace AstralBlankSample
                             writeableBmp.FillEllipseCentered(xPos, yPos, ActiveBrush.Radius, ActiveBrush.Radius, Colors.White);
                             break;
 
+                        case BrushTypes.AIRBRUSH:
+
+                            this.Dispatcher.Invoke(new Action(delegate
+                            {
+                                for (int i = 0; i < airbrushVolume; i++)
+                                {
+                                    System.Windows.Point p = RandomPointInCircle(50, xPos, yPos);
+                                    writeableBmp.SetPixel((int)p.X, (int)p.Y, ActiveBrush.Color);
+                                }
+                            }));
+                            break;
+
                         case Utilities.BrushTypes.STAMP:
-                            
+
                             break;
                     }
                 }
@@ -233,8 +251,8 @@ namespace AstralBlankSample
         {
             using (writeableBmp.GetBitmapContext())
             {
-                var xPos = (int) e.GetTouchPoint(Canvas).Position.X;
-                var yPos = (int) e.GetTouchPoint(Canvas).Position.Y;
+                var xPos = (int)e.GetTouchPoint(Canvas).Position.X;
+                var yPos = (int)e.GetTouchPoint(Canvas).Position.Y;
                 //Console.WriteLine(xPos + " " + yPos);
 
                 if (Canvas.IsMouseOver)
@@ -258,16 +276,44 @@ namespace AstralBlankSample
         private void OnDeviceConnected(object sender, DeviceConnectedEventArgs e)
         {
             device = new DeviceModel(e.Device, e.Session);
+            e.Device.MessageReceived += Device_MessageReceived;
 
             // Note: all networking events are running in a separate thread
             // you have to use this dispatcher invoke to do anything with the UI
             // otherwise you'll get a weird exception you can't make sense of
             Dispatcher.Invoke(new Action(delegate
             {
-                
+
             }));
-            
+
             InitializeDeviceEvents();
+        }
+
+        private void Device_MessageReceived(object sender, Message msg)
+        {
+            if (msg != null)
+            {
+                // get the message name
+                string msgName = msg.Name;
+                switch (msgName)
+                {
+                    case "AirflowChanged":
+                        //Console.WriteLine("AIRFLOW CHANGED " + msg.GetFloatField("Amount"));
+                        airbrushVolume = msg.GetFloatField("Amount");
+                        if (airbrushVolume <= 10)
+                            airbrushVolume = 0;
+                        else if (airbrushVolume > 200)
+                            airbrushVolume = 200;
+                        else
+                            airbrushVolume = Map(airbrushVolume, 10, 200, 20, 200);
+                        
+                        break;
+
+                    default:
+                        break;
+
+                }
+            }
         }
 
         private void InitializeDeviceEvents()
@@ -308,8 +354,8 @@ namespace AstralBlankSample
                     Complex[] audioBufferComplex = new Complex[paddedLength];
                     double[] magnitudes = new double[audioBuffer.Length / 2];
 
-                        // Make Complex array for FFT
-                        for (int i = 0; i < audioBuffer.Length; i++)
+                    // Make Complex array for FFT
+                    for (int i = 0; i < audioBuffer.Length; i++)
                     {
                         double hammingResult = (double)((0.53836 - (0.46164 * Math.Cos(Math.PI * 2 * (double)i / (double)(audioBuffer.Length - 1)))) * audioBuffer[i]);
                         audioBufferComplex[i] = new Complex(hammingResult, 0);
@@ -320,13 +366,13 @@ namespace AstralBlankSample
                         audioBufferComplex[i] = new Complex(0, 0);
                     }
                     FourierTransform.FFT(audioBufferComplex, FourierTransform.Direction.Forward);
-                        // calculate power spectrum
-                        for (int i = 0; i < magnitudes.Length; i++)
+                    // calculate power spectrum
+                    for (int i = 0; i < magnitudes.Length; i++)
                     {
                         magnitudes[i] = Math.Sqrt(audioBufferComplex[i].Re * audioBufferComplex[i].Re + audioBufferComplex[i].Im * audioBufferComplex[i].Im);
                     }
-                        // Find largest peak
-                        double max_magnitude = Double.NegativeInfinity;
+                    // Find largest peak
+                    double max_magnitude = Double.NegativeInfinity;
                     int max_index = -1;
                     for (int i = 0; i < magnitudes.Length; i++)
                     {
@@ -336,8 +382,8 @@ namespace AstralBlankSample
                             max_index = i;
                         }
                     }
-                        // convert largest peak to frequency
-                        lastFreq = max_index * 22050 / audioBuffer.Length;
+                    // convert largest peak to frequency
+                    lastFreq = max_index * 22050 / audioBuffer.Length;
 
                     double hue = 0;
                     if (lastFreq < 1000)
@@ -364,8 +410,8 @@ namespace AstralBlankSample
 
                     int r, g, b = 0;
                     HlsToRgb(hue, 0.5, 0.8, out r, out g, out b);
-                    ActiveBrush.Color = System.Windows.Media.Color.FromRgb((byte) r, (byte) g, (byte) b);
-                    ActiveBrush.Radius = (int) amp;
+                    ActiveBrush.Color = System.Windows.Media.Color.FromRgb((byte)r, (byte)g, (byte)b);
+                    ActiveBrush.Radius = (int)amp;
 
                     Message msg = new Message("BrushMic");
                     msg.AddField("Hue", hue);
@@ -373,8 +419,8 @@ namespace AstralBlankSample
                     device.Device.SendMessage(msg);
 
 
-                        //Console.WriteLine(string.Format("Freq = {0:f}, Amplitude = {1:f}", lastFreq, amplitude));
-                    }).Start();
+                    //Console.WriteLine(string.Format("Freq = {0:f}, Amplitude = {1:f}", lastFreq, amplitude));
+                }).Start();
             }
 
             //Console.WriteLine(e.MicrophoneData.Amplitude);
@@ -391,13 +437,7 @@ namespace AstralBlankSample
             {
 
             }
-
-            /* Vibrate and SendMessage test
-            Message msg = new Message("Vibrate");
-            msg.AddField("Milliseconds", (long) 50);
-            msg.AddField("Amplitude", (int) 100);
-            device.Device.SendMessage(msg);
-            */
+            
         }
         private void Display_TouchUp(object sender, AstralTouchEventArgs e)
         {
@@ -446,11 +486,11 @@ namespace AstralBlankSample
 
         private bool AccelIsStamp(AccelerationDeviceModelEventArgs e)
         {
-            if ((int) e.LinearZ == 0 && e.LinearY > 7)
+            if ((int)e.LinearZ == 0 && e.LinearY > 7)
             {
                 return true;
             }
-            
+
             return false;
         }
 
@@ -478,7 +518,8 @@ namespace AstralBlankSample
             return false;
         }
 
-        private bool AccelIsAirbrush(AccelerationDeviceModelEventArgs e) {
+        private bool AccelIsAirbrush(AccelerationDeviceModelEventArgs e)
+        {
             if (e.LinearY < 0 && e.LinearY > -9.81)
             {
                 if (e.LinearZ > 3 && e.LinearZ < 9.81)
@@ -488,7 +529,7 @@ namespace AstralBlankSample
             }
             return false;
         }
-        
+
 
         private void SendChangeTool(BrushTypes bt)
         {

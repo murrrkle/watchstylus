@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Astral.Droid.UI.BrushImageView xmlns:android="http://schemas.android.com/apk/res/android"
+<Astral.Droid.UI.AirbrushImageView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:custom="http://schemas.android.com/apk/res/android/custom"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/BrushImageView" />
+    android:id="@+id/AirbrushImageView" />
