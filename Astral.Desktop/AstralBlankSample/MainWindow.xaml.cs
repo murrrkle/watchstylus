@@ -22,6 +22,10 @@ using Astral.Messaging;
 using AstralBlankSample.Utilities;
 using AForgeFFT;
 using System.Threading;
+using Windows.UI.Core;
+
+using Windows.Devices.Sensors;
+using Windows.Foundation;
 
 namespace AstralBlankSample
 {
@@ -41,6 +45,10 @@ namespace AstralBlankSample
         private NetworkManager networkManager = NetworkManager.Instance;
         private DeviceModel device;
         private Bitmap CurrentStamp;
+        private Windows.Devices.Sensors.Magnetometer magnetometer;
+        private Windows.Devices.Sensors.Compass compass;
+
+
 
         WriteableBitmap writeableBmp;
         System.Windows.Point lastKnownCursorPosition;
@@ -57,6 +65,16 @@ namespace AstralBlankSample
 
         double airbrushVolume;
 
+        CompassReading reading;
+
+        private async void ReadingChanged(object sender, CompassReadingChangedEventArgs e)
+        {
+            await Dispatcher.InvokeAsync(() => {
+                reading = e.Reading;
+                //Console.WriteLine(reading.HeadingMagneticNorth);
+
+            });
+        }
 
         #endregion
 
@@ -80,6 +98,13 @@ namespace AstralBlankSample
             isTouchHeld = false;
             StampLoaded = false;
 
+            compass = Windows.Devices.Sensors.Compass.GetDefault();
+            if (compass != null)
+            {
+                compass.ReportInterval = compass.MinimumReportInterval;
+                compass.ReadingChanged += new TypedEventHandler<Windows.Devices.Sensors.Compass, CompassReadingChangedEventArgs>(ReadingChanged);
+            }
+
             lastChange = 0;
             lastFreq = 0;
             airbrushVolume = 0;
@@ -87,11 +112,14 @@ namespace AstralBlankSample
             
 
             this.Loaded += OnLoaded;
+            Canvas.TouchDown += Canvas_TouchDown;
             Canvas.TouchMove += Canvas_TouchMove;
-            Canvas.MouseDown += Canvas_MouseDown;
-            Canvas.MouseMove += Canvas_MouseMove;
+            //Canvas.MouseDown += Canvas_MouseDown;
+            //Canvas.MouseMove += Canvas_MouseMove;
 
         }
+
+
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             writeableBmp = BitmapFactory.New((int)this.ActualWidth, (int)this.ActualHeight);
@@ -106,10 +134,10 @@ namespace AstralBlankSample
 
         }
 
-        private void Canvas_MouseDown(object sender, MouseEventArgs e)
+        private void Canvas_TouchDown(object sender, TouchEventArgs e)
         {
-            var xPos = (int)e.GetPosition(this).X;
-            var yPos = (int)e.GetPosition(this).Y;
+            var xPos = (int)e.GetTouchPoint(this).Position.X;
+            var yPos = (int)e.GetTouchPoint(this).Position.Y;
             if (ActiveBrush.BrushType == Utilities.BrushTypes.STAMP)
             {
                 if (!StampLoaded)
@@ -200,12 +228,12 @@ namespace AstralBlankSample
             return new System.Windows.Point(x + xOffset, y + yOffset);
         }
 
-        private void Canvas_MouseMove(object sender, MouseEventArgs e)
+        private void Canvas_TouchMove(object sender, TouchEventArgs e)
         {
             using (writeableBmp.GetBitmapContext())
             {
-                var xPos = (int)e.GetPosition(this).X;
-                var yPos = (int)e.GetPosition(this).Y;
+                var xPos = (int)e.GetTouchPoint(this).Position.X;
+                var yPos = (int)e.GetTouchPoint(this).Position.Y;
                 if (Canvas.IsMouseOver && Mouse.LeftButton == MouseButtonState.Pressed)
                 {
                     switch (ActiveBrush.BrushType)
@@ -214,7 +242,10 @@ namespace AstralBlankSample
                             //writeableBmp.DrawLineAa((int)lastKnownCursorPosition.X, (int)lastKnownCursorPosition.Y, xPos, yPos, ActiveBrush.Color, ActiveBrush.Radius * 2);
 
                             if (ActiveBrush.BrushShape == Utilities.BrushShapes.ELLIPSE)
+                            {
+                                writeableBmp.DrawLineAa((int)lastKnownCursorPosition.X, (int)lastKnownCursorPosition.Y, xPos, yPos, ActiveBrush.Color, ActiveBrush.Radius * 2);
                                 writeableBmp.FillEllipseCentered(xPos, yPos, ActiveBrush.Radius, ActiveBrush.Radius, ActiveBrush.Color);
+                            }
 
                             else if (ActiveBrush.BrushShape == Utilities.BrushShapes.SQUARE)
                                 writeableBmp.FillRectangle(xPos - ActiveBrush.Radius, yPos - ActiveBrush.Radius, xPos + ActiveBrush.Radius, yPos + ActiveBrush.Radius, ActiveBrush.Color);
@@ -246,28 +277,7 @@ namespace AstralBlankSample
                 lastKnownCursorPosition = new System.Windows.Point(xPos, yPos);
             }
         }
-
-        private void Canvas_TouchMove(object sender, TouchEventArgs e)
-        {
-            using (writeableBmp.GetBitmapContext())
-            {
-                var xPos = (int)e.GetTouchPoint(Canvas).Position.X;
-                var yPos = (int)e.GetTouchPoint(Canvas).Position.Y;
-                //Console.WriteLine(xPos + " " + yPos);
-
-                if (Canvas.IsMouseOver)
-                {
-                    if (ActiveBrush.BrushType == Utilities.BrushTypes.BRUSH)
-                    {
-                        writeableBmp.SetPixel(xPos, yPos, ActiveBrush.Color);
-                    }
-                    else if (ActiveBrush.BrushType == Utilities.BrushTypes.ERASER)
-                    {
-                        writeableBmp.SetPixel(xPos, yPos, Colors.Transparent);
-                    }
-                }
-            }
-        }
+        
 
         #endregion
 
