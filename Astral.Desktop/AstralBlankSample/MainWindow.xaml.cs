@@ -605,7 +605,7 @@ namespace AstralBlankSample
         {
             using (Graphics g = Graphics.FromImage(CurrentStamp))
             {
-                g.CopyFromScreen(xPos- 160, yPos- 160,
+                g.CopyFromScreen(xPos *2- 160, yPos*2- 160,
                     0, 0, new System.Drawing.Size(320, 320),
                     CopyPixelOperation.SourceCopy);
             }
