@@ -135,6 +135,7 @@ namespace AstralBlankSample
             var xPos = (int)e.GetTouchPoint(this).Position.X;
             var yPos = (int)e.GetTouchPoint(this).Position.Y;
             Console.WriteLine("STAMP AT CENTER " + xPos + " " + yPos);
+            Console.WriteLine("DIMENSIONS: " + writeableBmp.PixelWidth + " " + writeableBmp.PixelHeight);
             if (ActiveBrush.BrushType == Utilities.BrushTypes.STAMP)
             {
                 if (!StampLoaded)
