@@ -136,7 +136,6 @@ namespace AstralBlankSample
             var yPos = (int)e.GetTouchPoint(this).Position.Y;
             Console.WriteLine("STAMP AT CENTER " + xPos + " " + yPos);
             Console.WriteLine("DIMENSIONS: " + writeableBmp.PixelWidth + " " + writeableBmp.PixelHeight);
-            Console.WriteLine("DIMENSIONS: " + writeableBmp.PixelWidth + " " + writeableBmp.PixelHeight);
             if (ActiveBrush.BrushType == Utilities.BrushTypes.STAMP)
             {
                 if (!StampLoaded)
@@ -604,7 +603,7 @@ namespace AstralBlankSample
                     yPos = 160;
 
                 g.CopyFromScreen(xPos*2 - 160, yPos*2 - 160,
-                    0, 0, new System.Drawing.Size(320, 320),
+                    0, 0, new System.Drawing.Size(160, 160),
                     CopyPixelOperation.SourceCopy);
             }
             Console.WriteLine("STAMP LOADED FROM CENTER " + xPos + " " + yPos);
