@@ -211,11 +211,15 @@ namespace AstralBlankSample
                         case Utilities.BrushTypes.ERASER:
                             writeableBmp.DrawLineAa((int)lastKnownCursorPosition.X, (int)lastKnownCursorPosition.Y, xPos, yPos, System.Windows.Media.Colors.White, 50);
                             writeableBmp.FillEllipseCentered(xPos, yPos, 25, 25, Colors.White);
-                            double velocity = Math.Sqrt((xPos - lastKnownCursorPosition.X) * (xPos - lastKnownCursorPosition.X) + (yPos - lastKnownCursorPosition.Y) * (yPos - lastKnownCursorPosition.Y));
+                            double velocity = Math.Sqrt((xPos - lastKnownCursorPosition.X) * (xPos - lastKnownCursorPosition.X) + (yPos - lastKnownCursorPosition.Y) * (yPos - lastKnownCursorPosition.Y))/5;
+                            if (velocity > 1)
+                            {
                             Console.WriteLine(velocity);
                             Message msg = new Message("Vibrate");
                             msg.AddField("Velocity", velocity);
                             device.Device.SendMessage(msg);
+
+                            }
                             break;
 
                         case BrushTypes.AIRBRUSH:

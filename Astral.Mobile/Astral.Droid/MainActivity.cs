@@ -186,7 +186,8 @@ namespace Astral.Droid
 
                     case "Vibrate":
                         double velocity = msg.GetDoubleField("Velocity");
-                        vibrator.Vibrate(VibrationEffect.CreateOneShot(50, (int) velocity));
+                        Int64[] pattern = new long[] { 0, (Int64)velocity, 0, (Int64)velocity };
+                        vibrator.Vibrate(pattern, 1);
                         break;
                     default:
                         break;
