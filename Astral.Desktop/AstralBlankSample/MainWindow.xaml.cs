@@ -609,8 +609,7 @@ namespace AstralBlankSample
                 
                 MemoryStream strm = new MemoryStream();
 
-                Bitmap tmp = new Bitmap(
-                    160, 160, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                Bitmap tmp = (Bitmap) CurrentStamp.Clone();
 
                 ImageCodecInfo jpgEncoder = GetEncoder(ImageFormat.Jpeg);
                 System.Drawing.Imaging.Encoder myEncoder = System.Drawing.Imaging.Encoder.Quality;

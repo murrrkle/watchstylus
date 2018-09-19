@@ -285,8 +285,19 @@ namespace Astral.Droid.UI
 
         public void UpdateContent(byte[] buffer)
         {
-            
-                int width = 160;
+
+            Log.Info("SCREENSHOT PROCESSING", "SCREENSHOT PROCESSING");
+            m_currImg = BitmapFactory.DecodeByteArray(buffer, 0, buffer.Length);
+            Log.Info("SCREENSHOT PROCESSED", "SCREENSHOT PROCESSED");
+
+            ((Activity)Context).RunOnUiThread(() =>
+            {
+                Log.Info("SCREENSHOT SET", "SCREENSHOT SET");
+                SetImageBitmap(m_currImg);
+                // SetImageBitmap(m_currImg);
+            });
+            /*
+            int width = 160;
                 int height = 160;
 
                 int bytesPerPixel = 4;
@@ -325,7 +336,7 @@ namespace Astral.Droid.UI
                Log.Info("SCREENSHOT SET", "SCREENSHOT SET");
                SetImageBitmap(RotateBitmap(m_currImg));
                 // SetImageBitmap(m_currImg);
-            });
+            });*/
         }
 
         private void OnDisplayContentUpdated(object sender, AstralContentEventArgs content)

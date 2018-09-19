@@ -169,9 +169,10 @@ namespace Astral.Droid
                                 break;
 
                             case (int)BrushTypes.STAMP:
-                                vibrator.Vibrate(50);
+                                StartStampTool();
+                                
                                 //SetContentView(Resource.Layout.Main);
-                                currentTool = BrushTypes.STAMP;
+
                                 // load brush UI 
                                 //Log.Info(debugTag, "Loading STAMP tool");
                                 break;
@@ -205,6 +206,16 @@ namespace Astral.Droid
                 }
 
             }
+        }
+
+        private void StartStampTool()
+        {
+            RunOnUiThread(() =>
+            {
+                activityContent.AddView(siv);
+            });
+            vibrator.Vibrate(50);
+            currentTool = BrushTypes.STAMP;
         }
 
         private void StartAirbrushTool()
