@@ -604,7 +604,7 @@ namespace AstralBlankSample
         private System.Windows.Point RandomPointInCircle(double r, double x, double y)
         {
             double magnitude = 1;
-            magnitude = zTilt < 5 ? 1 : Map(zTilt, 5, 9, 1, 2);
+            magnitude = zTilt < 5 ? 1 : Map(zTilt, 5, 9, 1, 10);
 
             double a = rnd.NextDouble();
             double b = rnd.NextDouble();
