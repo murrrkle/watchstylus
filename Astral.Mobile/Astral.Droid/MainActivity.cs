@@ -17,6 +17,7 @@ using Android.Views;
 using Android.Util;
 using Android.Graphics;
 using Android.Hardware;
+using Astral.Content;
 
 namespace Astral.Droid
 {
@@ -193,7 +194,10 @@ namespace Astral.Droid
                         break;
 
                     case "Stamp":
+
                         Log.Info("SCREENSHOT RECIEVED", "SCREENSHOT RECEIVED");
+                        
+                        siv.UpdateContent((byte[]) msg.GetField("buffer", typeof(byte[])));
                         break;
                             
                     default:

@@ -283,6 +283,52 @@ namespace Astral.Droid.UI
             });
         }
 
+        public void UpdateContent(byte[] buffer)
+        {
+            
+                int width = 160;
+                int height = 160;
+
+                int bytesPerPixel = 4;
+                int bytesPerRow = bytesPerPixel * width;
+                int numBytes = bytesPerRow * height;
+
+                if (m_currImg == null
+                    || m_currImg.Width != 160
+                    || m_currImg.Height != 160)
+                {
+                    m_currImg = Bitmap.CreateBitmap(width, height,
+                        Bitmap.Config.Argb8888);
+                }
+
+                // we need to adjust the bytes here (flip R and B)
+                unsafe
+                {
+                    fixed (byte* bytes = buffer)
+                    {
+                        uint* pixels = (uint*)bytes;
+                        int length = buffer.Length / bytesPerPixel;
+
+                        for (int i = 0; i < length; i++)
+                        {
+                            *pixels = ABGRtoARGB(*pixels);
+                            pixels++;
+                        }
+                    }
+                }
+
+                ByteBuffer b = ByteBuffer.Wrap(buffer);
+                b.Order(ByteOrder.BigEndian);
+                m_currImg.CopyPixelsFromBuffer(b);
+            
+
+           ((Activity)Context).RunOnUiThread(() =>
+           {
+               SetImageBitmap(RotateBitmap(m_currImg));
+                // SetImageBitmap(m_currImg);
+            });
+        }
+
         private void OnDisplayContentUpdated(object sender, AstralContentEventArgs content)
         {
             UpdateContent(content);
