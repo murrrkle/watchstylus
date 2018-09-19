@@ -223,9 +223,9 @@ namespace AstralBlankSample
                                 for (int i = 0; i < airbrushVolume; i++)
                                 {
                                     double magnitude = 1;
-                                    magnitude = zTilt < 5 ? 1 : Map(zTilt, 5, 9, 1, 5);
+                                    magnitude = zTilt < 5 ? 1 : Map(zTilt, 5, 9, 1, 2);
                                     System.Windows.Point p = RandomPointInCircle(50, xPos, yPos * magnitude);
-                                    p.Y += 50 * magnitude;
+                                    //p.Y += 50 * magnitude;
 
                                     double inRadians = degreeDifference * (Math.PI / 180);
 
@@ -244,8 +244,7 @@ namespace AstralBlankSample
 
                                     if (p.X >= 0 && p.Y >= 0 && p.X < writeableBmp.PixelWidth && p.Y < writeableBmp.PixelHeight)
                                         writeableBmp.SetPixel((int)p.X, (int)p.Y, ActiveBrush.Color);
-                                    else
-                                        Console.WriteLine("out of bounds: " + p.X + " " + p.Y);
+                                    
                                 }
                             }));
                             break;
