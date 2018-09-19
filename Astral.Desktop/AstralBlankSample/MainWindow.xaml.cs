@@ -222,8 +222,30 @@ namespace AstralBlankSample
                             {
                                 for (int i = 0; i < airbrushVolume; i++)
                                 {
-                                    System.Windows.Point p = RandomPointInCircle(50, xPos, yPos);
-                                    writeableBmp.SetPixel((int)p.X, (int)p.Y, ActiveBrush.Color);
+                                    double magnitude = 1;
+                                    magnitude = zTilt < 5 ? 1 : Map(zTilt, 5, 9, 1, 5);
+                                    System.Windows.Point p = RandomPointInCircle(50, xPos, yPos * magnitude);
+                                    p.Y += 50 * magnitude;
+
+                                    double inRadians = degreeDifference * (Math.PI / 180);
+
+                                    double c = Math.Cos(inRadians);
+                                    double s = Math.Sin(inRadians);
+
+                                    double tmpX = p.X - xPos;
+                                    double tmpY = p.Y - yPos;
+
+                                    double newX = tmpX * c - tmpY * s;
+                                    double newY = tmpY * c + tmpX * s;
+
+                                    p.X = newX + xPos;
+                                    p.Y = newY + yPos;
+
+
+                                    if (p.X >= 0 && p.Y >= 0 && p.X < writeableBmp.PixelWidth && p.Y < writeableBmp.PixelHeight)
+                                        writeableBmp.SetPixel((int)p.X, (int)p.Y, ActiveBrush.Color);
+                                    else
+                                        Console.WriteLine("out of bounds");
                                 }
                             }));
                             break;
@@ -446,9 +468,9 @@ namespace AstralBlankSample
 
         private void OnAccelerationChanged(object sender, AccelerationDeviceModelEventArgs e)
         {
-            //zTilt = e.LinearZ;
+            zTilt = e.LinearZ;
 
-            Console.WriteLine(e.GravityX + " " + e.GravityY + " " + e.GravityZ);
+            
 
             if (DateTimeOffset.Now.ToUnixTimeMilliseconds() - lastChange > 1000)
             {
