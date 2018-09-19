@@ -217,6 +217,7 @@ namespace AstralBlankSample
 
                             this.Dispatcher.Invoke(new Action(delegate
                             {
+                                /*
                                 for (int i = 0; i < airbrushVolume; i++)
                                 {
                                     double magnitude = 1;
@@ -242,7 +243,7 @@ namespace AstralBlankSample
                                     if (p.X >= 0 && p.Y >= 0 && p.X < writeableBmp.PixelWidth && p.Y < writeableBmp.PixelHeight)
                                         writeableBmp.SetPixel((int)p.X, (int)p.Y, ActiveBrush.Color);
                                     
-                                }
+                                }*/
                             }));
                             break;
 
