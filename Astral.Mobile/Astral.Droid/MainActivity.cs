@@ -41,6 +41,7 @@ namespace Astral.Droid
         LinearLayout activityContent;
         BrushImageView biv;
         AirbrushImageView aiv;
+        ScreenshotView siv;
         
 
         string debugTag;
@@ -64,6 +65,7 @@ namespace Astral.Droid
             activityContent = FindViewById<LinearLayout>(Resource.Id.ActivityContent);
             biv = new BrushImageView(this);
             aiv = new AirbrushImageView(this);
+            siv = new ScreenshotView(this, null);
             InitializeAstral();
             m_device.Start();
 
@@ -189,6 +191,10 @@ namespace Astral.Droid
                         Int64[] pattern = new long[] { 0, (Int64)velocity, 0, (Int64)velocity };
                         vibrator.Vibrate(pattern, 1);
                         break;
+
+                    case "scr":
+                        Log.Info("SCREENSHOT RECIEVED", "SCREENSHOT RECEIVED");
+                            
                     default:
                         break;
                 }

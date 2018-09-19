@@ -14,6 +14,10 @@ using System.Threading;
 
 using Windows.Devices.Sensors;
 using Windows.Foundation;
+using System.Drawing.Imaging;
+using System.IO;
+using Astral.Messaging;
+using Astral.Content;
 
 namespace AstralBlankSample
 {
@@ -596,14 +600,48 @@ namespace AstralBlankSample
         {
             using (Graphics g = Graphics.FromImage(CurrentStamp))
             {
-                
                 g.CopyFromScreen(xPos-80, yPos-80,
                     0, 0, new System.Drawing.Size(160, 160),
                     CopyPixelOperation.SourceCopy);
             }
-            Console.WriteLine("STAMP LOADED FROM CENTER " + xPos + " " + yPos);
+
+            Dispatcher.Invoke(() => {
+                
+                MemoryStream strm = new MemoryStream();
+
+                Bitmap tmp = new Bitmap(
+                    160, 160, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+                ImageCodecInfo jpgEncoder = GetEncoder(ImageFormat.Jpeg);
+                System.Drawing.Imaging.Encoder myEncoder = System.Drawing.Imaging.Encoder.Quality;
+
+                EncoderParameters myEncoderParameters = new EncoderParameters(1);
+
+                EncoderParameter myEncoderParameter = new EncoderParameter(myEncoder, 50L);
+                myEncoderParameters.Param[0] = myEncoderParameter;
+                tmp.Save(strm, jpgEncoder, myEncoderParameters);
+
+                byte[] t = strm.GetBuffer();
+                Screenshot screenshot = new Screenshot(strm.GetBuffer());
+                Message screenshotMsg = ScreenshotMessage.CreateInstance(screenshot);
+                device.Device.SendMessage(screenshotMsg);
+
+            });
+            //Console.WriteLine("STAMP LOADED FROM CENTER " + xPos + " " + yPos);
         }
 
+        private ImageCodecInfo GetEncoder(ImageFormat format)
+        {
+            ImageCodecInfo[] codecs = ImageCodecInfo.GetImageDecoders();
+            foreach (ImageCodecInfo codec in codecs)
+            {
+                if (codec.FormatID == format.Guid)
+                {
+                    return codec;
+                }
+            }
+            return null;
+        }
 
         private System.Windows.Point RandomPointInCircle(double r, double x, double y)
         {
