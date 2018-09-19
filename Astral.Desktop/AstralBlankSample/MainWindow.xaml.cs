@@ -347,7 +347,7 @@ namespace AstralBlankSample
             watchReading =  e.OrientationData.YawDegrees;
             if (watchReading < 0)
                 watchReading =  360 + e.OrientationData.YawDegrees ;
-            watchReading = watchReading + 180 % 360;
+            watchReading = watchReading % 360;
             degreeDifference = watchReading - tabletReading.HeadingMagneticNorth;
 
             if (degreeDifference > 180)
