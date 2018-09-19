@@ -206,14 +206,11 @@ namespace AstralBlankSample
                                 writeableBmp.FillEllipseCentered(xPos, yPos, ActiveBrush.Radius, ActiveBrush.Radius, ActiveBrush.Color);
                             }
 
-                            else if (ActiveBrush.BrushShape == Utilities.BrushShapes.SQUARE)
-                                writeableBmp.FillRectangle(xPos - ActiveBrush.Radius, yPos - ActiveBrush.Radius, xPos + ActiveBrush.Radius, yPos + ActiveBrush.Radius, ActiveBrush.Color);
-
                             break;
 
                         case Utilities.BrushTypes.ERASER:
-                            //writeableBmp.DrawLineAa((int)lastKnownCursorPosition.X, (int)lastKnownCursorPosition.Y, xPos, yPos, Colors.White, ActiveBrush.Radius * 2);
-                            writeableBmp.FillEllipseCentered(xPos, yPos, ActiveBrush.Radius, ActiveBrush.Radius, Colors.White);
+                            writeableBmp.DrawLineAa((int)lastKnownCursorPosition.X, (int)lastKnownCursorPosition.Y, xPos, yPos, ActiveBrush.Color, 50);
+                            writeableBmp.FillEllipseCentered(xPos, yPos, 25, 25, Colors.White);
                             break;
 
                         case BrushTypes.AIRBRUSH:
@@ -334,6 +331,7 @@ namespace AstralBlankSample
 
         private void Orientation_OrientationChanged(object sender, AstralOrientationEventArgs e)
         {
+            /*
             watchReading =  e.OrientationData.YawDegrees;
             if (watchReading < 0)
                 watchReading =  360 + e.OrientationData.YawDegrees ;
@@ -348,7 +346,7 @@ namespace AstralBlankSample
             {
                 degreeDifference = degreeDifference + 360;
             }
-
+            */
             
             //Console.WriteLine(degreeDifference);
 
