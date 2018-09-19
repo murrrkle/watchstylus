@@ -184,8 +184,10 @@ namespace Astral.Droid
                             biv.PostInvalidate();
                             break;
 
-                    
-
+                    case "Vibrate":
+                        double velocity = msg.GetDoubleField("Velocity");
+                        vibrator.Vibrate(VibrationEffect.CreateOneShot(50, (int) velocity));
+                        break;
                     default:
                         break;
                 }

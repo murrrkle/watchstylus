@@ -56,7 +56,7 @@ namespace AstralBlankSample.Utilities
         public Brush()
         {
             Color = Colors.Black;
-            Radius = 5;
+            Radius = 30;
             BrushType = BrushTypes.BRUSH;
             BrushShape = BrushShapes.ELLIPSE;
         }
