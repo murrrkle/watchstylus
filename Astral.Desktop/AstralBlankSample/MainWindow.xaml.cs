@@ -217,12 +217,11 @@ namespace AstralBlankSample
 
                             this.Dispatcher.Invoke(new Action(delegate
                             {
-                                /*
+                                
                                 for (int i = 0; i < airbrushVolume; i++)
                                 {
-                                    double magnitude = 1;
-                                    magnitude = zTilt < 5 ? 1 : Map(zTilt, 5, 9, 1, 2);
-                                    System.Windows.Point p = RandomPointInCircle(50, xPos, yPos * magnitude);
+                                    
+                                    System.Windows.Point p = RandomPointInCircle(50, xPos, yPos);
                                     //p.Y += 50 * magnitude;
 
                                     double inRadians = degreeDifference * (Math.PI / 180);
@@ -243,7 +242,7 @@ namespace AstralBlankSample
                                     if (p.X >= 0 && p.Y >= 0 && p.X < writeableBmp.PixelWidth && p.Y < writeableBmp.PixelHeight)
                                         writeableBmp.SetPixel((int)p.X, (int)p.Y, ActiveBrush.Color);
                                     
-                                }*/
+                                }
                             }));
                             break;
 
@@ -323,8 +322,6 @@ namespace AstralBlankSample
             device.Display.TouchUp += Display_TouchUp;
             //device.Accelerometer.AccelerationChanged += AccelerometerUpdated;
             device.Microphone.MicrophoneUpdated += OnMicrophoneUpdated;
-            device.Magnetometer.MagnetometerChanged += OnMagnetometerChanged;
-            device.Compass.HeadingChanged += HeadingChanged;
             // newer version of the accelerometer
             device.AccelerationChanged += OnAccelerationChanged;
             device.Orientation.OrientationChanged += Orientation_OrientationChanged;
@@ -332,7 +329,7 @@ namespace AstralBlankSample
 
         private void Orientation_OrientationChanged(object sender, AstralOrientationEventArgs e)
         {
-            /*
+            
             watchReading =  e.OrientationData.YawDegrees;
             if (watchReading < 0)
                 watchReading =  360 + e.OrientationData.YawDegrees ;
@@ -347,24 +344,12 @@ namespace AstralBlankSample
             {
                 degreeDifference = degreeDifference + 360;
             }
-            */
+            
             
             //Console.WriteLine(degreeDifference);
 
 
         }
-
-        private void HeadingChanged(object sender, AstralCompassEventArgs e)
-        {
-            //Console.WriteLine(e.CompassData.Heading);
-        }
-
-        private void OnMagnetometerChanged(object sender, AstralMagnetometerEventArgs e)
-        {
-            
-            //Console.WriteLine(e.MagnetometerData.X + " " + e.MagnetometerData.Y + " " + e.MagnetometerData.Z);
-        }
-
         
 
         private void OnMicrophoneUpdated(object sender, AstralMicrophoneEventArgs e)
@@ -467,9 +452,7 @@ namespace AstralBlankSample
         private void OnAccelerationChanged(object sender, AccelerationDeviceModelEventArgs e)
         {
             zTilt = e.LinearZ;
-
             
-
             if (DateTimeOffset.Now.ToUnixTimeMilliseconds() - lastChange > 1000)
             {
 
@@ -620,6 +603,8 @@ namespace AstralBlankSample
 
         private System.Windows.Point RandomPointInCircle(double r, double x, double y)
         {
+            double magnitude = 1;
+            magnitude = zTilt < 5 ? 1 : Map(zTilt, 5, 9, 1, 2);
 
             double a = rnd.NextDouble();
             double b = rnd.NextDouble();
@@ -632,7 +617,7 @@ namespace AstralBlankSample
             double xOffset = r * (b * Math.Cos(2 * Math.PI * a / b));
             double yOffset = r * (b * Math.Sin(2 * Math.PI * a / b));
 
-            return new System.Windows.Point(x + xOffset, y + yOffset);
+            return new System.Windows.Point(x + xOffset, y + yOffset * magnitude);
         }
     }
     #endregion
