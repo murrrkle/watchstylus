@@ -293,16 +293,14 @@ namespace Astral.Droid.UI
                 int bytesPerRow = bytesPerPixel * width;
                 int numBytes = bytesPerRow * height;
 
-                if (m_currImg == null
-                    || m_currImg.Width != 160
-                    || m_currImg.Height != 160)
-                {
-                    m_currImg = Bitmap.CreateBitmap(width, height,
+            Log.Info("SCREENSHOT PROCESSING", "SCREENSHOT PROCESSING 1");
+            
+                m_currImg = Bitmap.CreateBitmap(width, height,
                         Bitmap.Config.Argb8888);
-                }
-
-                // we need to adjust the bytes here (flip R and B)
-                unsafe
+                
+            Log.Info("SCREENSHOT PROCESSING", "SCREENSHOT PROCESSING 2");
+            // we need to adjust the bytes here (flip R and B)
+            unsafe
                 {
                     fixed (byte* bytes = buffer)
                     {
@@ -316,14 +314,15 @@ namespace Astral.Droid.UI
                         }
                     }
                 }
-
-                ByteBuffer b = ByteBuffer.Wrap(buffer);
+            Log.Info("SCREENSHOT PROCESSING", "SCREENSHOT PROCESSING 3");
+            ByteBuffer b = ByteBuffer.Wrap(buffer);
                 b.Order(ByteOrder.BigEndian);
                 m_currImg.CopyPixelsFromBuffer(b);
-            
+            Log.Info("SCREENSHOT PROCESSED", "SCREENSHOT PROCESSED");
 
-           ((Activity)Context).RunOnUiThread(() =>
+            ((Activity)Context).RunOnUiThread(() =>
            {
+               Log.Info("SCREENSHOT SET", "SCREENSHOT SET");
                SetImageBitmap(RotateBitmap(m_currImg));
                 // SetImageBitmap(m_currImg);
             });
