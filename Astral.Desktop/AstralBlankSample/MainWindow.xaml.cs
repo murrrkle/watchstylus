@@ -139,9 +139,7 @@ namespace AstralBlankSample
                 if (!StampLoaded)
                 {
                     LoadStamp(ref xPos, ref yPos);
-
                     Bitmap ss = CurrentStamp.Clone() as Bitmap;
-                    
                     StampLoaded = true;
 
                 }
@@ -153,7 +151,7 @@ namespace AstralBlankSample
                         {
                             for (int j = 0; j < 320; j++)
                             {
-                                if (xPos - 160 + i < 0 || yPos - 160 + j < 0 || xPos + i >= writeableBmp.Width || yPos + j >= writeableBmp.Height)
+                                if (xPos - 160 + i < 0 || yPos - 160 + j < 0 || xPos + i >= writeableBmp.PixelWidth || yPos + j >= writeableBmp.PixelHeight)
                                     continue;
                                 else
                                     try
@@ -254,10 +252,6 @@ namespace AstralBlankSample
                                     
                                 }
                             }));
-                            break;
-
-                        case Utilities.BrushTypes.STAMP:
-
                             break;
                     }
                 }
@@ -427,7 +421,7 @@ namespace AstralBlankSample
                         amp = amplitude;
                     }
 
-                    amp = Map(amp, 1000, 5000, 3, 50);
+                    amp = Map(amp, 1000, 5000, 25, 60);
 
                     int r, g, b = 0;
                     HlsToRgb(hue, 0.5, 0.8, out r, out g, out b);
@@ -480,6 +474,8 @@ namespace AstralBlankSample
                 }
                 else if (AccelIsStamp(e) && ActiveBrush.BrushType != Utilities.BrushTypes.STAMP)
                 {
+                    CurrentStamp = new Bitmap(320, 320, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                    StampLoaded = false;
                     ActiveBrush.BrushType = Utilities.BrushTypes.STAMP;
                     SendChangeTool(Utilities.BrushTypes.STAMP);
                     lastChange = DateTimeOffset.Now.ToUnixTimeMilliseconds();
