@@ -94,6 +94,7 @@ namespace AstralBlankSample
             airbrushVolume = 0;
 
             watchReading = 0;
+            degreeDifference = 0;
 
             this.Loaded += OnLoaded;
             Canvas.TouchDown += Canvas_TouchDown;
@@ -311,8 +312,15 @@ namespace AstralBlankSample
         private void Orientation_OrientationChanged(object sender, AstralOrientationEventArgs e)
         {
             watchReading =  e.OrientationData.YawDegrees;
+            if (watchReading < 0)
+                watchReading =  180 - e.OrientationData.YawDegrees;
+            watchReading = watchReading % 360;
+            degreeDifference = watchReading - tabletReading.HeadingMagneticNorth;
 
-            Console.WriteLine(tabletReading.HeadingMagneticNorth + " " + watchReading);
+
+            
+            Console.WriteLine(degreeDifference);
+
 
         }
 
