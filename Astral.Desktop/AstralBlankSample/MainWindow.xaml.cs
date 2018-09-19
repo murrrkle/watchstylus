@@ -317,6 +317,14 @@ namespace AstralBlankSample
             watchReading = watchReading % 360;
             degreeDifference = watchReading - tabletReading.HeadingMagneticNorth;
 
+            if (degreeDifference > 180)
+            {
+                degreeDifference = degreeDifference - 360;
+            }
+            else if (degreeDifference < -180)
+            {
+                degreeDifference = degreeDifference + 360;
+            }
 
             
             Console.WriteLine(degreeDifference);
