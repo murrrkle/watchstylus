@@ -209,7 +209,7 @@ namespace AstralBlankSample
                             break;
 
                         case Utilities.BrushTypes.ERASER:
-                            writeableBmp.DrawLineAa((int)lastKnownCursorPosition.X, (int)lastKnownCursorPosition.Y, xPos, yPos, ActiveBrush.Color, 50);
+                            writeableBmp.DrawLineAa((int)lastKnownCursorPosition.X, (int)lastKnownCursorPosition.Y, xPos, yPos, System.Windows.Media.Colors.White, 50);
                             writeableBmp.FillEllipseCentered(xPos, yPos, 25, 25, Colors.White);
                             break;
 
