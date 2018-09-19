@@ -137,6 +137,7 @@ namespace Astral.Droid.Sensors
         public void OnSensorChanged(SensorEvent e)
         {
             SensorType type = e.Sensor.Type;
+            
             if (m_sensors.ContainsKey(type))
             {
                 m_sensors[type].Update(e);

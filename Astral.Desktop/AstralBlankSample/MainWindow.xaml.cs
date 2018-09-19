@@ -53,7 +53,10 @@ namespace AstralBlankSample
 
         double airbrushVolume;
 
-        CompassReading reading;
+        CompassReading tabletReading;
+        double watchReading;
+        double degreeDifference;
+
 
         
 
@@ -90,7 +93,7 @@ namespace AstralBlankSample
             lastFreq = 0;
             airbrushVolume = 0;
 
-            
+            watchReading = 0;
 
             this.Loaded += OnLoaded;
             Canvas.TouchDown += Canvas_TouchDown;
@@ -177,9 +180,7 @@ namespace AstralBlankSample
         private async void ReadingChanged(object sender, CompassReadingChangedEventArgs e)
         {
             await Dispatcher.InvokeAsync(() => {
-                reading = e.Reading;
-                //Console.WriteLine(reading.HeadingMagneticNorth);
-
+                tabletReading = e.Reading;
             });
         }
 
@@ -289,7 +290,7 @@ namespace AstralBlankSample
             msg.AddField("Type", (int)bt);
             device.Device.SendMessage(msg);
 
-            Console.WriteLine("Sent CHANGETOOL " + bt);
+            //Console.WriteLine("Sent CHANGETOOL " + bt);
         }
         #endregion
 
@@ -304,23 +305,25 @@ namespace AstralBlankSample
             device.Compass.HeadingChanged += HeadingChanged;
             // newer version of the accelerometer
             device.AccelerationChanged += OnAccelerationChanged;
-            device.Orientation.OrientationChanged += OrientationChanged;
+            device.Orientation.OrientationChanged += Orientation_OrientationChanged;
         }
 
-        private void OrientationChanged(object sender, AstralOrientationEventArgs e)
+        private void Orientation_OrientationChanged(object sender, AstralOrientationEventArgs e)
         {
-            Console.WriteLine("Orientation UPDATED");
-            Console.WriteLine(e.OrientationData);
-            Console.WriteLine(e.OrientationData.YawDegrees);
+            watchReading =  e.OrientationData.YawDegrees;
+
+            Console.WriteLine(tabletReading.HeadingMagneticNorth - watchReading);
+
         }
 
         private void HeadingChanged(object sender, AstralCompassEventArgs e)
         {
-            Console.WriteLine(e.CompassData.Heading);
+            //Console.WriteLine(e.CompassData.Heading);
         }
 
         private void OnMagnetometerChanged(object sender, AstralMagnetometerEventArgs e)
         {
+            
             //Console.WriteLine(e.MagnetometerData.X + " " + e.MagnetometerData.Y + " " + e.MagnetometerData.Z);
         }
 
@@ -425,7 +428,7 @@ namespace AstralBlankSample
 
         private void OnAccelerationChanged(object sender, AccelerationDeviceModelEventArgs e)
         {
-
+            
             if (DateTimeOffset.Now.ToUnixTimeMilliseconds() - lastChange > 1000)
             {
 

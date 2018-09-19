@@ -18,7 +18,7 @@ namespace Astral.Droid.Sensors
     public class AndroidOrientation : Device.Orientation, IAndroidSensorBase
     {
         #region Implementation (IAndroidSensorBase)
-        public SensorType SensorType => SensorType.GameRotationVector;
+        public SensorType SensorType => SensorType.RotationVector;
 
         public void Update(SensorEvent e)
         {

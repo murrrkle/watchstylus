@@ -41,6 +41,7 @@ namespace Astral.Droid
         LinearLayout activityContent;
         BrushImageView biv;
         AirbrushImageView aiv;
+        
 
         string debugTag;
         #endregion
@@ -70,7 +71,6 @@ namespace Astral.Droid
 
             currentTool = BrushTypes.BRUSH;
             activityContent.AddView(biv);
-
             
         }
 
@@ -99,12 +99,6 @@ namespace Astral.Droid
                 ConnectivityType.RequestResponse);
             m_device.AddModule(display);
 
-            SensorManager sm = (SensorManager) GetSystemService(Context.SensorService);
-            Sensor or = sm.GetDefaultSensor(SensorType.Orientation);
-            if (or != null)
-                Log.Info("SENSOR DEBUGGER", "ORIENTATION SENSOR EXISTS");
-            else
-                Log.Info("SENSOR DEBUGGER", "ORIENTATION SENSOR DOES NOT EXIST");
 
             //microhpone
             AndroidMicrophone microphone = new AndroidMicrophone();
