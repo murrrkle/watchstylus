@@ -312,7 +312,7 @@ namespace AstralBlankSample
         {
             watchReading =  e.OrientationData.YawDegrees;
 
-            Console.WriteLine(tabletReading.HeadingMagneticNorth - watchReading);
+            Console.WriteLine(tabletReading.HeadingMagneticNorth + " " + watchReading);
 
         }
 

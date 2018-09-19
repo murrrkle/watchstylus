@@ -118,7 +118,7 @@ namespace Astral.Droid
 
             // add the corresponding handlers to the views
             //screenshotView.Screen = m_device[ModuleType.Display] as Astral.Device.Display;
-            string ipAddress = "192.168.0.27";
+            string ipAddress = "192.168.0.32";
             int port = 10001;
 
             m_device.Connect(IPAddress.Parse(ipAddress), port);
