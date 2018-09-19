@@ -446,7 +446,9 @@ namespace AstralBlankSample
 
         private void OnAccelerationChanged(object sender, AccelerationDeviceModelEventArgs e)
         {
-            zTilt = e.LinearZ;
+            //zTilt = e.LinearZ;
+
+            Console.WriteLine(e.GravityX + " " + e.GravityY + " " + e.GravityZ);
 
             if (DateTimeOffset.Now.ToUnixTimeMilliseconds() - lastChange > 1000)
             {
@@ -489,7 +491,7 @@ namespace AstralBlankSample
         #region Accel State Check
         private bool AccelIsStamp(AccelerationDeviceModelEventArgs e)
         {
-            if ((int)e.GravityZ == 0 && e.GravityZ > 7)
+            if ((int)e.LinearZ == 0 && e.LinearY > 7)
             {
                 return true;
             }
@@ -499,9 +501,9 @@ namespace AstralBlankSample
 
         private bool AccelIsBrush(AccelerationDeviceModelEventArgs e)
         {
-            if (e.GravityY > 0 && e.GravityY < 9.81)
+            if (e.LinearY > 0 && e.LinearY < 9.81)
             {
-                if (e.GravityZ > 3 && e.GravityZ < 9.81)
+                if (e.LinearZ > 3 && e.LinearZ < 9.81)
                 {
                     return true;
                 }
@@ -511,9 +513,9 @@ namespace AstralBlankSample
 
         private bool AccelIsEraser(AccelerationDeviceModelEventArgs e)
         {
-            if (e.GravityY > 0 && e.GravityY < 9.81)
+            if (e.LinearY > 0 && e.LinearY < 9.81)
             {
-                if (e.GravityZ < -3 && e.GravityZ > -9.81)
+                if (e.LinearZ < -3 && e.LinearZ > -9.81)
                 {
                     return true;
                 }
@@ -523,9 +525,9 @@ namespace AstralBlankSample
 
         private bool AccelIsAirbrush(AccelerationDeviceModelEventArgs e)
         {
-            if (e.GravityY < 0 && e.GravityY > -9.81)
+            if (e.LinearY < 0 && e.LinearY > -9.81)
             {
-                if (e.GravityZ > 3 && e.GravityZ < 9.81)
+                if (e.LinearZ > 3 && e.LinearZ < 9.81)
                 {
                     return true;
                 }
