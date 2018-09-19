@@ -117,7 +117,7 @@ namespace AstralBlankSample
             {
                 writeableBmp.Clear(Colors.White);
             }
-            CurrentStamp = new Bitmap(160, 160, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            CurrentStamp = new Bitmap(320, 320, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
         }
         #endregion
@@ -192,6 +192,11 @@ namespace AstralBlankSample
 
         private void Canvas_TouchMove(object sender, TouchEventArgs e)
         {
+            Console.WriteLine((int)e.GetTouchPoint(this).Position.X + " " + (int)e.GetTouchPoint(this).Position.Y);
+            Console.WriteLine((int)e.GetTouchPoint(Canvas).Position.X + " " + (int)e.GetTouchPoint(Canvas).Position.Y);
+            Console.WriteLine((int)e.GetTouchPoint(null).Position.X + " " + (int)e.GetTouchPoint(null).Position.Y);
+            
+
             using (writeableBmp.GetBitmapContext())
             {
                 var xPos = (int)e.GetTouchPoint(this).Position.X;
@@ -426,7 +431,7 @@ namespace AstralBlankSample
                         amp = amplitude;
                     }
 
-                    amp = Map(amp, 1000, 5000, 25, 60);
+                    amp = Map(amp, 1000, 5000, 10, 30);
 
                     int r, g, b = 0;
                     HlsToRgb(hue, 0.5, 0.8, out r, out g, out b);

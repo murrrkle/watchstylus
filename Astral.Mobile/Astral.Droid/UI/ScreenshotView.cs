@@ -285,58 +285,13 @@ namespace Astral.Droid.UI
 
         public void UpdateContent(byte[] buffer)
         {
-
-            Log.Info("SCREENSHOT PROCESSING", "SCREENSHOT PROCESSING");
+            
             m_currImg = BitmapFactory.DecodeByteArray(buffer, 0, buffer.Length);
-            Log.Info("SCREENSHOT PROCESSED", "SCREENSHOT PROCESSED");
 
             ((Activity)Context).RunOnUiThread(() =>
             {
-                Log.Info("SCREENSHOT SET", "SCREENSHOT SET");
                 SetImageBitmap(m_currImg);
-                // SetImageBitmap(m_currImg);
             });
-            /*
-            int width = 160;
-                int height = 160;
-
-                int bytesPerPixel = 4;
-                int bytesPerRow = bytesPerPixel * width;
-                int numBytes = bytesPerRow * height;
-
-            Log.Info("SCREENSHOT PROCESSING", "SCREENSHOT PROCESSING 1");
-            
-                m_currImg = Bitmap.CreateBitmap(width, height,
-                        Bitmap.Config.Argb8888);
-                
-            Log.Info("SCREENSHOT PROCESSING", "SCREENSHOT PROCESSING 2");
-            // we need to adjust the bytes here (flip R and B)
-            unsafe
-                {
-                    fixed (byte* bytes = buffer)
-                    {
-                        uint* pixels = (uint*)bytes;
-                        int length = buffer.Length / bytesPerPixel;
-
-                        for (int i = 0; i < length; i++)
-                        {
-                            *pixels = ABGRtoARGB(*pixels);
-                            pixels++;
-                        }
-                    }
-                }
-            Log.Info("SCREENSHOT PROCESSING", "SCREENSHOT PROCESSING 3");
-            ByteBuffer b = ByteBuffer.Wrap(buffer);
-                b.Order(ByteOrder.BigEndian);
-                m_currImg.CopyPixelsFromBuffer(b);
-            Log.Info("SCREENSHOT PROCESSED", "SCREENSHOT PROCESSED");
-
-            ((Activity)Context).RunOnUiThread(() =>
-           {
-               Log.Info("SCREENSHOT SET", "SCREENSHOT SET");
-               SetImageBitmap(RotateBitmap(m_currImg));
-                // SetImageBitmap(m_currImg);
-            });*/
         }
 
         private void OnDisplayContentUpdated(object sender, AstralContentEventArgs content)

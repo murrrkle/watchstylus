@@ -195,9 +195,6 @@ namespace Astral.Droid
                         break;
 
                     case "Stamp":
-
-                        Log.Info("SCREENSHOT RECIEVED", "SCREENSHOT RECEIVED");
-                        
                         siv.UpdateContent((byte[]) msg.GetField("buffer", typeof(byte[])));
                         break;
                             
