@@ -245,7 +245,7 @@ namespace AstralBlankSample
                                     if (p.X >= 0 && p.Y >= 0 && p.X < writeableBmp.PixelWidth && p.Y < writeableBmp.PixelHeight)
                                         writeableBmp.SetPixel((int)p.X, (int)p.Y, ActiveBrush.Color);
                                     else
-                                        Console.WriteLine("out of bounds");
+                                        Console.WriteLine("out of bounds: " + p.X + " " + p.Y);
                                 }
                             }));
                             break;
