@@ -192,8 +192,9 @@ namespace Astral.Droid
                         vibrator.Vibrate(pattern, 1);
                         break;
 
-                    case "scr":
+                    case "Stamp":
                         Log.Info("SCREENSHOT RECIEVED", "SCREENSHOT RECEIVED");
+                        break;
                             
                     default:
                         break;

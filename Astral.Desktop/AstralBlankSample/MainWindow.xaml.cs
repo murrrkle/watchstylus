@@ -622,9 +622,10 @@ namespace AstralBlankSample
                 tmp.Save(strm, jpgEncoder, myEncoderParameters);
 
                 byte[] t = strm.GetBuffer();
-                Screenshot screenshot = new Screenshot(strm.GetBuffer());
-                Message screenshotMsg = ScreenshotMessage.CreateInstance(screenshot);
-                device.Device.SendMessage(screenshotMsg);
+
+                Message message = new Message("Stamp");
+                message.AddField("buffer", t);
+                device.Device.SendMessage(message);
 
             });
             //Console.WriteLine("STAMP LOADED FROM CENTER " + xPos + " " + yPos);
