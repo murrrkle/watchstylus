@@ -152,26 +152,26 @@ namespace AstralBlankSample
                 {
                     Action DoStamp = () =>
                     {
-                        for (int i = 0; i < 320; i++)
+                        for (int i = 0; i < 160; i++)
                         {
-                            for (int j = 0; j < 320; j++)
+                            for (int j = 0; j < 160; j++)
                             {
-                                if (xPos - 160 + i < 0 || yPos - 160 + j < 0 || xPos + i >= writeableBmp.PixelWidth || yPos + j >= writeableBmp.PixelHeight)
+                                if (xPos - 80 + i < 0 || yPos - 80 + j < 0 || xPos + i >= writeableBmp.PixelWidth || yPos + j >= writeableBmp.PixelHeight)
                                     continue;
                                 else
                                     try
                                     {
                                         using (writeableBmp.GetBitmapContext())
                                         {
-                                            System.Drawing.Color c_tmp = CurrentStamp.GetPixel(i, j);
+                                            System.Drawing.Color c_tmp = CurrentStamp.GetPixel(i*2, j*2);
                                             System.Windows.Media.Color c = System.Windows.Media.Color.FromArgb(c_tmp.A, c_tmp.R, c_tmp.G, c_tmp.B);
-                                            writeableBmp.SetPixel(xPos - 160 + i, yPos - 160 + j, c);
+                                            writeableBmp.SetPixel(xPos - 80 + i, yPos - 80 + j, c);
                                         }
 
                                     }
                                     catch (Exception)
                                     {
-                                        Console.WriteLine("Tried to set pixel at " + (xPos - 160 + i) + " " + (yPos - 160 + j));
+                                        Console.WriteLine("Tried to set pixel at " + (xPos - 80 + i) + " " + (yPos - 80 + j));
 
                                     }
                             }
