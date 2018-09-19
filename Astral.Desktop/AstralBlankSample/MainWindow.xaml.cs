@@ -1,28 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Astral;
 using Astral.Device;
 using Astral.Net;
 using System.Drawing;
-using System.IO;
-using System.Drawing.Imaging;
-using Astral.Messaging;
 using AstralBlankSample.Utilities;
 using AForgeFFT;
 using System.Threading;
-using Windows.UI.Core;
 
 using Windows.Devices.Sensors;
 using Windows.Foundation;
@@ -67,14 +55,7 @@ namespace AstralBlankSample
 
         CompassReading reading;
 
-        private async void ReadingChanged(object sender, CompassReadingChangedEventArgs e)
-        {
-            await Dispatcher.InvokeAsync(() => {
-                reading = e.Reading;
-                //Console.WriteLine(reading.HeadingMagneticNorth);
-
-            });
-        }
+        
 
         #endregion
 
@@ -114,16 +95,13 @@ namespace AstralBlankSample
             this.Loaded += OnLoaded;
             Canvas.TouchDown += Canvas_TouchDown;
             Canvas.TouchMove += Canvas_TouchMove;
-            //Canvas.MouseDown += Canvas_MouseDown;
-            //Canvas.MouseMove += Canvas_MouseMove;
+            Canvas.TouchUp += Canvas_TouchUp;
 
         }
-
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             writeableBmp = BitmapFactory.New((int)this.ActualWidth, (int)this.ActualHeight);
-            //Console.WriteLine(writeableBmp.PixelWidth + " " + writeableBmp.PixelHeight);
             Canvas.Source = writeableBmp;
             using (writeableBmp.GetBitmapContext())
             {
@@ -133,6 +111,18 @@ namespace AstralBlankSample
                 320, 320, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
         }
+        #endregion
+
+        #region Window Events
+
+        private void Canvas_TouchUp(object sender, TouchEventArgs e)
+        {
+            var xPos = (int)e.GetTouchPoint(this).Position.X;
+            var yPos = (int)e.GetTouchPoint(this).Position.Y;
+            lastKnownCursorPosition = new System.Windows.Point(xPos, yPos);
+        }
+
+       
 
         private void Canvas_TouchDown(object sender, TouchEventArgs e)
         {
@@ -181,51 +171,16 @@ namespace AstralBlankSample
                     DoStamp.Invoke();
                 }
             }
+            lastKnownCursorPosition = new System.Windows.Point(xPos, yPos);
         }
 
-        private void LoadStamp(ref int xPos, ref int yPos)
+        private async void ReadingChanged(object sender, CompassReadingChangedEventArgs e)
         {
-            using (Graphics g = Graphics.FromImage(CurrentStamp))
-            {
-                if (xPos - 160 < 0)
-                    xPos = 160;
-                if (yPos - 160 < 0)
-                    yPos = 160;
+            await Dispatcher.InvokeAsync(() => {
+                reading = e.Reading;
+                //Console.WriteLine(reading.HeadingMagneticNorth);
 
-                g.CopyFromScreen(xPos - 160, yPos - 160,
-                    0, 0, new System.Drawing.Size(320, 320),
-                    CopyPixelOperation.SourceCopy);
-            }
-        }
-
-        private ImageCodecInfo GetEncoder(ImageFormat format)
-        {
-            ImageCodecInfo[] codecs = ImageCodecInfo.GetImageDecoders();
-            foreach (ImageCodecInfo codec in codecs)
-            {
-                if (codec.FormatID == format.Guid)
-                {
-                    return codec;
-                }
-            }
-            return null;
-        }
-
-        private System.Windows.Point RandomPointInCircle(double r, double x, double y)
-        {
-
-            double a = rnd.NextDouble();
-            double b = rnd.NextDouble();
-            if (b < a)
-            {
-                double temp = b;
-                b = a;
-                a = temp;
-            }
-            double xOffset = r * (b * Math.Cos(2 * Math.PI * a / b));
-            double yOffset = r * (b * Math.Sin(2 * Math.PI * a / b));
-
-            return new System.Windows.Point(x + xOffset, y + yOffset);
+            });
         }
 
         private void Canvas_TouchMove(object sender, TouchEventArgs e)
@@ -277,9 +232,11 @@ namespace AstralBlankSample
                 lastKnownCursorPosition = new System.Windows.Point(xPos, yPos);
             }
         }
+        #endregion
+
         
 
-        #endregion
+        
 
         #region Connection Initialization
 
@@ -326,9 +283,20 @@ namespace AstralBlankSample
             }
         }
 
+        private void SendChangeTool(BrushTypes bt)
+        {
+            Message msg = new Message("ChangeTool");
+            msg.AddField("Type", (int)bt);
+            device.Device.SendMessage(msg);
+
+            Console.WriteLine("Sent CHANGETOOL " + bt);
+        }
+        #endregion
+
+        #region Device Events
         private void InitializeDeviceEvents()
         {
-            device.Display.TouchDown += OnTouchDown;
+            device.Display.TouchDown += Display_TouchDown;
             device.Display.TouchUp += Display_TouchUp;
             //device.Accelerometer.AccelerationChanged += AccelerometerUpdated;
             device.Microphone.MicrophoneUpdated += OnMicrophoneUpdated;
@@ -336,8 +304,15 @@ namespace AstralBlankSample
             device.Compass.HeadingChanged += HeadingChanged;
             // newer version of the accelerometer
             device.AccelerationChanged += OnAccelerationChanged;
+            device.Orientation.OrientationChanged += OrientationChanged;
         }
 
+        private void OrientationChanged(object sender, AstralOrientationEventArgs e)
+        {
+            Console.WriteLine("Orientation UPDATED");
+            Console.WriteLine(e.OrientationData);
+            Console.WriteLine(e.OrientationData.YawDegrees);
+        }
 
         private void HeadingChanged(object sender, AstralCompassEventArgs e)
         {
@@ -349,7 +324,7 @@ namespace AstralBlankSample
             //Console.WriteLine(e.MagnetometerData.X + " " + e.MagnetometerData.Y + " " + e.MagnetometerData.Z);
         }
 
-        #endregion
+        
 
         private void OnMicrophoneUpdated(object sender, AstralMicrophoneEventArgs e)
         {
@@ -439,15 +414,9 @@ namespace AstralBlankSample
 
         }
 
-        private void OnTouchDown(object sender, AstralTouchEventArgs e)
+        private void Display_TouchDown(object sender, AstralTouchEventArgs e)
         {
             isTouchHeld = true;
-
-            if (ActiveBrush.BrushType == Utilities.BrushTypes.STAMP)
-            {
-
-            }
-            
         }
         private void Display_TouchUp(object sender, AstralTouchEventArgs e)
         {
@@ -493,7 +462,9 @@ namespace AstralBlankSample
             //Console.WriteLine( (int) e.LinearX + " :: " + (int) e.LinearY + " :: " + (int) e.LinearZ);
             //Console.WriteLine(e.LinearMagnitude);
         }
+        #endregion
 
+        #region Accel State Check
         private bool AccelIsStamp(AccelerationDeviceModelEventArgs e)
         {
             if ((int)e.LinearZ == 0 && e.LinearY > 7)
@@ -539,16 +510,9 @@ namespace AstralBlankSample
             }
             return false;
         }
+        #endregion
 
-
-        private void SendChangeTool(BrushTypes bt)
-        {
-            Message msg = new Message("ChangeTool");
-            msg.AddField("Type", (int)bt);
-            device.Device.SendMessage(msg);
-
-            Console.WriteLine("Sent CHANGETOOL " + bt);
-        }
+        #region Helpers
 
         public double Map(double value, double from1, double to1, double from2, double to2)
         {
@@ -593,6 +557,39 @@ namespace AstralBlankSample
             if (hue < 240) return q1 + (q2 - q1) * (240 - hue) / 60;
             return q1;
         }
-    }
 
+        private void LoadStamp(ref int xPos, ref int yPos)
+        {
+            using (Graphics g = Graphics.FromImage(CurrentStamp))
+            {
+                if (xPos - 160 < 0)
+                    xPos = 160;
+                if (yPos - 160 < 0)
+                    yPos = 160;
+
+                g.CopyFromScreen(xPos - 160, yPos - 160,
+                    0, 0, new System.Drawing.Size(320, 320),
+                    CopyPixelOperation.SourceCopy);
+            }
+        }
+
+
+        private System.Windows.Point RandomPointInCircle(double r, double x, double y)
+        {
+
+            double a = rnd.NextDouble();
+            double b = rnd.NextDouble();
+            if (b < a)
+            {
+                double temp = b;
+                b = a;
+                a = temp;
+            }
+            double xOffset = r * (b * Math.Cos(2 * Math.PI * a / b));
+            double yOffset = r * (b * Math.Sin(2 * Math.PI * a / b));
+
+            return new System.Windows.Point(x + xOffset, y + yOffset);
+        }
+    }
+    #endregion
 }

@@ -16,6 +16,7 @@ using Astral.Droid.UI;
 using Android.Views;
 using Android.Util;
 using Android.Graphics;
+using Android.Hardware;
 
 namespace Astral.Droid
 {
@@ -33,6 +34,7 @@ namespace Astral.Droid
         }
 
         AstralDevice m_device;
+
         BrushTypes currentTool;
         Android.Graphics.Color CurrentColor; 
         Vibrator vibrator;
@@ -67,11 +69,9 @@ namespace Astral.Droid
             aiv.AirflowChanged += Aiv_AirflowChanged;
 
             currentTool = BrushTypes.BRUSH;
+            activityContent.AddView(biv);
 
-            //RunOnUiThread(() =>
-            //{
-                activityContent.AddView(biv);
-            //});
+            
         }
 
         private void Aiv_AirflowChanged(object sender, float airflow)
@@ -99,8 +99,12 @@ namespace Astral.Droid
                 ConnectivityType.RequestResponse);
             m_device.AddModule(display);
 
-            
-
+            SensorManager sm = (SensorManager) GetSystemService(Context.SensorService);
+            Sensor or = sm.GetDefaultSensor(SensorType.Orientation);
+            if (or != null)
+                Log.Info("SENSOR DEBUGGER", "ORIENTATION SENSOR EXISTS");
+            else
+                Log.Info("SENSOR DEBUGGER", "ORIENTATION SENSOR DOES NOT EXIST");
 
             //microhpone
             AndroidMicrophone microphone = new AndroidMicrophone();
@@ -142,29 +146,29 @@ namespace Astral.Droid
                 switch (msgName)
                 {
                     case "ChangeTool":
-                        Log.Info(debugTag, "REMOVING ALL VIEWS");
+                        
                         RunOnUiThread(() =>
                         {
                             activityContent.RemoveAllViews();
                         });
-                        Log.Info(debugTag, "REMOVED ALL VIEWS");
+                        
                         switch (msg.GetIntField("Type"))
                         {
                             case (int) BrushTypes.BRUSH:
-                                Log.Info(debugTag, "Loading BRUSH tool");
+                                //Log.Info(debugTag, "Loading BRUSH tool");
                                 StartBrushTool();
                                 break;
 
                             case (int)BrushTypes.ERASER:
                                 StartEraserTool();
                                 // load brush UI 
-                                Log.Info(debugTag, "Loading ERASER tool");
+                                //Log.Info(debugTag, "Loading ERASER tool");
                                 break;
 
                             case (int)BrushTypes.AIRBRUSH:
                                 StartAirbrushTool();
                                 // load brush UI 
-                                Log.Info(debugTag, "Loading AIRBRUSH tool");
+                                //Log.Info(debugTag, "Loading AIRBRUSH tool");
                                 break;
 
                             case (int)BrushTypes.STAMP:
@@ -172,7 +176,7 @@ namespace Astral.Droid
                                 //SetContentView(Resource.Layout.Main);
                                 currentTool = BrushTypes.STAMP;
                                 // load brush UI 
-                                Log.Info(debugTag, "Loading STAMP tool");
+                                //Log.Info(debugTag, "Loading STAMP tool");
                                 break;
                         }
 
@@ -185,6 +189,9 @@ namespace Astral.Droid
                             biv.SetBrush(CurrentColor, size);
                             biv.PostInvalidate();
                             break;
+
+                    
+
                     default:
                         break;
                 }
