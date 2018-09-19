@@ -114,7 +114,7 @@ namespace AstralBlankSample
                 writeableBmp.Clear(Colors.White);
             }
             CurrentStamp = new Bitmap(
-                320, 320, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                160, 160, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
         }
         #endregion
