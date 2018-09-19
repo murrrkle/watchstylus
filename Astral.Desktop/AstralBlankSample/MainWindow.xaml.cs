@@ -597,8 +597,8 @@ namespace AstralBlankSample
             using (Graphics g = Graphics.FromImage(CurrentStamp))
             {
                 
-                g.CopyFromScreen(xPos*2-80, yPos*2-80,
-                    0, 0, new System.Drawing.Size(320, 320),
+                g.CopyFromScreen(xPos-80, yPos-80,
+                    0, 0, new System.Drawing.Size(160, 160),
                     CopyPixelOperation.SourceCopy);
             }
             Console.WriteLine("STAMP LOADED FROM CENTER " + xPos + " " + yPos);
