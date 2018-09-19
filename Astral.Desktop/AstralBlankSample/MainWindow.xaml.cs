@@ -57,7 +57,7 @@ namespace AstralBlankSample
         double watchReading;
         double degreeDifference;
 
-
+        double zTilt;
         
 
         #endregion
@@ -95,6 +95,8 @@ namespace AstralBlankSample
 
             watchReading = 0;
             degreeDifference = 0;
+
+            zTilt = 0;
 
             this.Loaded += OnLoaded;
             Canvas.TouchDown += Canvas_TouchDown;
@@ -327,7 +329,7 @@ namespace AstralBlankSample
             }
 
             
-            Console.WriteLine(degreeDifference);
+            //Console.WriteLine(degreeDifference);
 
 
         }
@@ -444,7 +446,8 @@ namespace AstralBlankSample
 
         private void OnAccelerationChanged(object sender, AccelerationDeviceModelEventArgs e)
         {
-            
+            zTilt = e.LinearZ;
+
             if (DateTimeOffset.Now.ToUnixTimeMilliseconds() - lastChange > 1000)
             {
 
@@ -486,7 +489,7 @@ namespace AstralBlankSample
         #region Accel State Check
         private bool AccelIsStamp(AccelerationDeviceModelEventArgs e)
         {
-            if ((int)e.LinearZ == 0 && e.LinearY > 7)
+            if ((int)e.GravityZ == 0 && e.GravityZ > 7)
             {
                 return true;
             }
@@ -496,9 +499,9 @@ namespace AstralBlankSample
 
         private bool AccelIsBrush(AccelerationDeviceModelEventArgs e)
         {
-            if (e.LinearY > 0 && e.LinearY < 9.81)
+            if (e.GravityY > 0 && e.GravityY < 9.81)
             {
-                if (e.LinearZ > 3 && e.LinearZ < 9.81)
+                if (e.GravityZ > 3 && e.GravityZ < 9.81)
                 {
                     return true;
                 }
@@ -508,9 +511,9 @@ namespace AstralBlankSample
 
         private bool AccelIsEraser(AccelerationDeviceModelEventArgs e)
         {
-            if (e.LinearY > 0 && e.LinearY < 9.81)
+            if (e.GravityY > 0 && e.GravityY < 9.81)
             {
-                if (e.LinearZ < -3 && e.LinearZ > -9.81)
+                if (e.GravityZ < -3 && e.GravityZ > -9.81)
                 {
                     return true;
                 }
@@ -520,9 +523,9 @@ namespace AstralBlankSample
 
         private bool AccelIsAirbrush(AccelerationDeviceModelEventArgs e)
         {
-            if (e.LinearY < 0 && e.LinearY > -9.81)
+            if (e.GravityY < 0 && e.GravityY > -9.81)
             {
-                if (e.LinearZ > 3 && e.LinearZ < 9.81)
+                if (e.GravityZ > 3 && e.GravityZ < 9.81)
                 {
                     return true;
                 }
