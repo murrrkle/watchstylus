@@ -11,6 +11,7 @@ using Android.Runtime;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using Astral.Droid.Models;
 
 namespace Astral.Droid.UI
 {
@@ -18,14 +19,26 @@ namespace Astral.Droid.UI
     public class BrushImageView : View
     {
         private Paint paint;
+        private LinearLayout layout;
         private float size;
+
+        public SeekBar hSlider;
+        public SeekBar sSlider;
+        public SeekBar vSlider;
+
+
+        float hue;
+        float sat;
+        float val;
 
         public BrushImageView(Context context, IAttributeSet attrs = null) :
             base(context, attrs)
         {
+            
             Initialize();
             
         }
+        
 
         public BrushImageView(Context context, IAttributeSet attrs, int defStyle) :
             base(context, attrs, defStyle)
@@ -35,12 +48,29 @@ namespace Astral.Droid.UI
         private void Initialize()
         {
             paint = new Paint() { Color = Color.Black };
-            size = 20;
+            size = 30;
+
+            layout = new LinearLayout(this.Context)
+            {
+                Orientation = Orientation.Vertical
+            };
+
+            hSlider = new SeekBar(this.Context);
+            sSlider = new SeekBar(this.Context);
+            vSlider = new SeekBar(this.Context);
+
+            layout.AddView(hSlider);
+            layout.AddView(sSlider);
+            layout.AddView(vSlider);
         }
 
-        public void SetBrush(Color c, float size)
+        public void SetBrush(float h, float s, float v, float size)
         {
-            paint.Color = c;
+            hue = h;
+            sat = s;
+            val = v;
+
+            paint.Color = Color.HSVToColor(new float[] { hue, sat, val });
             this.size = size;
         }
 

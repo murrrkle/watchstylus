@@ -53,20 +53,27 @@ namespace AstralBlankSample.Utilities
             get; set;
         }
 
+        public int MicAttribute // 0 = For Hue, 1 = For Saturation, 2 = For Value, 3 = for Radius
+        {
+            get; set;
+        }
+
         public Brush()
         {
             Color = Colors.Black;
             Radius = 30;
             BrushType = BrushTypes.BRUSH;
             BrushShape = BrushShapes.ELLIPSE;
+            MicAttribute = 0;
         }
 
-        public Brush(Color color, int radius, BrushTypes bt, BrushShapes bs)
+        public Brush(Color color, int radius, BrushTypes bt, BrushShapes bs, int ma)
         {
             Color = color;
             Radius = radius;
             BrushType = bt;
             BrushShape = bs;
+            MicAttribute = ma;
         }
     }
 }

@@ -85,14 +85,14 @@ namespace AstralBlankSample
             lastKnownCursorPosition = new System.Windows.Point(0, 0);
             isTouchHeld = false;
             StampLoaded = false;
-
+            
             compass = Windows.Devices.Sensors.Compass.GetDefault();
             if (compass != null)
             {
                 compass.ReportInterval = compass.MinimumReportInterval;
                 compass.ReadingChanged += new TypedEventHandler<Windows.Devices.Sensors.Compass, CompassReadingChangedEventArgs>(ReadingChanged);
             }
-
+            
             lastChange = 0;
             lastFreq = 0;
             airbrushVolume = 0;
@@ -269,9 +269,6 @@ namespace AstralBlankSample
             }
         }
         #endregion
-
-        
-
         
 
         #region Connection Initialization
@@ -361,7 +358,7 @@ namespace AstralBlankSample
             
             
             //Console.WriteLine(degreeDifference);
-
+            
 
         }
         
@@ -410,13 +407,22 @@ namespace AstralBlankSample
                     // convert largest peak to frequency
                     lastFreq = max_index * 22050 / audioBuffer.Length;
 
+
+                    // calculating color based on mic data
+
+                    System.Windows.Media.Color prevcolour = ActiveBrush.Color;
                     double hue = 0;
+                    double amp;
+
+
+
+
+
                     if (lastFreq < 1000)
                         hue = Map(2 * (lastFreq % 180), 100, 360, 0, 360);
                     else
                         hue = Map(lastFreq, 1000, 3000, 0, 360);
 
-                    double amp;
 
                     if (amplitude < 1000)
                     {
@@ -435,6 +441,7 @@ namespace AstralBlankSample
 
                     int r, g, b = 0;
                     HlsToRgb(hue, 0.5, 0.8, out r, out g, out b);
+
                     ActiveBrush.Color = System.Windows.Media.Color.FromRgb((byte)r, (byte)g, (byte)b);
                     ActiveBrush.Radius = (int)amp;
 

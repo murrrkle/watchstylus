@@ -37,9 +37,11 @@ namespace Astral.Droid
         AstralDevice m_device;
 
         BrushTypes currentTool;
-        Android.Graphics.Color CurrentColor; 
+        int MicAttribute; // 0 = For Hue, 1 = For Saturation, 2 = For Value, 3 = for Radius
+
         Vibrator vibrator;
         LinearLayout activityContent;
+
         BrushImageView biv;
         AirbrushImageView aiv;
         ScreenshotView siv;
@@ -71,10 +73,29 @@ namespace Astral.Droid
             m_device.Start();
 
             aiv.AirflowChanged += Aiv_AirflowChanged;
+            biv.hSlider.ProgressChanged += HSlider_ProgressChanged;
+            biv.sSlider.ProgressChanged += SSlider_ProgressChanged;
+            biv.vSlider.ProgressChanged += VSlider_ProgressChanged;
 
             currentTool = BrushTypes.BRUSH;
+            MicAttribute = 0;
             activityContent.AddView(biv);
             
+        }
+
+        private void VSlider_ProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
+        {
+            //throw new NotImplementedException();
+        }
+
+        private void SSlider_ProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
+        {
+           // throw new NotImplementedException();
+        }
+
+        private void HSlider_ProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
+        {
+           //throw new NotImplementedException();
         }
 
         private void Aiv_AirflowChanged(object sender, float airflow)
@@ -121,7 +142,8 @@ namespace Astral.Droid
 
             // add the corresponding handlers to the views
             //screenshotView.Screen = m_device[ModuleType.Display] as Astral.Device.Display;
-            string ipAddress = "192.168.0.32";
+            //string ipAddress = "70.77.214.69";
+            string ipAddress = "192.168.0.39";
             int port = 10001;
 
             m_device.Connect(IPAddress.Parse(ipAddress), port);
@@ -182,9 +204,11 @@ namespace Astral.Droid
 
                     case "BrushMic":
                             float hue = (float) msg.GetDoubleField("Hue");
-                            CurrentColor = Android.Graphics.Color.HSVToColor(new float[] { hue, 0.8f, 0.8f});
+                            float sat = (float)msg.GetDoubleField("Sat");
+                            float val = (float)msg.GetDoubleField("Val");
                             float size = (float) msg.GetDoubleField("Size");
-                            biv.SetBrush(CurrentColor, size);
+
+                            biv.SetBrush(hue, sat, val, size);
                             biv.PostInvalidate();
                             break;
 
