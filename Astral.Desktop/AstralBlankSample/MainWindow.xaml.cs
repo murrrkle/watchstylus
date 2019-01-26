@@ -412,6 +412,8 @@ namespace AstralBlankSample
 
                     System.Windows.Media.Color prevcolour = ActiveBrush.Color;
                     double hue = 0;
+                    double sat = 0.8;
+                    double val = 0.5;
                     double amp;
 
 
@@ -447,6 +449,8 @@ namespace AstralBlankSample
 
                     Message msg = new Message("BrushMic");
                     msg.AddField("Hue", hue);
+                    msg.AddField("Sat", sat);
+                    msg.AddField("Val", val);
                     msg.AddField("Size", amp);
                     device.Device.SendMessage(msg);
 
