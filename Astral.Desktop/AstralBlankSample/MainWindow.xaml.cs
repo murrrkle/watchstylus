@@ -40,7 +40,7 @@ namespace AstralBlankSample
         private Windows.Devices.Sensors.Magnetometer magnetometer;
         private Windows.Devices.Sensors.Compass compass;
 
-
+        int MicAttribute;
 
         WriteableBitmap writeableBmp;
         System.Windows.Point lastKnownCursorPosition;
@@ -77,6 +77,8 @@ namespace AstralBlankSample
             this.networkManager.DeviceAdded += OnDeviceConnected;
 
             rnd = new Random();
+
+            MicAttribute = 4;
 
             writeableBmp = null;
             Brushes = new List<Utilities.Brush>();
@@ -192,9 +194,9 @@ namespace AstralBlankSample
 
         private void Canvas_TouchMove(object sender, TouchEventArgs e)
         {
-            Console.WriteLine((int)e.GetTouchPoint(this).Position.X + " " + (int)e.GetTouchPoint(this).Position.Y);
-            Console.WriteLine((int)e.GetTouchPoint(Canvas).Position.X + " " + (int)e.GetTouchPoint(Canvas).Position.Y);
-            Console.WriteLine((int)e.GetTouchPoint(null).Position.X + " " + (int)e.GetTouchPoint(null).Position.Y);
+            //Console.WriteLine((int)e.GetTouchPoint(this).Position.X + " " + (int)e.GetTouchPoint(this).Position.Y);
+            //Console.WriteLine((int)e.GetTouchPoint(Canvas).Position.X + " " + (int)e.GetTouchPoint(Canvas).Position.Y);
+            //Console.WriteLine((int)e.GetTouchPoint(null).Position.X + " " + (int)e.GetTouchPoint(null).Position.Y);
             
 
             using (writeableBmp.GetBitmapContext())
@@ -218,7 +220,7 @@ namespace AstralBlankSample
 
                         case Utilities.BrushTypes.ERASER:
                             writeableBmp.DrawLineAa((int)lastKnownCursorPosition.X, (int)lastKnownCursorPosition.Y, xPos, yPos, System.Windows.Media.Colors.White, 50);
-                            writeableBmp.FillEllipseCentered(xPos, yPos, 25, 25, Colors.White);
+                            writeableBmp.FillEllipseCentered(xPos, yPos, 50, 50, Colors.White);
                             double velocity = Math.Sqrt((xPos - lastKnownCursorPosition.X) * (xPos - lastKnownCursorPosition.X) + (yPos - lastKnownCursorPosition.Y) * (yPos - lastKnownCursorPosition.Y))/5;
                             if (velocity > 1)
                             {
@@ -307,6 +309,28 @@ namespace AstralBlankSample
                         else
                             airbrushVolume = Map(airbrushVolume, 10, 200, 20, 200);
                         
+                        break;
+
+                    case "SizeChanged":
+                        int newSize = msg.GetIntField("Amount");
+                        ActiveBrush.SetColor(ActiveBrush.Hue, ActiveBrush.Val, ActiveBrush.Sat, newSize);
+                        break;
+
+                    case "HueChanged":
+                        int newHue = msg.GetIntField("Amount");
+                        ActiveBrush.SetColor(newHue, ActiveBrush.Val, ActiveBrush.Sat, ActiveBrush.Radius);
+                        break;
+                    case "ValChanged":
+                        double newVal = msg.GetDoubleField("Amount");
+                        ActiveBrush.SetColor(ActiveBrush.Hue, newVal, ActiveBrush.Sat, ActiveBrush.Radius);
+                        break;
+                    case "SatChanged":
+                        double newSat = msg.GetDoubleField("Amount");
+                        ActiveBrush.SetColor(ActiveBrush.Hue, ActiveBrush.Val, newSat, ActiveBrush.Radius);
+                        break;
+
+                    case "MicAttrChanged":
+                        MicAttribute = msg.GetIntField("Attr");
                         break;
 
                     default:
@@ -410,49 +434,82 @@ namespace AstralBlankSample
 
                     // calculating color based on mic data
 
-                    System.Windows.Media.Color prevcolour = ActiveBrush.Color;
-                    double hue = 0;
-                    double sat = 0.8;
-                    double val = 0.5;
-                    double amp;
-
-
-
-
-
-                    if (lastFreq < 1000)
-                        hue = Map(2 * (lastFreq % 180), 100, 360, 0, 360);
-                    else
-                        hue = Map(lastFreq, 1000, 3000, 0, 360);
-
-
-                    if (amplitude < 1000)
+                    if (amplitude > 1000)
                     {
-                        amp = 1000;
+                        double prevhue = ActiveBrush.Hue;
+                        double prevsat = ActiveBrush.Sat;
+                        double prevval = ActiveBrush.Val;
+                        int prevsize = ActiveBrush.Radius;
+                        double hue = prevhue;
+                        double sat = prevsat;
+                        double val = prevval;
+                        int size = prevsize;
+
+
+                        switch (MicAttribute)
+                        {
+                            case 0:
+                                if (lastFreq < 1000)
+                                    hue = prevhue;
+                                else if (lastFreq > 3000)
+                                    hue = prevhue;
+                                else 
+                                    hue = Map(lastFreq, 1000, 3000, 0, 360);
+
+                                sat = prevsat;
+                                val = prevval;
+                                size = prevsize;
+                                break;
+                            case 1:
+                                if (lastFreq < 1000)
+                                    sat = prevsat;
+                                else if (lastFreq > 3000)
+                                    sat = prevsat;
+
+                                else
+                                    sat = Map(lastFreq, 1000, 3000, 0, 100) / 100;
+                                hue = prevhue;
+                                val = prevval;
+                                size = prevsize;
+                                break;
+                            case 2:
+                                if (lastFreq < 1000)
+                                    val = prevval;
+                                else if (lastFreq > 3000)
+                                    val = prevval;
+
+                                else
+                                    val = Map(lastFreq, 1000, 3000, 0, 100) / 100;
+                                sat = prevsat;
+                                hue = prevhue;
+                                size = prevsize;
+                                break;
+                            case 3:
+                                if (lastFreq < 1000)
+                                    size = prevsize;
+                                else if (lastFreq > 3000)
+                                    size = prevsize;
+
+                                else
+                                    size = (int) Map(lastFreq, 1000, 3000, 10, 60);
+                                sat = prevsat;
+                                val = prevval;
+                                hue = prevhue;
+                                break;
+                            default:
+                                break;
+                        }
+
+                        ActiveBrush.SetColor(hue, val, sat, size);
+
+                        Message msg = new Message("BrushMic");
+                        msg.AddField("Hue", hue);
+                        msg.AddField("Sat", sat);
+                        msg.AddField("Val", val);
+                        msg.AddField("Size", size);
+                        device.Device.SendMessage(msg);
                     }
-                    else if (amplitude > 5000)
-                    {
-                        amp = 5000;
-                    }
-                    else
-                    {
-                        amp = amplitude;
-                    }
 
-                    amp = Map(amp, 1000, 5000, 10, 30);
-
-                    int r, g, b = 0;
-                    HlsToRgb(hue, 0.5, 0.8, out r, out g, out b);
-
-                    ActiveBrush.Color = System.Windows.Media.Color.FromRgb((byte)r, (byte)g, (byte)b);
-                    ActiveBrush.Radius = (int)amp;
-
-                    Message msg = new Message("BrushMic");
-                    msg.AddField("Hue", hue);
-                    msg.AddField("Sat", sat);
-                    msg.AddField("Val", val);
-                    msg.AddField("Size", amp);
-                    device.Device.SendMessage(msg);
 
 
                     //Console.WriteLine(string.Format("Freq = {0:f}, Amplitude = {1:f}", lastFreq, amplitude));
@@ -574,43 +631,7 @@ namespace AstralBlankSample
         }
 
 
-        public static void HlsToRgb(double h, double l, double s, out int r, out int g, out int b)
-        {
-            double p2;
-            if (l <= 0.5) p2 = l * (1 + s);
-            else p2 = l + s - l * s;
-
-            double p1 = 2 * l - p2;
-            double double_r, double_g, double_b;
-            if (s == 0)
-            {
-                double_r = l;
-                double_g = l;
-                double_b = l;
-            }
-            else
-            {
-                double_r = QqhToRgb(p1, p2, h + 120);
-                double_g = QqhToRgb(p1, p2, h);
-                double_b = QqhToRgb(p1, p2, h - 120);
-            }
-
-            // Convert RGB to the 0 to 255 range.
-            r = (int)(double_r * 255.0);
-            g = (int)(double_g * 255.0);
-            b = (int)(double_b * 255.0);
-        }
-
-        private static double QqhToRgb(double q1, double q2, double hue)
-        {
-            if (hue > 360) hue -= 360;
-            else if (hue < 0) hue += 360;
-
-            if (hue < 60) return q1 + (q2 - q1) * hue / 60;
-            if (hue < 180) return q2;
-            if (hue < 240) return q1 + (q2 - q1) * (240 - hue) / 60;
-            return q1;
-        }
+        
 
         private void LoadStamp(ref int xPos, ref int yPos)
         {
