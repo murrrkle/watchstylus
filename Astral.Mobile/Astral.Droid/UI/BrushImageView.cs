@@ -16,27 +16,28 @@ using Astral.Droid.Models;
 namespace Astral.Droid.UI
 {
     [Register("Astral.Droid.UI.BrushImageView")]
-    public class BrushImageView : View
+    public class BrushImageView : LinearLayout
     {
         private Paint paint;
         private LinearLayout layout;
-        private float size;
 
         public SeekBar hSlider;
         public SeekBar sSlider;
         public SeekBar vSlider;
+        public SeekBar zSlider;
 
+        public Button toggle;
+        public int MicAttribute; // 0 = For Hue, 1 = For Saturation, 2 = For Value, 3 = for Radius, 4 = OFF
 
-        float hue;
-        float sat;
-        float val;
+        public float size { get; set; }
+        public float hue {get;set;}
+        public float sat { get; set; }
+        public float val { get; set; }
 
         public BrushImageView(Context context, IAttributeSet attrs = null) :
             base(context, attrs)
         {
-            
             Initialize();
-            
         }
         
 
@@ -47,21 +48,130 @@ namespace Astral.Droid.UI
         }
         private void Initialize()
         {
-            paint = new Paint() { Color = Color.Black };
-            size = 30;
+            MicAttribute = 4;
+            paint = new Paint();
+            hue = 0;
+            sat = 1;
+            val = 0.8f;
+            size = 10;
+            SetBrush(hue, sat, val, size);
+
+            this.SetWillNotDraw(false);
 
             layout = new LinearLayout(this.Context)
             {
-                Orientation = Orientation.Vertical
+                Orientation = Orientation.Vertical,
+                LayoutParameters = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent)
+                
             };
 
-            hSlider = new SeekBar(this.Context);
-            sSlider = new SeekBar(this.Context);
-            vSlider = new SeekBar(this.Context);
+            LinearLayout.LayoutParams ll = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
+            ll.SetMargins(240, 15, 20, 15);
 
-            layout.AddView(hSlider);
-            layout.AddView(sSlider);
-            layout.AddView(vSlider);
+            //= Resources.DisplayMetrics.HeightPixels / 4;
+            //layout.LayoutParameters = ll;
+
+            LinearLayout buttonLayout = new LinearLayout(this.Context)
+            {
+                Orientation = Orientation.Horizontal,
+                LayoutParameters = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent)
+            };
+
+            buttonLayout.LayoutParameters = ll;
+
+
+            toggle = new Button(this.Context)
+            {
+                LayoutParameters = new LayoutParams(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent),
+                Text = "N",
+            };
+            buttonLayout.AddView(toggle);
+
+             hSlider = new SeekBar(this.Context)
+            {
+                LayoutParameters = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent),
+                Max = 360,
+                
+            };
+            sSlider = new SeekBar(this.Context)
+            {
+                LayoutParameters = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent),
+                Max = 100
+            };
+            vSlider = new SeekBar(this.Context)
+            {
+                LayoutParameters = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent),
+                Max = 100
+            };
+            zSlider = new SeekBar(this.Context)
+            {
+                LayoutParameters = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent),
+                Max = 50
+            };
+            LinearLayout hSliderLayout = new LinearLayout(this.Context)
+            {
+                Orientation = Orientation.Horizontal,
+                LayoutParameters = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent)
+            };
+            hSliderLayout.AddView(new TextView(this.Context)
+            {
+                Text = "H",
+                LayoutParameters = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent)
+
+            });
+            hSliderLayout.AddView(hSlider);
+
+            LinearLayout sSliderLayout = new LinearLayout(this.Context)
+            {
+                Orientation = Orientation.Horizontal,
+                LayoutParameters = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent)
+            };
+            sSliderLayout.AddView(new TextView(this.Context)
+            {
+                Text = "S",
+                LayoutParameters = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent)
+
+            });
+            sSliderLayout.AddView(sSlider);
+
+            LinearLayout vSliderLayout = new LinearLayout(this.Context)
+            {
+                Orientation = Orientation.Horizontal,
+                LayoutParameters = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent)
+            };
+            vSliderLayout.AddView(new TextView(this.Context)
+            {
+                Text = "V",
+                LayoutParameters = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent)
+
+            });
+            vSliderLayout.AddView(vSlider);
+
+            LinearLayout zSliderLayout = new LinearLayout(this.Context)
+            {
+                Orientation = Orientation.Horizontal,
+                LayoutParameters = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent)
+            };
+            zSliderLayout.AddView(new TextView(this.Context)
+            {
+                Text = "R",
+                LayoutParameters = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent)
+
+            });
+            zSliderLayout.AddView(zSlider);
+
+            layout.AddView(buttonLayout);
+            layout.AddView(hSliderLayout);
+            layout.AddView(sSliderLayout);
+            layout.AddView(vSliderLayout);
+            layout.AddView(zSliderLayout);
+
+            this.AddView(layout);
+
+            sSlider.Progress = (int) sat * 100;
+            vSlider.Progress = (int) val * 100;
+            zSlider.Progress = (int) size;
+            
         }
 
         public void SetBrush(float h, float s, float v, float size)
@@ -76,7 +186,7 @@ namespace Astral.Droid.UI
 
         protected override void OnDraw(Canvas canvas)
         {
-            canvas.DrawCircle((float) Resources.DisplayMetrics.WidthPixels/2, (float) Resources.DisplayMetrics.HeightPixels/2, size, paint);
+            canvas.DrawCircle((float) Resources.DisplayMetrics.WidthPixels/3, (float) Resources.DisplayMetrics.HeightPixels/4, size + 20, paint);
         }
     }
 }

@@ -37,7 +37,7 @@ namespace Astral.Droid
         AstralDevice m_device;
 
         BrushTypes currentTool;
-        int MicAttribute; // 0 = For Hue, 1 = For Saturation, 2 = For Value, 3 = for Radius
+        
 
         Vibrator vibrator;
         LinearLayout activityContent;
@@ -76,26 +76,112 @@ namespace Astral.Droid
             biv.hSlider.ProgressChanged += HSlider_ProgressChanged;
             biv.sSlider.ProgressChanged += SSlider_ProgressChanged;
             biv.vSlider.ProgressChanged += VSlider_ProgressChanged;
+            biv.zSlider.ProgressChanged += ZSlider_ProgressChanged;
+            biv.toggle.Click += Toggle_Click;
 
             currentTool = BrushTypes.BRUSH;
-            MicAttribute = 0;
+            biv.MicAttribute = 4;
             activityContent.AddView(biv);
             
         }
 
+        private void Toggle_Click(object sender, EventArgs e)
+        {
+            switch (biv.MicAttribute)
+            {
+                case 0:
+                    biv.MicAttribute = 1;
+                    biv.toggle.Text = "S";
+                    break;
+                case 1:
+                    biv.MicAttribute = 2;
+                    biv.toggle.Text = "V";
+                    break;
+                case 2:
+                    biv.MicAttribute = 3;
+                    biv.toggle.Text = "R";
+                    break;
+                case 3:
+                    biv.MicAttribute = 4;
+                    biv.toggle.Text = "N";
+                    break;
+                case 4:
+                    biv.MicAttribute = 0;
+                    biv.toggle.Text = "H";
+                    break;
+            }
+            Net.Message msg = new Net.Message("MicAttrChanged");
+            msg.AddField("Attr", biv.MicAttribute);
+            m_device.SendMessage(msg);
+        }
+
+        private void ZSlider_ProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
+        {
+            if (biv.MicAttribute != 3)
+            {
+
+            float prevhue = biv.hue;
+            float prevval = biv.val;
+            float prevsat = biv.sat;
+
+            biv.SetBrush(prevhue, prevsat, prevval, e.Progress);
+            biv.PostInvalidate();
+
+            Net.Message msg = new Net.Message("SizeChanged");
+            msg.AddField("Amount", (int)e.Progress);
+            m_device.SendMessage(msg);
+            }
+        }
+
         private void VSlider_ProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
         {
-            //throw new NotImplementedException();
+            if (biv.MicAttribute != 2)
+            {
+                float prevhue = biv.hue;
+                float prevsat = biv.sat;
+                float prevsize = biv.size;
+
+                biv.SetBrush(prevhue, prevsat, e.Progress / 100, prevsize);
+                biv.PostInvalidate();
+
+                Net.Message msg = new Net.Message("ValChanged");
+                msg.AddField("Amount", (double)e.Progress / 100);
+                m_device.SendMessage(msg);
+            }
         }
 
         private void SSlider_ProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
         {
-           // throw new NotImplementedException();
+            if (biv.MicAttribute != 1)
+            {
+                float prevhue = biv.hue;
+                float prevval = biv.val;
+                float prevsize = biv.size;
+
+                biv.SetBrush(prevhue, e.Progress / 100, prevval, prevsize);
+                biv.PostInvalidate();
+
+                Net.Message msg = new Net.Message("SatChanged");
+                msg.AddField("Amount", (double)e.Progress / 100);
+                m_device.SendMessage(msg);
+            }
         }
 
         private void HSlider_ProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
         {
-           //throw new NotImplementedException();
+            if (biv.MicAttribute != 0)
+            {
+                float prevsat = biv.sat;
+                float prevval = biv.val;
+                float prevsize = biv.size;
+
+                biv.SetBrush(e.Progress, prevsat, prevval, prevsize);
+                biv.PostInvalidate();
+
+                Net.Message msg = new Net.Message("HueChanged");
+                msg.AddField("Amount", e.Progress);
+                m_device.SendMessage(msg);
+            }
         }
 
         private void Aiv_AirflowChanged(object sender, float airflow)
@@ -206,7 +292,21 @@ namespace Astral.Droid
                             float hue = (float) msg.GetDoubleField("Hue");
                             float sat = (float)msg.GetDoubleField("Sat");
                             float val = (float)msg.GetDoubleField("Val");
-                            float size = (float) msg.GetDoubleField("Size");
+                            float size = (float) msg.GetIntField("Size");
+                            
+                            //if (biv.MicAttribute == 0)
+                       
+                                biv.hSlider.Progress = (int) hue;
+
+                        
+                            //if (biv.MicAttribute == 1) 
+                                biv.sSlider.Progress = (int) (sat * 100);
+
+                            //if (biv.MicAttribute == 2)
+                                biv.vSlider.Progress = (int) (val * 100);
+                            //if (biv.MicAttribute == 3)
+                                biv.zSlider.Progress = (int) size;
+                        
 
                             biv.SetBrush(hue, sat, val, size);
                             biv.PostInvalidate();
