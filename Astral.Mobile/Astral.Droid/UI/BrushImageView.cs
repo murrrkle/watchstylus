@@ -48,7 +48,7 @@ namespace Astral.Droid.UI
         }
         private void Initialize()
         {
-            MicAttribute = 4;
+            MicAttribute = 0;
             paint = new Paint();
             hue = 0;
             sat = 1;

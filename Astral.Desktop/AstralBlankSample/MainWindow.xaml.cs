@@ -431,9 +431,36 @@ namespace AstralBlankSample
                     // convert largest peak to frequency
                     lastFreq = max_index * 22050 / audioBuffer.Length;
 
+                    if (amplitude > 1000)
+                    {
+
+                        double hue = 0;
+                        double prevhue = ActiveBrush.Hue;
+                        double prevsat = ActiveBrush.Sat;
+                        double prevval = ActiveBrush.Val;
+                        int size = (int) Map(amplitude, 1000, 3000, 10, 60);
+
+
+                        if (lastFreq < 1000)
+                            hue = prevhue;
+                        else if (lastFreq > 3000)
+                            hue = prevhue;
+                        else
+                            hue = Map(lastFreq, 1000, 3000, 0, 360);
+
+
+                        ActiveBrush.SetColor(hue, prevval, prevsat, size);
+
+                        Message msg = new Message("BrushMic");
+                        msg.AddField("Hue", hue);
+                        msg.AddField("Sat", prevsat);
+                        msg.AddField("Val", prevval);
+                        msg.AddField("Size", size);
+                        device.Device.SendMessage(msg);
+                    }
 
                     // calculating color based on mic data
-
+                    /*
                     if (amplitude > 1000)
                     {
                         double prevhue = ActiveBrush.Hue;
@@ -509,7 +536,7 @@ namespace AstralBlankSample
                         msg.AddField("Size", size);
                         device.Device.SendMessage(msg);
                     }
-
+                    */
 
 
                     //Console.WriteLine(string.Format("Freq = {0:f}, Amplitude = {1:f}", lastFreq, amplitude));

@@ -80,7 +80,7 @@ namespace Astral.Droid
             biv.toggle.Click += Toggle_Click;
 
             currentTool = BrushTypes.BRUSH;
-            biv.MicAttribute = 4;
+            biv.MicAttribute = 0;
             activityContent.AddView(biv);
             
         }
@@ -229,7 +229,7 @@ namespace Astral.Droid
             // add the corresponding handlers to the views
             //screenshotView.Screen = m_device[ModuleType.Display] as Astral.Device.Display;
             //string ipAddress = "70.77.214.69";
-            string ipAddress = "192.168.0.39";
+            string ipAddress = "192.168.1.177";
             int port = 10001;
 
             m_device.Connect(IPAddress.Parse(ipAddress), port);
