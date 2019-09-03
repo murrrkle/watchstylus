@@ -4,4 +4,4 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/ActivityContent"
-    android:background="@android:color/white" />
+    android:background="@android:color/background_dark" />

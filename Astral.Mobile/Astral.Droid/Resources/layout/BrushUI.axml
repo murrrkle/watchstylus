@@ -1,6 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Astral.Droid.UI.BrushImageView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:custom="http://schemas.android.com/apk/res/android/custom"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/BrushImageView" /> 
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:custom="http://schemas.android.com/apk/res/android/custom"
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:id="@+id/BrushView"
+	android:minWidth="25px"
+	android:minHeight="25px">
+	<LinearLayout
+		android:orientation="horizontal"
+		android:minWidth="25px"
+		android:minHeight="25px"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/PreviewPane">
+		<Astral.Droid.UI.BrushCanvasView
+			android:layout_width="100dp"
+			android:layout_height="match_parent"
+			android:id="@+id/BrushPreview" />
+		<LinearLayout
+			android:orientation="vertical"
+			android:minWidth="25px"
+			android:minHeight="25px"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/ButtonPane">
+			<Button
+				android:text="None"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:id="@+id/MicChangeButton" />
+			<Button
+				android:text="Pause"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:id="@+id/MicPauseButton" />
+		</LinearLayout>
+	</LinearLayout>
+	<LinearLayout
+		android:orientation="horizontal"
+		android:minWidth="25px"
+		android:minHeight="25px"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/HueSliderLayout">
+		<TextView
+			android:text="@string/hue"
+			android:gravity="right"
+			android:layout_width="30dp"
+			android:layout_height="match_parent"
+			android:id="@+id/HueTextView"
+			android:layout_marginLeft="6.0dp"
+			android:layout_marginRight="6.0dp" />
+		<SeekBar
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:id="@+id/HueSeekbar"
+			android:max="360" />
+	</LinearLayout>
+	<LinearLayout
+		android:orientation="horizontal"
+		android:minWidth="25px"
+		android:minHeight="25px"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/SatSliderLayout">
+		<TextView
+			android:text="@string/sat"
+			android:gravity="right"
+			android:layout_width="30dp"
+			android:layout_height="match_parent"
+			android:id="@+id/SatTextView"
+			android:layout_marginLeft="6.0dp"
+			android:layout_marginRight="6.0dp" />
+		<SeekBar
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:id="@+id/SatSeekbar"
+			android:max="100" />
+	</LinearLayout>
+	<LinearLayout
+		android:orientation="horizontal"
+		android:minWidth="25px"
+		android:minHeight="25px"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/ValSliderLayout">
+		<TextView
+			android:text="@string/val"
+			android:gravity="right"
+			android:layout_width="30dp"
+			android:layout_height="match_parent"
+			android:id="@+id/ValTextView"
+			android:layout_marginLeft="6.0dp"
+			android:layout_marginRight="6.0dp" />
+		<SeekBar
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:id="@+id/ValSeekbar"
+			android:max="100" />
+	</LinearLayout>
+	<LinearLayout
+		android:orientation="horizontal"
+		android:minWidth="25px"
+		android:minHeight="25px"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/SizeSliderLayout">
+		<TextView
+			android:text="@string/size"
+			android:gravity="right"
+			android:layout_width="30dp"
+			android:layout_height="match_parent"
+			android:id="@+id/SizeTextView"
+			android:layout_marginLeft="6.0dp"
+			android:layout_marginRight="6.0dp" />
+		<SeekBar
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:id="@+id/SizeSeekbar"
+			android:max="50" />
+		<LinearLayout
+			android:orientation="horizontal"
+			android:minWidth="25px"
+			android:minHeight="25px"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:id="@+id/SizeSliderLayout">
+			<TextView
+				android:text="Size"
+				android:layout_width="30dp"
+				android:layout_height="match_parent"
+				android:id="@+id/SizeTextView"
+				android:layout_marginLeft="6.0dp"
+				android:layout_marginRight="6.0dp" />
+			<SeekBar
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:id="@+id/SizeSeekbar"
+				android:max="50" />
+		</LinearLayout>
+	</LinearLayout>
+
+</LinearLayout > 

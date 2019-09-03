@@ -41,20 +41,93 @@ namespace Astral.Droid
 			}
 		}
 		
+		public partial class Drawable
+		{
+			
+			// aapt resource value: 0x7f020000
+			public const int align = 2130837504;
+			
+			static Drawable()
+			{
+				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
+			}
+			
+			private Drawable()
+			{
+			}
+		}
+		
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f050002
-			public const int ActivityContent = 2131034114;
+			// aapt resource value: 0x7f060015
+			public const int ActivityContent = 2131099669;
 			
-			// aapt resource value: 0x7f050000
-			public const int AirbrushImageView = 2131034112;
+			// aapt resource value: 0x7f060002
+			public const int AirbrushTrigger = 2131099650;
 			
-			// aapt resource value: 0x7f050001
-			public const int BrushImageView = 2131034113;
+			// aapt resource value: 0x7f060000
+			public const int AirbrushUI = 2131099648;
 			
-			// aapt resource value: 0x7f050003
-			public const int ScreenshotView = 2131034115;
+			// aapt resource value: 0x7f060005
+			public const int BrushPreview = 2131099653;
+			
+			// aapt resource value: 0x7f060003
+			public const int BrushView = 2131099651;
+			
+			// aapt resource value: 0x7f060006
+			public const int ButtonPane = 2131099654;
+			
+			// aapt resource value: 0x7f06000b
+			public const int HueSeekbar = 2131099659;
+			
+			// aapt resource value: 0x7f060009
+			public const int HueSliderLayout = 2131099657;
+			
+			// aapt resource value: 0x7f06000a
+			public const int HueTextView = 2131099658;
+			
+			// aapt resource value: 0x7f060007
+			public const int MicChangeButton = 2131099655;
+			
+			// aapt resource value: 0x7f060008
+			public const int MicPauseButton = 2131099656;
+			
+			// aapt resource value: 0x7f060004
+			public const int PreviewPane = 2131099652;
+			
+			// aapt resource value: 0x7f06000e
+			public const int SatSeekbar = 2131099662;
+			
+			// aapt resource value: 0x7f06000c
+			public const int SatSliderLayout = 2131099660;
+			
+			// aapt resource value: 0x7f06000d
+			public const int SatTextView = 2131099661;
+			
+			// aapt resource value: 0x7f060016
+			public const int ScreenshotView = 2131099670;
+			
+			// aapt resource value: 0x7f060014
+			public const int SizeSeekbar = 2131099668;
+			
+			// aapt resource value: 0x7f060012
+			public const int SizeSliderLayout = 2131099666;
+			
+			// aapt resource value: 0x7f060013
+			public const int SizeTextView = 2131099667;
+			
+			// aapt resource value: 0x7f060011
+			public const int ValSeekbar = 2131099665;
+			
+			// aapt resource value: 0x7f06000f
+			public const int ValSliderLayout = 2131099663;
+			
+			// aapt resource value: 0x7f060010
+			public const int ValTextView = 2131099664;
+			
+			// aapt resource value: 0x7f060001
+			public const int imageButton1 = 2131099649;
 			
 			static Id()
 			{
@@ -69,17 +142,17 @@ namespace Astral.Droid
 		public partial class Layout
 		{
 			
-			// aapt resource value: 0x7f030000
-			public const int AirbrushUI = 2130903040;
+			// aapt resource value: 0x7f040000
+			public const int AirbrushUI = 2130968576;
 			
-			// aapt resource value: 0x7f030001
-			public const int BrushUI = 2130903041;
+			// aapt resource value: 0x7f040001
+			public const int BrushUI = 2130968577;
 			
-			// aapt resource value: 0x7f030002
-			public const int Main = 2130903042;
+			// aapt resource value: 0x7f040002
+			public const int Main = 2130968578;
 			
-			// aapt resource value: 0x7f030003
-			public const int Mainbkp = 2130903043;
+			// aapt resource value: 0x7f040003
+			public const int Mainbkp = 2130968579;
 			
 			static Layout()
 			{
@@ -94,8 +167,8 @@ namespace Astral.Droid
 		public partial class Mipmap
 		{
 			
-			// aapt resource value: 0x7f020000
-			public const int Icon = 2130837504;
+			// aapt resource value: 0x7f030000
+			public const int Icon = 2130903040;
 			
 			static Mipmap()
 			{
@@ -110,11 +183,23 @@ namespace Astral.Droid
 		public partial class String
 		{
 			
-			// aapt resource value: 0x7f040001
-			public const int app_name = 2130968577;
+			// aapt resource value: 0x7f050005
+			public const int app_name = 2131034117;
 			
-			// aapt resource value: 0x7f040000
-			public const int hello = 2130968576;
+			// aapt resource value: 0x7f050000
+			public const int hue = 2131034112;
+			
+			// aapt resource value: 0x7f050004
+			public const int none = 2131034116;
+			
+			// aapt resource value: 0x7f050002
+			public const int sat = 2131034114;
+			
+			// aapt resource value: 0x7f050003
+			public const int size = 2131034115;
+			
+			// aapt resource value: 0x7f050001
+			public const int val = 2131034113;
 			
 			static String()
 			{

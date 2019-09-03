@@ -1,28 +1,22 @@
-﻿using System;
-using System.Net;
-using System.Drawing;
-
-using Android.App;
-using Android.Widget;
-using Android.OS;
-
-using Astral.Device;
+﻿using Android.App;
 using Android.Content;
-using Android.Bluetooth;
-
+using Android.OS;
+using Android.Util;
+using Android.Widget;
+using Astral.Device;
+using Astral.Droid.Fragments;
 using Astral.Droid.Media;
 using Astral.Droid.Sensors;
 using Astral.Droid.UI;
-using Android.Views;
-using Android.Util;
-using Android.Graphics;
-using Android.Hardware;
-using Astral.Content;
+using System;
+using System.Net;
 
 namespace Astral.Droid
 {
     // NOTE: had to add potrait orientation: if that's not there, an orientation change recreates the activity!
-    [Activity(Label = "Astral.Droid", MainLauncher = true, Icon = "@mipmap/icon", Theme = "@android:style/Theme.Black.NoTitleBar.Fullscreen", ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait)]
+    [Activity(Label = "Astral.Droid", MainLauncher = true, Icon = "@mipmap/icon", 
+        Theme = "@android:style/Theme.DeviceDefault", 
+        ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait)]
     public class MainActivity : LiveSensorActivity
     {
         #region Class Members
@@ -34,20 +28,27 @@ namespace Astral.Droid
             AIRBRUSH = 3
         }
 
+        public struct PaintBkp
+        {
+            public float hue;
+            public float sat;
+            public float val;
+            public float size;
+
+        }
+
         AstralDevice m_device;
 
         BrushTypes currentTool;
         
-
         Vibrator vibrator;
         LinearLayout activityContent;
 
-        BrushImageView biv;
-        AirbrushImageView aiv;
-        ScreenshotView siv;
-        
+        BrushFragment bf;
+        AirbrushFragment af;
 
-        string debugTag;
+        PaintBkp paintBkp;
+       
         #endregion
 
         #region Android Startup
@@ -63,131 +64,67 @@ namespace Astral.Droid
         protected override void OnStart()
         {
             base.OnStart();
-            debugTag = "VS DEBUG";
+                                   
             vibrator = (Vibrator)this.ApplicationContext.GetSystemService(Context.VibratorService);
             activityContent = FindViewById<LinearLayout>(Resource.Id.ActivityContent);
-            biv = new BrushImageView(this);
-            aiv = new AirbrushImageView(this);
-            siv = new ScreenshotView(this, null);
+            paintBkp = new PaintBkp() { hue = 0, sat = 1, val = 0.8f, size = 10 };
+
+            //biv = new BrushImageView(this);
+            //aiv = new AirbrushImageView(this);
+            //siv = new ScreenshotView(this, null);
             InitializeAstral();
             m_device.Start();
 
-            aiv.AirflowChanged += Aiv_AirflowChanged;
-            biv.hSlider.ProgressChanged += HSlider_ProgressChanged;
-            biv.sSlider.ProgressChanged += SSlider_ProgressChanged;
-            biv.vSlider.ProgressChanged += VSlider_ProgressChanged;
-            biv.zSlider.ProgressChanged += ZSlider_ProgressChanged;
-            biv.toggle.Click += Toggle_Click;
 
-            currentTool = BrushTypes.BRUSH;
-            biv.MicAttribute = 0;
-            activityContent.AddView(biv);
+
+            bf = new BrushFragment();
+            bf.SliderUpdated += SliderUpdate;
+
+            af = new AirbrushFragment();
+            af.AirflowChanged += Aiv_AirflowChanged;
+
             
-        }
+            this.FragmentManager.BeginTransaction()
+                .Add(Resource.Id.ActivityContent, bf)
+                .Commit();
 
-        private void Toggle_Click(object sender, EventArgs e)
+            //FragmentTransaction abrushTx = this.FragmentManager.BeginTransaction();
+            //abrushTx.Add(Resource.Id.ActivityContent, af);
+            //abrushTx.Commit();
+
+
+
+            /*
+            aiv.AirflowChanged += Aiv_AirflowChanged;
+            biv.toggle.Click += Toggle_Click;
+            */
+
+
+            //currentTool = BrushTypes.BRUSH;
+            //biv.MicAttribute = 4;
+            //activityContent.AddView(biv);
+
+        }
+        #endregion
+        #region events
+
+        private void SliderUpdate(object sender, float hue, float sat, float val, float size)
         {
-            switch (biv.MicAttribute)
-            {
-                case 0:
-                    biv.MicAttribute = 1;
-                    biv.toggle.Text = "S";
-                    break;
-                case 1:
-                    biv.MicAttribute = 2;
-                    biv.toggle.Text = "V";
-                    break;
-                case 2:
-                    biv.MicAttribute = 3;
-                    biv.toggle.Text = "R";
-                    break;
-                case 3:
-                    biv.MicAttribute = 4;
-                    biv.toggle.Text = "N";
-                    break;
-                case 4:
-                    biv.MicAttribute = 0;
-                    biv.toggle.Text = "H";
-                    break;
-            }
-            Net.Message msg = new Net.Message("MicAttrChanged");
-            msg.AddField("Attr", biv.MicAttribute);
+            //String s = String.Concat(hue, sat, val, size);
+            //Log.Info("SliderUpdate", s);
+            Net.Message msg = new Net.Message("SliderUpdate");
+            msg.AddField("Hue", hue);
+            msg.AddField("Sat", sat);
+            msg.AddField("Val", val);
+            msg.AddField("Size", size);
             m_device.SendMessage(msg);
-        }
-
-        private void ZSlider_ProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
-        {
-            if (biv.MicAttribute != 3)
-            {
-
-            float prevhue = biv.hue;
-            float prevval = biv.val;
-            float prevsat = biv.sat;
-
-            biv.SetBrush(prevhue, prevsat, prevval, e.Progress);
-            biv.PostInvalidate();
-
-            Net.Message msg = new Net.Message("SizeChanged");
-            msg.AddField("Amount", (int)e.Progress);
-            m_device.SendMessage(msg);
-            }
-        }
-
-        private void VSlider_ProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
-        {
-            if (biv.MicAttribute != 2)
-            {
-                float prevhue = biv.hue;
-                float prevsat = biv.sat;
-                float prevsize = biv.size;
-
-                biv.SetBrush(prevhue, prevsat, e.Progress / 100, prevsize);
-                biv.PostInvalidate();
-
-                Net.Message msg = new Net.Message("ValChanged");
-                msg.AddField("Amount", (double)e.Progress / 100);
-                m_device.SendMessage(msg);
-            }
-        }
-
-        private void SSlider_ProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
-        {
-            if (biv.MicAttribute != 1)
-            {
-                float prevhue = biv.hue;
-                float prevval = biv.val;
-                float prevsize = biv.size;
-
-                biv.SetBrush(prevhue, e.Progress / 100, prevval, prevsize);
-                biv.PostInvalidate();
-
-                Net.Message msg = new Net.Message("SatChanged");
-                msg.AddField("Amount", (double)e.Progress / 100);
-                m_device.SendMessage(msg);
-            }
-        }
-
-        private void HSlider_ProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
-        {
-            if (biv.MicAttribute != 0)
-            {
-                float prevsat = biv.sat;
-                float prevval = biv.val;
-                float prevsize = biv.size;
-
-                biv.SetBrush(e.Progress, prevsat, prevval, prevsize);
-                biv.PostInvalidate();
-
-                Net.Message msg = new Net.Message("HueChanged");
-                msg.AddField("Amount", e.Progress);
-                m_device.SendMessage(msg);
-            }
         }
 
         private void Aiv_AirflowChanged(object sender, float airflow)
         {
             Net.Message msg = new Net.Message("AirflowChanged");
             msg.AddField("Amount", airflow);
+            Log.Debug("AirbrushChangedEvent", ""+airflow);
             m_device.SendMessage(msg);
 
         }
@@ -209,7 +146,6 @@ namespace Astral.Droid
                 ConnectivityType.RequestResponse);
             m_device.AddModule(display);
 
-
             //microhpone
             AndroidMicrophone microphone = new AndroidMicrophone();
             m_device.AddModule(microphone);
@@ -219,7 +155,10 @@ namespace Astral.Droid
             {
                 m_device.AddModule(module);
             }
+            
         }
+
+        
 
         private void InitializeAstral()
         {
@@ -229,7 +168,7 @@ namespace Astral.Droid
             // add the corresponding handlers to the views
             //screenshotView.Screen = m_device[ModuleType.Display] as Astral.Device.Display;
             //string ipAddress = "70.77.214.69";
-            string ipAddress = "192.168.1.177";
+            string ipAddress = "10.13.179.6";
             int port = 10001;
 
             m_device.Connect(IPAddress.Parse(ipAddress), port);
@@ -251,33 +190,43 @@ namespace Astral.Droid
                 switch (msgName)
                 {
                     case "ChangeTool":
-                        
+                        vibrator.Vibrate(10);
+                        /*
                         RunOnUiThread(() =>
                         {
                             activityContent.RemoveAllViews();
                         });
-                        
-                        switch (msg.GetIntField("Type"))
+                        */
+                        switch ((BrushTypes)msg.GetIntField("Type"))
                         {
                             case (int) BrushTypes.BRUSH:
+                                Log.Info("DEBUG", "Loading AIRBRUSH tool");
+                                this.FragmentManager.BeginTransaction()
+                                    .Replace(Resource.Id.ActivityContent, bf)
+                                    .Commit();
+                                break;
                                 //Log.Info(debugTag, "Loading BRUSH tool");
-                                StartBrushTool();
+                                //StartBrushTool();
                                 break;
 
-                            case (int)BrushTypes.ERASER:
-                                StartEraserTool();
+                            case BrushTypes.ERASER:
+                                //StartEraserTool();
                                 // load brush UI 
                                 //Log.Info(debugTag, "Loading ERASER tool");
                                 break;
 
-                            case (int)BrushTypes.AIRBRUSH:
-                                StartAirbrushTool();
+                            case BrushTypes.AIRBRUSH:
+
+                                //StartAirbrushTool();
                                 // load brush UI 
-                                //Log.Info(debugTag, "Loading AIRBRUSH tool");
+                                Log.Info("DEBUG", "Loading AIRBRUSH tool");
+                                this.FragmentManager.BeginTransaction()
+                                    .Replace(Resource.Id.ActivityContent, af)
+                                    .Commit();
                                 break;
 
-                            case (int)BrushTypes.STAMP:
-                                StartStampTool();
+                            case BrushTypes.STAMP:
+                                //StartStampTool();
                                 
                                 //SetContentView(Resource.Layout.Main);
 
@@ -289,28 +238,34 @@ namespace Astral.Droid
                         break;
 
                     case "BrushMic":
+                        if (!bf.MicPaused())
+                        {
                             float hue = (float) msg.GetDoubleField("Hue");
                             float sat = (float)msg.GetDoubleField("Sat");
                             float val = (float)msg.GetDoubleField("Val");
                             float size = (float) msg.GetIntField("Size");
-                            
-                            //if (biv.MicAttribute == 0)
-                       
-                                biv.hSlider.Progress = (int) hue;
 
-                        
-                            //if (biv.MicAttribute == 1) 
-                                biv.sSlider.Progress = (int) (sat * 100);
+                            bf.SetColour(hue, sat, val, size);
+                        }
+                        /*
+                        if (biv.MicAttribute == 0)
 
-                            //if (biv.MicAttribute == 2)
-                                biv.vSlider.Progress = (int) (val * 100);
-                            //if (biv.MicAttribute == 3)
-                                biv.zSlider.Progress = (int) size;
-                        
+                            biv.hSlider.Progress = (int)hue;
 
-                            biv.SetBrush(hue, sat, val, size);
-                            biv.PostInvalidate();
-                            break;
+
+                        if (biv.MicAttribute == 1)
+                            biv.sSlider.Progress = (int)(sat * 100);
+
+                        if (biv.MicAttribute == 2)
+                            biv.vSlider.Progress = (int)(val * 100);
+                        if (biv.MicAttribute == 3)
+                            biv.zSlider.Progress = (int)size;
+
+
+                        biv.SetBrush(hue, sat, val, size);
+                        biv.PostInvalidate();
+                        */
+                        break;
 
                     case "Vibrate":
                         double velocity = msg.GetDoubleField("Velocity");
@@ -319,7 +274,7 @@ namespace Astral.Droid
                         break;
 
                     case "Stamp":
-                        siv.UpdateContent((byte[]) msg.GetField("buffer", typeof(byte[])));
+                        //siv.UpdateContent((byte[]) msg.GetField("buffer", typeof(byte[])));
                         break;
                             
                     default:
@@ -333,27 +288,27 @@ namespace Astral.Droid
         {
             RunOnUiThread(() =>
             {
-                activityContent.AddView(siv);
+            //    activityContent.AddView(siv);
             });
             vibrator.Vibrate(50);
-            currentTool = BrushTypes.STAMP;
+            //currentTool = BrushTypes.STAMP;
         }
 
         private void StartAirbrushTool()
         {
             RunOnUiThread(() =>
             {
-                activityContent.AddView(aiv);
+              //  activityContent.AddView(aiv);
             });
             vibrator.Vibrate(50);
-            currentTool = BrushTypes.AIRBRUSH;
+            //currentTool = BrushTypes.AIRBRUSH;
 
         }
 
         private void StartEraserTool()
         {
             vibrator.Vibrate(50);
-            currentTool = BrushTypes.ERASER;
+            //currentTool = BrushTypes.ERASER;
         }
 
         private void StartBrushTool()
@@ -361,11 +316,11 @@ namespace Astral.Droid
             
             RunOnUiThread(() =>
             {
-                activityContent.AddView(biv);
+               // activityContent.AddView(biv);
             });
             
             vibrator.Vibrate(50);
-            currentTool = BrushTypes.BRUSH;
+            //currentTool = BrushTypes.BRUSH;
             
         }
         #endregion

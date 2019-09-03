@@ -62,8 +62,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AstralRunnable.cs" />
+    <Compile Include="Fragments\AirbrushFragment.cs" />
+    <Compile Include="Fragments\BrushFragment.cs" />
     <Compile Include="Models\Brush.cs" />
     <Compile Include="UI\AirbrushImageView.cs" />
+    <Compile Include="UI\BrushCanvasView.cs" />
     <Compile Include="UI\BrushImageView.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
@@ -100,7 +103,7 @@
     <AndroidResource Include="Resources\mipmap-xxxhdpi\Icon.png" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Resources\drawable\" />
+    <AndroidResource Include="Resources\drawable\align.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Astral.Shared\Astral.Shared\Astral.Shared.csproj">

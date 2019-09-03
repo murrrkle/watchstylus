@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Astral.Droid.UI.AirbrushImageView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:custom="http://schemas.android.com/apk/res/android/custom"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/AirbrushImageView" />
+	android:orientation="vertical"
+    android:id="@+id/AirbrushUI">
+	<ImageButton
+		android:layout_gravity="right"
+		android:src="@drawable/align"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:id="@+id/imageButton1" />
+	
+	<Astral.Droid.UI.AirbrushImageView
+	 android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/AirbrushTrigger"/>
+
+
+</LinearLayout>

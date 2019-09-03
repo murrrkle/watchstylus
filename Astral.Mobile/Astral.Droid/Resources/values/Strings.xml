@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string name="hello">Hello World, Click Me!</string>
+  <string name="hue">Hue</string>
+  <string name="val">Val</string>
+  <string name="sat">Sat</string>
+  <string name="size">Size</string>
+  <string name="none">None</string>
   <string name="app_name">Astral.Droid</string>
 </resources>
