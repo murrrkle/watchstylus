@@ -39,7 +39,7 @@ namespace AstralBlankSample
 
         private AstralService m_service;
         private AstralSession m_session;
-        private AstralDevice m_device;
+        //private AstralDevice m_device;
 
         public event EventHandler<DeviceConnectedEventArgs> DeviceAdded;
 
