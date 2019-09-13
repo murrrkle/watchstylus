@@ -111,7 +111,7 @@ namespace Astral.Net
                     if (m_sock == null)
                     {
                         m_sock = new TcpClient();
-
+                        
                         ConnectionState state = new ConnectionState { Client = m_sock, Success = true };
                         IAsyncResult result = m_sock.BeginConnect(m_ipAddress, m_port, AsyncConnectionComplete, state);
                         state.Success = result.AsyncWaitHandle.WaitOne(Configuration.Network.Timeout, false);

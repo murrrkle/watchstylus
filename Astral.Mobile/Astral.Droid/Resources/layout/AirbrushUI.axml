@@ -10,7 +10,7 @@
 		android:src="@drawable/align"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:id="@+id/imageButton1" />
+		android:id="@+id/RecalibrateButton" />
 	
 	<Astral.Droid.UI.AirbrushImageView
 	 android:layout_width="match_parent"

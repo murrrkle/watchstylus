@@ -3,6 +3,7 @@ using Android.App;
 using Android.Graphics;
 using Android.OS;
 using Android.Runtime;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Astral.Droid.UI;
@@ -21,15 +22,19 @@ namespace Astral.Droid.Fragments
     [Register("Astral.Droid.Fragments.BrushFragment")]
     public class BrushFragment : Fragment
     {
-        public delegate void BrushEventHandler(object sender, float hue, float sat, float val, float size);
-        public event BrushEventHandler SliderUpdated;
+        public delegate void SliderUpdatedHandler(object sender, int hue, float sat, float val, int size);
+        public delegate void MicAttrChangedHandler(object sender, MicrophoneMode m);
+
+        public event SliderUpdatedHandler SliderUpdated;
+        public event MicAttrChangedHandler MicAttrChanged;
+
 
         private View fragView;
 
-        private float hue;
+        private int hue;
         private float sat;
         private float val;
-        private float size;
+        private int size;
 
         private bool micPaused;
 
@@ -73,15 +78,16 @@ namespace Astral.Droid.Fragments
         public BrushFragment()
         {
             MicMode = MicrophoneMode.NONE;
+            micPaused = false;
         }
 
-        public void SetColour(float h, float s, float v, float size)
+        public void SetColour(int h, float s, float v, int size)
         {
             hue = h;
             sat = s;
             val = v;
             this.size = size;
-
+            //og.Debug("colour params", String.Concat(hue, " ", sat, " ", val, " ", this.size));
 
             BrushCanvasView bcv = fragView.FindViewById<BrushCanvasView>(Resource.Id.BrushPreview);
             bcv.UpdateColour(Color.HSVToColor(new float[] { hue, sat, val }), size);
@@ -90,8 +96,8 @@ namespace Astral.Droid.Fragments
         public void UpdateSliders()
         {
             hueSeekBar.Progress = (int) hue;
-            satSeekBar.Progress = (int) sat * 100;
-            valSeekBar.Progress = (int) val * 100;
+            satSeekBar.Progress = (int) (sat * 100);
+            valSeekBar.Progress = (int) (val * 100);
             sizeSeekBar.Progress = (int) size;
 
         }
@@ -184,6 +190,7 @@ namespace Astral.Droid.Fragments
                     micModeToggle.Text = GetString(Resource.String.none);
                     break;
             }
+            MicAttrChanged?.Invoke(this, MicMode);
         }
 
         private void SizeSeekBar_ProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
@@ -222,6 +229,44 @@ namespace Astral.Droid.Fragments
             satSeekBar.Progress = 100;
             valSeekBar.Progress = 80;
             sizeSeekBar.Progress = 10;
+        }
+
+        public void UpdateMicMode(MicrophoneMode mode)
+        {
+            MicMode = mode;
+
+            hueSeekBar.Enabled = true;
+            satSeekBar.Enabled = true;
+            valSeekBar.Enabled = true;
+            sizeSeekBar.Enabled = true;
+
+            switch (MicMode)
+            {
+                case MicrophoneMode.NONE: // if None, change to Hue
+                    MicMode = MicrophoneMode.HUE;
+                    micModeToggle.Text = GetString(Resource.String.hue);
+                    hueSeekBar.Enabled = false;
+                    break;
+                case MicrophoneMode.HUE: // if Hue, change to Sat
+                    MicMode = MicrophoneMode.SAT;
+                    micModeToggle.Text = GetString(Resource.String.sat);
+                    satSeekBar.Enabled = false;
+                    break;
+                case MicrophoneMode.SAT: // if Sat, change to Val
+                    MicMode = MicrophoneMode.VALUE;
+                    micModeToggle.Text = GetString(Resource.String.val);
+                    valSeekBar.Enabled = false;
+                    break;
+                case MicrophoneMode.VALUE: // if Val, change to Size
+                    MicMode = MicrophoneMode.SIZE;
+                    micModeToggle.Text = GetString(Resource.String.size);
+                    sizeSeekBar.Enabled = false;
+                    break;
+                case MicrophoneMode.SIZE: // if Size, change to None
+                    MicMode = MicrophoneMode.NONE;
+                    micModeToggle.Text = GetString(Resource.String.none);
+                    break;
+            }
         }
     }
 }

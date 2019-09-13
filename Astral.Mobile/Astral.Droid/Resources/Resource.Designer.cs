@@ -96,6 +96,9 @@ namespace Astral.Droid
 			// aapt resource value: 0x7f060004
 			public const int PreviewPane = 2131099652;
 			
+			// aapt resource value: 0x7f060001
+			public const int RecalibrateButton = 2131099649;
+			
 			// aapt resource value: 0x7f06000e
 			public const int SatSeekbar = 2131099662;
 			
@@ -117,6 +120,12 @@ namespace Astral.Droid
 			// aapt resource value: 0x7f060013
 			public const int SizeTextView = 2131099667;
 			
+			// aapt resource value: 0x7f060018
+			public const int StampDisplayView = 2131099672;
+			
+			// aapt resource value: 0x7f060017
+			public const int StampUILayout = 2131099671;
+			
 			// aapt resource value: 0x7f060011
 			public const int ValSeekbar = 2131099665;
 			
@@ -125,9 +134,6 @@ namespace Astral.Droid
 			
 			// aapt resource value: 0x7f060010
 			public const int ValTextView = 2131099664;
-			
-			// aapt resource value: 0x7f060001
-			public const int imageButton1 = 2131099649;
 			
 			static Id()
 			{
@@ -149,10 +155,16 @@ namespace Astral.Droid
 			public const int BrushUI = 2130968577;
 			
 			// aapt resource value: 0x7f040002
-			public const int Main = 2130968578;
+			public const int EraserUI = 2130968578;
 			
 			// aapt resource value: 0x7f040003
-			public const int Mainbkp = 2130968579;
+			public const int Main = 2130968579;
+			
+			// aapt resource value: 0x7f040004
+			public const int Mainbkp = 2130968580;
+			
+			// aapt resource value: 0x7f040005
+			public const int StampUI = 2130968581;
 			
 			static Layout()
 			{

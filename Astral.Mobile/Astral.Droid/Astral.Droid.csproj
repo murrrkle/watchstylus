@@ -64,6 +64,8 @@
     <Compile Include="AstralRunnable.cs" />
     <Compile Include="Fragments\AirbrushFragment.cs" />
     <Compile Include="Fragments\BrushFragment.cs" />
+    <Compile Include="Fragments\EraserFragment.cs" />
+    <Compile Include="Fragments\StampFragment.cs" />
     <Compile Include="Models\Brush.cs" />
     <Compile Include="UI\AirbrushImageView.cs" />
     <Compile Include="UI\BrushCanvasView.cs" />
@@ -123,6 +125,16 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\AirbrushUI.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\EraserUI.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\StampUI.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

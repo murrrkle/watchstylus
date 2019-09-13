@@ -3,6 +3,7 @@ using Android.App;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
+using Android.Widget;
 using Astral.Droid.UI;
 
 namespace Astral.Droid.Fragments
@@ -12,6 +13,10 @@ namespace Astral.Droid.Fragments
     {
         public delegate void AirbrushEventHandler(object sender, float airflow);
         public event AirbrushEventHandler AirflowChanged;
+        public delegate void AirbrushRecalibrateButtonHandler(object sender);
+        public event AirbrushRecalibrateButtonHandler RecalibrateButtonPressed;
+
+        public ImageButton recalibrateBtn;
 
         public AirbrushImageView aiv;
         public AirbrushFragment()
@@ -40,6 +45,14 @@ namespace Astral.Droid.Fragments
 
             aiv = view.FindViewById<AirbrushImageView>(Resource.Id.AirbrushTrigger);
             aiv.AirflowChanged += Aiv_AirflowChanged;
+            recalibrateBtn = view.FindViewById<ImageButton>(Resource.Id.RecalibrateButton);
+            recalibrateBtn.Click += RecalibrateBtn_Click;
+
+        }
+
+        private void RecalibrateBtn_Click(object sender, System.EventArgs e)
+        {
+            RecalibrateButtonPressed?.Invoke(this);
         }
 
         private void Aiv_AirflowChanged(object sender, float airflow)

@@ -21,6 +21,9 @@ namespace Astral.Droid.UI
         public delegate void AirbrushEventHandler(object sender, float airflow);
         public event AirbrushEventHandler AirflowChanged;
 
+        private long LastEventInvoke;
+        private const long DELAY_BETWEEN_EVENTS = 100;
+
         float PaintVolume { get; set; }
         public float TriggerY { get; set; }
 
@@ -41,6 +44,7 @@ namespace Astral.Droid.UI
         {
             PaintVolume = 0.0f;
             TriggerY = 60.0f;
+            LastEventInvoke = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond ;
         }
         
 
@@ -62,13 +66,21 @@ namespace Astral.Droid.UI
         
         public override bool OnTouchEvent(MotionEvent e)
         {
-            TriggerY = e.GetY();
+            long now = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
-            if (e.Action is MotionEventActions.Up)
-                TriggerY = 60;
+            if (now - LastEventInvoke > DELAY_BETWEEN_EVENTS)
+            {
+                TriggerY = e.GetY();
 
-            AirflowChanged?.Invoke(this, TriggerY - 60.0f);
-            Invalidate();
+                if (e.Action is MotionEventActions.Up)
+                    TriggerY = 60;
+
+                LastEventInvoke = now;
+                AirflowChanged?.Invoke(this, TriggerY - 60.0f);
+                Invalidate();
+                return true;
+            }
+
             return true;
         }
     }
