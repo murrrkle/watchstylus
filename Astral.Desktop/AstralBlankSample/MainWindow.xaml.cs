@@ -251,7 +251,7 @@ namespace AstralBlankSample
 
                                     System.Windows.Point p = RandomPointInCircle(50, xPos, yPos);
                                     p.Y += 50 * magnitude;
-                                    double inRadians = degreeDifference * (Math.PI / 180);
+                                    double inRadians = (degreeDifference + offset) * (Math.PI / 180);
 
                                     double c = Math.Cos(inRadians);
                                     double s = Math.Sin(inRadians);
@@ -327,7 +327,16 @@ namespace AstralBlankSample
                         break;
 
                     case "Recalibrate":
-                        offset = 0;
+                        if (degreeDifference < -180)
+                            offset = -180 - degreeDifference;
+                        else if (degreeDifference > 180)
+                            offset = 180 - degreeDifference;
+                        else if (degreeDifference >= 0 && degreeDifference < 180)
+                            offset = 180 - degreeDifference;
+                        else if (degreeDifference <= 0 && degreeDifference > -180)
+                            offset = -180 - degreeDifference;
+                        else
+                            offset = 0;
                         break;
                     default:
                         break;
@@ -369,8 +378,8 @@ namespace AstralBlankSample
         {
             
             watchReading =  e.OrientationData.YawDegrees;
-            //Console.WriteLine("tablt: " + tabletReading.HeadingMagneticNorth);
-            //Console.WriteLine("watch: " + watchReading);
+            Console.WriteLine("tablt: " + tabletReading.HeadingMagneticNorth);
+            Console.WriteLine("watch: " + watchReading);
 
             if (watchReading < 0)
                 watchReading =  360 + e.OrientationData.YawDegrees ;
@@ -387,7 +396,7 @@ namespace AstralBlankSample
                 degreeDifference = degreeDifference + 360;
             }
 
-            //Console.WriteLine(degreeDifference);
+            Console.WriteLine("Difference: " +degreeDifference);
             
             
 
